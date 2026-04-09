@@ -20,3 +20,4 @@
 Assets/Firebase/Plugins/**/*.bundle
 Assets/Firebase/Plugins/**/*.so
 Assets/Firebase/Plugins/**/*.dll
+Assets/Resources/Mapbox/MapboxConfiguration.txt

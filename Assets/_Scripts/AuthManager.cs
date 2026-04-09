@@ -1,9 +1,9 @@
 using UnityEngine;
 using Firebase;
 using Firebase.Auth;
-using Firebase.Extensions; // <--- THIS IS THE CRITICAL LINE
+using Firebase.Extensions; 
 using TMPro;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement; // This allows us to switch scenes!
 
 public class AuthManager : MonoBehaviour
 {
@@ -13,7 +13,6 @@ public class AuthManager : MonoBehaviour
 
     void Start()
     {
-        // Wait for Firebase to be ready before doing anything
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
             var dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available) {
@@ -31,10 +30,13 @@ public class AuthManager : MonoBehaviour
 
         auth.CreateUserWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWithOnMainThread(task => {
             if (task.IsFaulted || task.IsCanceled) {
-                Debug.LogError("Registration failed: " + task.Exception);
+                Debug.LogError("Registration failed: " + task.Exception.Flatten().InnerException.Message);
                 return;
             }
             Debug.Log("Student Registered: " + task.Result.User.Email);
+            
+            // THE BRIDGE: Go to the Map Scene!
+            SceneManager.LoadScene("SampleScene"); 
         });
     }
 
@@ -44,10 +46,13 @@ public class AuthManager : MonoBehaviour
 
         auth.SignInWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWithOnMainThread(task => {
             if (task.IsFaulted) {
-                Debug.LogError("Login failed!");
+                Debug.LogError("Login failed: " + task.Exception.Flatten().InnerException.Message);
                 return;
             }
             Debug.Log("Login Successful!");
+            
+            // THE BRIDGE: Go to the Map Scene!
+            SceneManager.LoadScene("SampleScene");
         });
     }
 }

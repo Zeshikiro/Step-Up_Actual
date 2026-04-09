@@ -1,48 +1,60 @@
 using UnityEngine;
-using TMPro;
 
 public class StepCounter1 : MonoBehaviour
 {
-    public TextMeshProUGUI stepText; 
-    public FirebaseManager firebaseManager;
-    private int totalSteps = 0;
+    [Header("Hardware Settings")]
+    [Tooltip("How hard the phone needs to shake to count a step. Default gravity is 1.0.")]
+    public float stepThreshold = 2.5f; 
+    private bool isStepping = false;
+
+    // We need to talk to the FirebaseManager to save the steps
+    private FirebaseManager firebaseManager;
+    private int currentSteps = 0;
 
     void Start()
     {
-        if (SystemInfo.supportsAccelerometer) 
-        {
-            Debug.Log("Pedometer/Accelerometer is supported!");
-        }
-        else
-        {
-            Debug.LogWarning("No step sensor found (PC Testing Mode)");
-        }
+        // Automatically find the FirebaseManager in the scene
+        firebaseManager = FindObjectOfType<FirebaseManager>();
     }
 
     void Update()
     {
-        // Mobile Shake
-        if (SystemInfo.supportsAccelerometer && Input.acceleration.magnitude > 1.5f) 
-        {
-            RecordStep();
-        }
-
-        // PC Spacebar
+        // --- 1. PC TESTING MODE (The Spacebar) ---
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            RecordStep();
+            RegisterPhysicalStep();
+        }
+
+        // --- 2. MOBILE HARDWARE MODE (The Accelerometer) ---
+        // Grab the physical forces acting on the phone right now (X, Y, and Z axes)
+        Vector3 phoneAcceleration = Input.acceleration; 
+        
+        // Calculate the total force combined (sqrMagnitude is highly efficient for mobile batteries)
+        float totalForce = phoneAcceleration.sqrMagnitude;
+
+        // If the force spikes higher than our threshold, it's a step!
+        if (totalForce > stepThreshold && !isStepping)
+        {
+            isStepping = true;
+            RegisterPhysicalStep();
+        }
+        // Reset the trigger once the phone stabilizes so we don't double-count one long shake
+        else if (totalForce < stepThreshold)
+        {
+            isStepping = false;
         }
     }
 
-    void RecordStep()
+    // The function that actually adds the step and tells the cloud
+    private void RegisterPhysicalStep()
     {
-        totalSteps++;
-        stepText.text = "Steps: " + totalSteps;
-        
-        // The Handshake
-        if (firebaseManager != null) 
+        currentSteps++;
+        Debug.Log("Real Step Detected! Session Total: " + currentSteps);
+
+        // Tell Firebase to update the cloud
+        if (firebaseManager != null)
         {
-            firebaseManager.UpdateStepsInCloud(totalSteps);
+            firebaseManager.UpdateStepsInCloud(currentSteps);
         }
     }
 }
