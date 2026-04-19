@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro; // <--- 1. ADDED THIS: Tells Unity we want to talk to the UI text
 
 public class StepCounter1 : MonoBehaviour
 {
@@ -6,6 +7,9 @@ public class StepCounter1 : MonoBehaviour
     [Tooltip("How hard the phone needs to shake to count a step. Default gravity is 1.0.")]
     public float stepThreshold = 2.5f; 
     private bool isStepping = false;
+
+    [Header("UI Elements")]
+    public TextMeshProUGUI stepTextDisplay; // <--- 2. ADDED THIS: The blank slot for your text object
 
     // We need to talk to the FirebaseManager to save the steps
     private FirebaseManager firebaseManager;
@@ -26,30 +30,30 @@ public class StepCounter1 : MonoBehaviour
         }
 
         // --- 2. MOBILE HARDWARE MODE (The Accelerometer) ---
-        // Grab the physical forces acting on the phone right now (X, Y, and Z axes)
         Vector3 phoneAcceleration = Input.acceleration; 
-        
-        // Calculate the total force combined (sqrMagnitude is highly efficient for mobile batteries)
         float totalForce = phoneAcceleration.sqrMagnitude;
 
-        // If the force spikes higher than our threshold, it's a step!
         if (totalForce > stepThreshold && !isStepping)
         {
             isStepping = true;
             RegisterPhysicalStep();
         }
-        // Reset the trigger once the phone stabilizes so we don't double-count one long shake
         else if (totalForce < stepThreshold)
         {
             isStepping = false;
         }
     }
 
-    // The function that actually adds the step and tells the cloud
     private void RegisterPhysicalStep()
     {
         currentSteps++;
         Debug.Log("Real Step Detected! Session Total: " + currentSteps);
+
+        // <--- 3. ADDED THIS: Update the physical screen!
+        if (stepTextDisplay != null)
+        {
+            stepTextDisplay.text = "Steps: " + currentSteps;
+        }
 
         // Tell Firebase to update the cloud
         if (firebaseManager != null)

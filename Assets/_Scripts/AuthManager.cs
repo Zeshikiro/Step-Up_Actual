@@ -10,6 +10,8 @@ public class AuthManager : MonoBehaviour
     public TMP_InputField emailField;
     public TMP_InputField passwordField;
     private FirebaseAuth auth;
+    public GameObject loginPanel;
+    public GameObject eulaPanel;
 
     void Start()
     {
@@ -35,8 +37,12 @@ public class AuthManager : MonoBehaviour
             }
             Debug.Log("Student Registered: " + task.Result.User.Email);
             
-            // THE BRIDGE: Go to the Map Scene!
-            SceneManager.LoadScene("SampleScene"); 
+            // Hide the Login/Register screen
+            loginPanel.SetActive(false);
+    
+            // Show the EULA screen
+            eulaPanel.SetActive(true);
+            
         });
     }
 
@@ -51,8 +57,11 @@ public class AuthManager : MonoBehaviour
             }
             Debug.Log("Login Successful!");
             
-            // THE BRIDGE: Go to the Map Scene!
-            SceneManager.LoadScene("SampleScene");
+            // Hide the Login/Register screen
+            loginPanel.SetActive(false);
+    
+            // Show the EULA screen
+            eulaPanel.SetActive(true);
         });
     }
 }
