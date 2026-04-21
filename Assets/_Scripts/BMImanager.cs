@@ -1,24 +1,25 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement; // Needed to load the Map!
 
 public class BMIManager : MonoBehaviour
 {
-    [Header("Input Fields")]
-    public TMP_InputField heightInput; // Expecting Centimeters
-    public TMP_InputField weightInput; // Expecting Kilograms
+    [Header("Input Fields (The Survey)")]
+    public TMP_InputField ageInput; 
+    public TMP_InputField heightInput;
+    public TMP_InputField weightInput;
 
     [Header("Display Elements")]
     public TextMeshProUGUI resultText;
     public GameObject continueButton;
+
     [Header("Routing")]
-    public GameObject loginPanel;
     public GameObject bmiPanel;
+    public GameObject mainMenuPanel; // Routes to your new Main Menu!
 
     void Start()
     {
-        // Hide the continue button until they actually calculate their BMI
+        // Hide the continue button until they calculate
         if (continueButton != null) 
         {
             continueButton.SetActive(false);
@@ -27,10 +28,12 @@ public class BMIManager : MonoBehaviour
 
     public void CalculateBMI()
     {
-        // Check if the user typed actual numbers
-        if (float.TryParse(heightInput.text, out float heightCm) && float.TryParse(weightInput.text, out float weightKg))
+        // Check if they filled out the survey (Age, Height, Weight)
+        if (int.TryParse(ageInput.text, out int age) && 
+            float.TryParse(heightInput.text, out float heightCm) && 
+            float.TryParse(weightInput.text, out float weightKg))
         {
-            // Math: BMI = kg / m^2
+            // Standard BMI Math
             float heightM = heightCm / 100f; 
             float bmi = weightKg / (heightM * heightM);
             
@@ -38,44 +41,27 @@ public class BMIManager : MonoBehaviour
             string category = "Normal";
 
             // WHO Guidelines Logic
-            if (bmi < 18.5f) 
-            {
-                category = "Underweight";
-                stepGoal = 8000; // Gradual start
-            } 
-            else if (bmi >= 18.5f && bmi <= 24.9f) 
-            {
-                category = "Normal Weight";
-                stepGoal = 10000; // Standard baseline
-            } 
-            else if (bmi >= 25f && bmi <= 29.9f) 
-            {
-                category = "Overweight";
-                stepGoal = 12000; // Increased for weight management
-            } 
-            else if (bmi >= 30f) 
-            {
-                category = "Obese";
-                stepGoal = 8000; // Lowered to protect joints during early fitness
-            }
+            if (bmi < 18.5f) { category = "Underweight"; stepGoal = 8000; } 
+            else if (bmi >= 18.5f && bmi <= 24.9f) { category = "Normal Weight"; stepGoal = 10000; } 
+            else if (bmi >= 25f && bmi <= 29.9f) { category = "Overweight"; stepGoal = 12000; } 
+            else if (bmi >= 30f) { category = "Obese"; stepGoal = 8000; }
 
-            // Display the results formatting to 1 decimal place (e.g., 24.5)
+            // Display results
             resultText.text = $"Your BMI: {bmi:F1}\nCategory: {category}\n\n<b>Daily Target: {stepGoal} Steps</b>";
             
-            // Un-hide the continue button so they can enter the game
+            // Show the continue button
             continueButton.SetActive(true);
         }
         else
         {
-            resultText.text = "<color=red>Please enter valid numbers!</color>";
+            resultText.text = "<color=red>Please enter valid numbers in all fields!</color>";
         }
     }
 
-    // This is the final bridge to the map!
-    public void EnterGame()
+    // Call this from the "Continue" button
+    public void GoToMainMenu()
     {
-        // Hide the BMI Panel and Show the Login Panel
         bmiPanel.SetActive(false);
-        loginPanel.SetActive(true);
+        mainMenuPanel.SetActive(true);
     }
 }
