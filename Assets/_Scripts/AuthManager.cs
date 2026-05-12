@@ -33,7 +33,7 @@ public class AuthManager : MonoBehaviour
                 auth = FirebaseAuth.DefaultInstance;
 
                 // ==============================================
-                // "REMEMBER ME" IS TURNED BACK ON!
+                // "REMEMBER ME"
                 // ==============================================
                 if (auth.CurrentUser != null) {
             Debug.Log("User recognized! Bypassing login...");
@@ -112,7 +112,7 @@ public class AuthManager : MonoBehaviour
         if (auth == null) return;
 
         if (loginButton != null) loginButton.interactable = false;
-        if (statusText != null) statusText.text = "Checking credentials...";
+        if (statusText != null) statusText.text = "Checking credentials..."; 
 
         auth.SignInWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWithOnMainThread(task => {
             if (task.IsFaulted) {
