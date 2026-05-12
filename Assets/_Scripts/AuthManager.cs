@@ -36,13 +36,25 @@ public class AuthManager : MonoBehaviour
                 // "REMEMBER ME" IS TURNED BACK ON!
                 // ==============================================
                 if (auth.CurrentUser != null) {
-                    Debug.Log("User recognized! Bypassing login...");
-                    loginPanel.SetActive(false);
-                    
-                    // Route directly to Main Menu to skip EULA and BMI
-                    if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
-                    else eulaPanel.SetActive(true); // Fallback just in case
-                }
+            Debug.Log("User recognized! Bypassing login...");
+            if (loginPanel != null) loginPanel.SetActive(false);
+
+            // --- THE NEW ONBOARDING LOCK CHECK ---
+            // Did they already finish the BMI survey previously?
+            if (PlayerPrefs.GetInt("OnboardingComplete", 0) == 1) 
+            {
+                // Yes! Route directly to Main Menu.
+                if (eulaPanel != null) eulaPanel.SetActive(false);
+                // bmiPanel.SetActive(false); // Add this if you have a bmiPanel variable here!
+                if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+            }
+            else 
+            {
+                // No, they haven't finished it yet. Route to EULA.
+                if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+                if (eulaPanel != null) eulaPanel.SetActive(true);
+            }
+        }
 
             } else {
                 Debug.LogError("Could not resolve Firebase dependencies: " + dependencyStatus);

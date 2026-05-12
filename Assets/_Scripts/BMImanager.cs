@@ -61,6 +61,8 @@ public class BMIManager : MonoBehaviour
     // Call this from the "Continue" button
     public void GoToMainMenu()
     {
+        PlayerPrefs.SetInt("OnboardingComplete", 1); 
+        PlayerPrefs.Save();
         bmiPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }
