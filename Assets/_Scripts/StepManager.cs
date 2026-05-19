@@ -1,4 +1,7 @@
 using UnityEngine;
+using TMPro; // Needed to update your screen text
+using Firebase.Database;
+using Firebase.Auth;
 
 public class StepManager : MonoBehaviour
 {
@@ -7,36 +10,56 @@ public class StepManager : MonoBehaviour
     public int totalLifetimeSteps = 0;
 
     [Header("Pedometer Sensitivity")]
-    // 1.0 is normal gravity. 1.5 means a slight "jolt" from walking.
+    [Tooltip("How hard the phone needs to shake to count a step. Default gravity is 1.0.")]
     public float stepThreshold = 1.5f; 
-    // Phone must settle below this before counting the next step (prevents double-counting)
+    [Tooltip("Phone must settle below this before counting the next step to prevent double-counting.")]
     public float resetThreshold = 1.0f; 
     
     private bool isStepReady = true;
 
+    [Header("UI Elements")]
+    [SerializeField] private TMP_Text stepTextDisplay; // Assign your UI text slot here!
+
+    private DatabaseReference dbReference;
+    private string userId;
+
     void Start()
     {
-        // Load the saved steps when the app opens
+        // 1. Initialize Firebase connection strings safely
+        if (FirebaseAuth.DefaultInstance.CurrentUser != null)
+        {
+            userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+            dbReference = FirebaseDatabase.DefaultInstance.RootReference;
+        }
+
+        // 2. Load cached historical records from the phone's storage
         currentDailySteps = PlayerPrefs.GetInt("DailySteps", 0);
         totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
+
+        // 3. Render the correct initial value on screen immediately
+        UpdateStepUI();
     }
 
     void Update()
     {
-        // 1. Measure the total force/movement acting on the phone right now
+        // --- PC TESTING MODE (The Spacebar) ---
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            RegisterStep();
+        }
+
+        // --- MOBILE HARDWARE MODE (The Accelerometer) ---
         float acceleration = Input.acceleration.magnitude;
 
-        // 2. Did the phone bounce hard enough to be considered a step?
         if (acceleration > stepThreshold && isStepReady)
         {
             RegisterStep();
-            isStepReady = false; // Lock it so it doesn't count 5 steps in one movement
+            isStepReady = false; // Lock tracking loop frame execution
         }
         
-        // 3. Has the phone settled down? If yes, unlock ready for the next step
         if (acceleration < resetThreshold)
         {
-            isStepReady = true;
+            isStepReady = true; // Settle state reached, unlock loop
         }
     }
 
@@ -45,12 +68,34 @@ public class StepManager : MonoBehaviour
         currentDailySteps++;
         totalLifetimeSteps++;
 
-        // Save the real steps to the phone's hard drive instantly
+        // Save progress locally onto the hardware storage layer
         PlayerPrefs.SetInt("DailySteps", currentDailySteps);
         PlayerPrefs.SetInt("TotalLifetimeSteps", totalLifetimeSteps);
         PlayerPrefs.Save();
         
-        // Optional: If you plug your phone into your PC to debug, you'll see this!
-        Debug.Log("Real Step Taken! Total: " + currentDailySteps);
+        // Update the user screen interface elements
+        UpdateStepUI();
+
+        // Sync live data up to your Firebase Database Tree matching LeaderboardManager's query
+        SyncStepsToFirebase();
+
+        Debug.Log($"Step Tracked! Daily: {currentDailySteps} | Lifetime: {totalLifetimeSteps}");
+    }
+
+    private void UpdateStepUI()
+    {
+        if (stepTextDisplay != null)
+        {
+            stepTextDisplay.text = "Steps: " + totalLifetimeSteps.ToString("N0");
+        }
+    }
+
+    private void SyncStepsToFirebase()
+    {
+        if (dbReference != null && !string.IsNullOrEmpty(userId))
+        {
+            // Updates 'TotalLifetimeSteps' under 'users/uid/' node
+            dbReference.Child("users").Child(userId).Child("TotalLifetimeSteps").SetValueAsync(totalLifetimeSteps);
+        }
     }
 }
