@@ -43,3 +43,9 @@ Assets/Resources/Mapbox/MapboxConfiguration.txt
 # Keeps database secrets and individual configuration strings local
 google-services.json
 GoogleService-Info.plist
+
+# Android build artifacts cache
+.utmp/
+
+# User-specific settings folders
+/[Uu]ser[Ss]ettings/

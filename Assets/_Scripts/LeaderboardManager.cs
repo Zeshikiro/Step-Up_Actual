@@ -31,6 +31,10 @@ public class LeaderboardManager : MonoBehaviour
     [Header("Current User Status Footer")]
     [SerializeField] private TMP_Text currentUserRankText;
 
+    [Header("Scroll View Population Settings")]
+    [SerializeField] private GameObject rowTemplatePrefab;
+    [SerializeField] private Transform contentContainerTarget;
+
     private DatabaseReference leaderboardQueryRef;
     private FirebaseAuth auth;
     
@@ -124,14 +128,15 @@ public class LeaderboardManager : MonoBehaviour
             }
             else
             {
-                GameObject newRow = Instantiate(rowPrefab, scrollContentContainer);
-                TMP_Text[] rowTexts = newRow.GetComponentsInChildren<TMP_Text>();
-                if (rowTexts.Length >= 3)
-                {
-                    rowTexts[0].text = "Rank " + currentRankPosition;
-                    rowTexts[1].text = record.username;
-                    rowTexts[2].text = record.steps.ToString("N0");
-                }
+            // 1. Clones your custom row design directly inside your dynamic scrolling content container
+            GameObject newRow = Instantiate(rowTemplatePrefab, contentContainerTarget);
+    
+            // 2. Safely accesses your dedicated display controller script component
+            if (newRow.TryGetComponent(out LeaderboardRowDisplay rowDisplay))
+            {
+            // 3. Injects the rank integer, string name, and long step count cleanly into your text meshes
+            rowDisplay.SetupRowDisplay(currentRankPosition, record.username, (int)record.steps);
+            }
             }
 
             if (record.uid == localUserUid)
