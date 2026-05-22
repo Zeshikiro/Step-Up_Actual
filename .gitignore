@@ -7,6 +7,7 @@
 /[Ll]ogs/
 /[MemoryCaptures]/
 /[VeeVee]/
+/[Uu]ser[Ss]ettings/
 
 # --- Visual Studio & IDE Cache Directories ---
 .vs/
@@ -49,3 +50,6 @@ GoogleService-Info.plist
 
 # User-specific settings folders
 /[Uu]ser[Ss]ettings/
+
+# Native Gallery / Plugins
+/[Aa]ssets/Plugins/NativeGallery/

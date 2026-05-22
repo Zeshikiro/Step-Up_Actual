@@ -1,39 +1,31 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class EULAManager : MonoBehaviour
 {
-    [Header("UI Elements")]
-    public Toggle agreementToggle;
-    public TextMeshProUGUI warningText;
-    
-    [Header("Panels")]
+    [Header("Panel References")]
     public GameObject eulaPanel;
     public GameObject bmiPanel;
+    public GameObject mainMenuPanel; // The panel with Start, Customize, Settings, etc.
 
-    void Start()
+    // Wire this to your EULA "Accept & Continue" Button's OnClick() event
+    public void OnAcceptEulaClicked()
     {
-        // Ensure the warning is hidden when the screen first loads
-        if (warningText != null) 
-        {
-            warningText.gameObject.SetActive(false);
-        }
-    }
+        // 1. Mark EULA as accepted so they don't see it again
+        PlayerPrefs.SetInt("EulaAccepted", 1);
+        if (eulaPanel != null) eulaPanel.SetActive(false);
 
-    public void TryToContinue()
-    {
-        // Did they check the box?
-        if (agreementToggle.isOn)
+        // 2. Check if this user already completed their BMI setup last time
+        if (PlayerPrefs.GetInt("BMI_Setup_Complete", 0) == 1)
         {
-            // Yes! Hide the EULA, show the BMI panel
-            eulaPanel.SetActive(false);
-            bmiPanel.SetActive(true);
+            Debug.Log("Returning User Detected! Bypassing BMI Panel straight to Main Menu.");
+            if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
         }
         else
         {
-            // No! Show the red warning text
-            warningText.gameObject.SetActive(true);
+            Debug.Log("New User Detected! Opening BMI Panel.");
+            if (bmiPanel != null) bmiPanel.SetActive(true);
         }
+
+        PlayerPrefs.Save();
     }
 }

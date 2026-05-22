@@ -1,8 +1,8 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.IO;
 
-// This handles everything: The Name, the Image, and the Unlock Level!
 [System.Serializable]
 public class RankTier
 {
@@ -13,75 +13,79 @@ public class RankTier
 
 public class ProfileManager : MonoBehaviour
 {
-    [Header("UI References")]
+    [Header("UI Text References")]
     public TMP_InputField userNameInput; 
-    public TextMeshProUGUI levelText;        
+    public TextMeshProUGUI levelText;         
     public TextMeshProUGUI activityLevelText; 
+    
+    [Header("XP Progress Bar")]
     public Slider xpProgressBar; 
-    
-    [Header("Edit Mode UI")]
-    public TextMeshProUGUI editButtonText; 
-    public GameObject[] penIcons; // Drop your new Pen UI objects in here!
+    public TextMeshProUGUI xpProgressText; // Optional: To print "2500 / 5000 XP"
 
-    [Header("Images")]
-    public Image profileAvatarImage; // The top-left profile picture (Clickable)
-    public Image rankBadgeImage;     // The bottom-left activity badge (Automatic)
+    [Header("Action Buttons & Icons")]
+    public TextMeshProUGUI editButtonText; 
+    public GameObject[] penIcons; // Drag both of your Pen icons into this array
+
+    [Header("Image Displays")]
+    public Image profileAvatarImage; // Top-Left user selected avatar photo
+    public Image rankBadgeImage;     // Bottom activity milestone status badge
     
-    [Header("Rank System")]
-    public RankTier[] rankTiers; // Build your ranks here!
+    [Header("Rank Configuration")]
+    public RankTier[] rankTiers; 
     
-    private int currentAvatarIndex = 0;
     private int currentLevel = 1;
     private int xpPerLevel = 5000; 
     private bool isEditing = false; 
+    private string savedImagePathKey = "CustomAvatarPath";
 
     void OnEnable()
     {
         isEditing = false;
         UpdateEditModeUI();
         RefreshProfileUI();
+        LoadCustomAvatar();
     }
 
     public void RefreshProfileUI()
     {
-        // 1. Fetch User Data
-        string currentName = PlayerPrefs.GetString("UserName", "Player1"); 
-        int totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 8500);
-        int missionXPEarned = PlayerPrefs.GetInt("MissionXPEarned", 1000);
+        // 1. Load Step Tracker and Reward Core Values
+        string currentName = PlayerPrefs.GetString("UserName", "Player 1"); 
+        int totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
+        int missionXPEarned = PlayerPrefs.GetInt("MissionXPEarned", 0);
 
-        // 2. Math for Leveling
+        // 2. XP Calculations 
         int totalXP = totalLifetimeSteps + missionXPEarned;
         currentLevel = (totalXP / xpPerLevel) + 1; 
-        float currentXPProgress = (float)(totalXP % xpPerLevel) / xpPerLevel;
+        int currentXPInLevel = totalXP % xpPerLevel;
+        float progressPercentage = (float)currentXPInLevel / xpPerLevel;
 
-        // 3. Update Text and XP Bar
+        // 3. Populate Fields
         userNameInput.text = currentName; 
-        levelText.text = currentLevel.ToString();  
-        if (xpProgressBar != null) xpProgressBar.value = currentXPProgress;
+        levelText.text = "LEVEL: " + currentLevel.ToString();  
+        
+        if (xpProgressBar != null) 
+            xpProgressBar.value = progressPercentage;
+            
+        if (xpProgressText != null)
+            xpProgressText.text = $"{currentXPInLevel} / {xpPerLevel} XP";
 
-        // 4. AUTOMATIC RANK BADGE
-        // Find the highest rank they have unlocked
-        RankTier currentRank = rankTiers[0]; 
-        for (int i = 0; i < rankTiers.Length; i++)
+        // 4. Evaluate and Assign Automated Milestones
+        if (rankTiers != null && rankTiers.Length > 0)
         {
-            if (currentLevel >= rankTiers[i].requiredLevel)
+            RankTier currentRank = rankTiers[0]; 
+            for (int i = 0; i < rankTiers.Length; i++)
             {
-                currentRank = rankTiers[i];
+                if (currentLevel >= rankTiers[i].requiredLevel)
+                {
+                    currentRank = rankTiers[i];
+                }
             }
+            activityLevelText.text = "YOU ARE: " + currentRank.rankName.ToUpper();
+            if (rankBadgeImage != null) rankBadgeImage.sprite = currentRank.rankImage;
         }
-        activityLevelText.text = currentRank.rankName.ToUpper();
-        if (rankBadgeImage != null) rankBadgeImage.sprite = currentRank.rankImage;
-
-        // 5. Load Saved Profile Avatar
-        currentAvatarIndex = PlayerPrefs.GetInt("UserAvatar", 0);
-        if (rankTiers.Length > 0 && currentLevel < rankTiers[currentAvatarIndex].requiredLevel)
-        {
-            currentAvatarIndex = 0; // Reset if they somehow saved a locked avatar
-        }
-        UpdateAvatarVisual();
     }
 
-    // --- EDIT MODE SYSTEM ---
+    // --- INTERACTION HANDLING ---
     public void ToggleEditMode()
     {
         isEditing = !isEditing;
@@ -93,8 +97,12 @@ public class ProfileManager : MonoBehaviour
         else
         {
             editButtonText.text = "EDIT MY PROFILE";
-            PlayerPrefs.SetString("UserName", userNameInput.text);
-            PlayerPrefs.SetInt("UserAvatar", currentAvatarIndex);
+            
+            // Validate and enforce character limits on save
+            string cleanName = userNameInput.text;
+            if (cleanName.Length > 8) cleanName = cleanName.Substring(0, 8);
+
+            PlayerPrefs.SetString("UserName", cleanName);
             PlayerPrefs.Save();
         }
 
@@ -105,36 +113,67 @@ public class ProfileManager : MonoBehaviour
     {
         userNameInput.interactable = isEditing;
         
-        // Turn the Pen icons on or off depending on edit mode!
+        // Toggle the interactable edit items
         foreach (GameObject pen in penIcons)
         {
             if (pen != null) pen.SetActive(isEditing);
         }
     }
 
-    // --- AVATAR CYCLING SYSTEM ---
-    public void CycleNextAvatar()
+    // --- NATIVE MOBILE GALLERY HUB ---
+    
+    public void OpenDeviceGallery()
     {
-        if (!isEditing || rankTiers.Length == 0) return;
+        // Block gallery click if the user hasn't clicked "EDIT MY PROFILE" first!
+        if (!isEditing) return;
 
-        int startIndex = currentAvatarIndex;
-
-        // Loop to find the next unlocked avatar
-        do
+        // FIX: Removed the "NativeGallery.Permission permission =" assignment
+        NativeGallery.GetImageFromGallery((path) =>
         {
-            currentAvatarIndex++;
-            if (currentAvatarIndex >= rankTiers.Length) currentAvatarIndex = 0; 
-        } 
-        while (currentLevel < rankTiers[currentAvatarIndex].requiredLevel && currentAvatarIndex != startIndex);
+            if (path != null)
+            {
+                // Process and compile image bytes from disk
+                byte[] fileData = File.ReadAllBytes(path);
+                Texture2D texture = new Texture2D(2, 2);
+                
+                if (texture.LoadImage(fileData))
+                {
+                    // Format runtime file to UI layout specs
+                    Sprite customAvatar = Sprite.Create(
+                        texture, 
+                        new Rect(0, 0, texture.width, texture.height), 
+                        new Vector2(0.5f, 0.5f)
+                    );
+                    
+                    profileAvatarImage.sprite = customAvatar;
 
-        UpdateAvatarVisual();
+                    // Permanently save the path string to storage
+                    PlayerPrefs.SetString(savedImagePathKey, path);
+                    PlayerPrefs.Save();
+                }
+            }
+        }, "Select Profile Picture", "image/*");
     }
 
-    private void UpdateAvatarVisual()
+    private void LoadCustomAvatar()
     {
-        if (rankTiers.Length > 0 && profileAvatarImage != null)
+        if (PlayerPrefs.HasKey(savedImagePathKey))
         {
-            profileAvatarImage.sprite = rankTiers[currentAvatarIndex].rankImage;
+            string savedPath = PlayerPrefs.GetString(savedImagePathKey);
+            if (File.Exists(savedPath))
+            {
+                byte[] fileData = File.ReadAllBytes(savedPath);
+                Texture2D texture = new Texture2D(2, 2);
+                if (texture.LoadImage(fileData))
+                {
+                    Sprite savedAvatar = Sprite.Create(
+                        texture, 
+                        new Rect(0, 0, texture.width, texture.height), 
+                        new Vector2(0.5f, 0.5f)
+                    );
+                    profileAvatarImage.sprite = savedAvatar;
+                }
+            }
         }
     }
 }

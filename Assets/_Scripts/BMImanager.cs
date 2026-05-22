@@ -47,8 +47,13 @@ public class BMIManager : MonoBehaviour
             else if (bmi >= 30f) { category = "Obese"; stepGoal = 8000; }
 
             // Save the calculated goal and category so the Missions panel can use them!
+            // Save the calculated goal and category so the Missions panel can use them!
             PlayerPrefs.SetInt("DailyStepGoal", stepGoal);
             PlayerPrefs.SetString("BMICategory", category);
+
+            // ADD THIS LINE HERE: Mark the BMI profile setup as officially done
+            PlayerPrefs.SetInt("BMI_Setup_Complete", 1); 
+
             PlayerPrefs.Save();
             
             // Display results
