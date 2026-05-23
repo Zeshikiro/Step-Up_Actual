@@ -1,24 +1,42 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // This is the magic word for changing scenes!
+using UnityEngine.SceneManagement; 
 
 public class MainMenuManager : MonoBehaviour
 {
-    // This function will be called when you click the Start button
+    [Header("UI Panels")]
+    // This allows you to drag the Settings Panel from the Hierarchy into this slot
+    public GameObject settingsPanel;
+
     public void StartGame()
     {
-        // Replace "SampleScene" with the EXACT name of your Map scene if it's different!
         SceneManager.LoadScene("SampleScene"); 
     }
 
-    // We'll use these later for your other buttons!
+    // Logic to open the panel
+    public void OpenSettings()
+    {
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("Settings Panel is not assigned in the Inspector!");
+        }
+    }
+
+    // Logic to close the panel (useful for your Close button)
+    public void CloseSettings()
+    {
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
+        }
+    }
+
     public void OpenCustomize()
     {
         Debug.Log("Opening Customize Menu...");
-    }
-
-    public void OpenSettings()
-    {
-        Debug.Log("Opening Settings Menu...");
     }
 
     public void OpenHealthTips()

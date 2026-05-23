@@ -17,6 +17,9 @@ public class ProfileManager : MonoBehaviour
     public TMP_InputField userNameInput; 
     public TextMeshProUGUI levelText;         
     public TextMeshProUGUI activityLevelText; 
+
+    [Header("Stats UI")]
+    public GameObject statsPopUpPanel;
     
     [Header("XP Progress Bar")]
     public Slider xpProgressBar; 
@@ -61,7 +64,7 @@ public class ProfileManager : MonoBehaviour
 
         // 3. Populate Fields
         userNameInput.text = currentName; 
-        levelText.text = "LEVEL: " + currentLevel.ToString();  
+        levelText.text = currentLevel.ToString();  
         
         if (xpProgressBar != null) 
             xpProgressBar.value = progressPercentage;
@@ -80,9 +83,26 @@ public class ProfileManager : MonoBehaviour
                     currentRank = rankTiers[i];
                 }
             }
-            activityLevelText.text = "YOU ARE: " + currentRank.rankName.ToUpper();
+            activityLevelText.text = currentRank.rankName.ToUpper();
             if (rankBadgeImage != null) rankBadgeImage.sprite = currentRank.rankImage;
         }
+    }
+
+    public void OpenStatsPanel()
+    {
+    if (statsPopUpPanel != null)
+    {
+        statsPopUpPanel.SetActive(true);
+        // We will add the logic to update the numbers here later!
+    }
+    }
+
+    public void CloseStatsPanel()
+    {
+    if (statsPopUpPanel != null)
+    {
+        statsPopUpPanel.SetActive(false);
+    }
     }
 
     // --- INTERACTION HANDLING ---
