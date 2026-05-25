@@ -10,7 +10,8 @@ public class GameplayUIManager : MonoBehaviour
     public GameObject settingsPanel;     
     public GameObject progressPanel;     
     public GameObject leaderboardPanel;  
-    public GameObject profilePanel;      
+    public GameObject profilePanel;     
+    public GameObject summaryPanel;  
 
     [Header("Tip Pop-Up Text")]
     public TextMeshProUGUI tipTitleText;
@@ -45,6 +46,7 @@ public class GameplayUIManager : MonoBehaviour
         if (progressPanel) progressPanel.SetActive(false);
         if (leaderboardPanel) leaderboardPanel.SetActive(false);
         if (profilePanel) profilePanel.SetActive(false);
+        if (summaryPanel) summaryPanel.SetActive(false);
     }
 
     // Call these from your specific HUD buttons
@@ -53,6 +55,7 @@ public class GameplayUIManager : MonoBehaviour
     public void OpenProgressPanel() { HideAllPanels(); progressPanel.SetActive(true); }
     public void OpenLeaderboardPanel() { HideAllPanels(); leaderboardPanel.SetActive(true); }
     public void OpenProfilePanel() { HideAllPanels(); profilePanel.SetActive(true); }
+    public void OpenSummaryPanel() { HideAllPanels(); summaryPanel.SetActive(true); }
 
     // Call this from the "Back" arrows inside your new panels
     public void CloseCurrentPanel()

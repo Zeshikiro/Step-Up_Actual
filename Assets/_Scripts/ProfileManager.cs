@@ -19,7 +19,7 @@ public class ProfileManager : MonoBehaviour
     public TextMeshProUGUI activityLevelText; 
 
     [Header("Stats UI")]
-    public GameObject statsPopUpPanel;
+    public GameObject summaryPanel;
     
     [Header("XP Progress Bar")]
     public Slider xpProgressBar; 
@@ -88,20 +88,25 @@ public class ProfileManager : MonoBehaviour
         }
     }
 
-    public void OpenStatsPanel()
+   public void OpenStats()
     {
-    if (statsPopUpPanel != null)
+    if (summaryPanel != null)
     {
-        statsPopUpPanel.SetActive(true);
-        // We will add the logic to update the numbers here later!
+        summaryPanel.SetActive(true);
+        this.gameObject.SetActive(false); // Hides the profile panel so they don't overlap
+    }
+    else
+    {
+        Debug.LogError("Summary Panel is not assigned in the ProfileManager inspector!");
     }
     }
 
-    public void CloseStatsPanel()
+   public void CloseStats()
     {
-    if (statsPopUpPanel != null)
+    if (summaryPanel != null)
     {
-        statsPopUpPanel.SetActive(false);
+        summaryPanel.SetActive(false);
+        this.gameObject.SetActive(true); // Shows the profile panel again
     }
     }
 
