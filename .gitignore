@@ -39,6 +39,7 @@ Assets/Firebase/Plugins/**/*.bundle
 Assets/Firebase/Plugins/**/*.so
 Assets/Firebase/Plugins/**/*.dll
 Assets/Resources/Mapbox/MapboxConfiguration.txt
+Assets/_AdditionalAssets/Characters
 
 # --- CRITICAL SECURITY: Sensitive API Keys & Config Data ---
 # Keeps database secrets and individual configuration strings local
