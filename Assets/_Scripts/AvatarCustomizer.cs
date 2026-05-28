@@ -1,4 +1,7 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 public class AvatarCustomizer : MonoBehaviour
 {
@@ -10,103 +13,162 @@ public class AvatarCustomizer : MonoBehaviour
     public GameObject femaleAvatar;
     public GameObject maleAvatar;
 
-    [Header("Female Body Part Renderers")]
-    public SkinnedMeshRenderer femaleHead;
-    public SkinnedMeshRenderer femaleBody;
-    public SkinnedMeshRenderer femaleLegs;
-    public SkinnedMeshRenderer femaleFeet;
-    public SkinnedMeshRenderer femaleAccessory; // Added
-
-    [Header("Male Body Part Renderers")]
-    public SkinnedMeshRenderer maleHead;
-    public SkinnedMeshRenderer maleBody;
-    public SkinnedMeshRenderer maleLegs;
-    public SkinnedMeshRenderer maleFeet;
-    public SkinnedMeshRenderer maleAccessory; // Added
-
     [Header("UI Sub-Panels")]
     public GameObject[] subPanels;
 
-    public void ShowShopPage(bool showShop)
+    [Header("Wallet UI Components")]
+    public Text coinTextDisplay; 
+    public TextMeshProUGUI coinTextDisplayTMP;
+    public int currentCoins = 500;
+
+    [Header("Current Active GameObjects (Runtime)")]
+    public GameObject currentHead;
+    public GameObject currentBody;
+    public GameObject currentLegs;
+    public GameObject currentFeet;
+    public GameObject currentAccessory;
+
+    [Header("Default Casual Objects (Assign in Inspector)")]
+    public GameObject defaultMaleHead;
+    public GameObject defaultMaleBody;
+    public GameObject defaultMaleLegs;
+    public GameObject defaultMaleFeet;
+    [Space]
+    public GameObject defaultFemaleHead;
+    public GameObject defaultFemaleBody;
+    public GameObject defaultFemaleLegs;
+    public GameObject defaultFemaleFeet;
+
+    private void Start()
     {
-        if (shopPage != null) shopPage.SetActive(showShop);
-        if (customizePage != null) customizePage.SetActive(!showShop);
+        InitializeAvatarState();
+        UpdateCoinDisplay();
+        ToggleShopPanel(false);
+    }
+
+    public void InitializeAvatarState()
+    {
+        bool isMale = maleAvatar != null && maleAvatar.activeSelf;
+        ResetToDefaults(isMale);
+    }
+
+    public void ResetToDefaults(bool isMale)
+    {
+        DeactivateCurrentSet();
+
+        if (isMale)
+        {
+            currentHead = defaultMaleHead;
+            currentBody = defaultMaleBody;
+            currentLegs = defaultMaleLegs;
+            currentFeet = defaultMaleFeet;
+        }
+        else
+        {
+            currentHead = defaultFemaleHead;
+            currentBody = defaultFemaleBody;
+            currentLegs = defaultFemaleLegs;
+            currentFeet = defaultFemaleFeet;
+        }
+
+        if (currentHead != null) currentHead.SetActive(true);
+        if (currentBody != null) currentBody.SetActive(true);
+        if (currentLegs != null) currentLegs.SetActive(true);
+        if (currentFeet != null) currentFeet.SetActive(true);
+        if (currentAccessory != null) currentAccessory.SetActive(false);
+    }
+
+    private void DeactivateCurrentSet()
+    {
+        if (currentHead != null) currentHead.SetActive(false);
+        if (currentBody != null) currentBody.SetActive(false);
+        if (currentLegs != null) currentLegs.SetActive(false);
+        if (currentFeet != null) currentFeet.SetActive(false);
+        if (currentAccessory != null) currentAccessory.SetActive(false);
+    }
+
+    // Fixed: Public and explicit context recognition
+    public void UpdateCoinDisplay()
+    {
+        if (coinTextDisplayTMP != null) coinTextDisplayTMP.text = currentCoins.ToString();
+        if (coinTextDisplay != null) coinTextDisplay.text = currentCoins.ToString();
+    }
+
+    // Route A Equip Endpoints
+    public void EquipHeadObject(GameObject newHeadObject)
+    {
+        if (currentHead != null) currentHead.SetActive(false);
+        currentHead = newHeadObject;
+        if (currentHead != null) currentHead.SetActive(true);
+    }
+
+    public void EquipBodyObject(GameObject newBodyObject)
+    {
+        if (currentBody != null) currentBody.SetActive(false);
+        currentBody = newBodyObject;
+        if (currentBody != null) currentBody.SetActive(true);
+    }
+
+    public void EquipLegsObject(GameObject newLegsObject)
+    {
+        if (currentLegs != null) currentLegs.SetActive(false);
+        currentLegs = newLegsObject;
+        if (currentLegs != null) currentLegs.SetActive(true);
+    }
+
+    public void EquipFeetObject(GameObject newFeetObject)
+    {
+        if (currentFeet != null) currentFeet.SetActive(false);
+        currentFeet = newFeetObject;
+        if (currentFeet != null) currentFeet.SetActive(true);
+    }
+
+    public void EquipAccessoryObject(GameObject newAccessoryObject)
+    {
+        if (currentAccessory != null) currentAccessory.SetActive(false);
+        currentAccessory = newAccessoryObject;
+        if (currentAccessory != null) currentAccessory.SetActive(true);
+    }
+
+    public void ToggleShopPanel(bool openShopView)
+    {
+        if (shopPage != null) shopPage.SetActive(openShopView);
+        if (customizePage != null) customizePage.SetActive(!openShopView);
+
+        if (openShopView)
+        {
+            ShopItemButton[] shopButtons = Object.FindObjectsByType<ShopItemButton>(FindObjectsSortMode.None);
+            foreach (var btn in shopButtons) btn.RefreshButtonState();
+        }
+        else
+        {
+            // Fixed: Explicit type usage for Unity 6 compatibility
+            InventoryItemButton[] invButtons = Object.FindObjectsByType<InventoryItemButton>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var btn in invButtons) btn.RefreshVisibility();
+        }
     }
 
     public void SetGender(bool isMale)
     {
-        maleAvatar.SetActive(isMale);
-        femaleAvatar.SetActive(!isMale);
+        if (maleAvatar != null) maleAvatar.SetActive(isMale);
+        if (femaleAvatar != null) femaleAvatar.SetActive(!isMale);
+        
+        ResetToDefaults(isMale);
     }
 
     public void OpenPanel(int panelIndex)
     {
         for (int i = 0; i < subPanels.Length; i++)
         {
-            subPanels[i].SetActive(i == panelIndex);
+            if (subPanels[i] != null)
+            {
+                subPanels[i].SetActive(i == panelIndex);
+            }
         }
     }
 
-    // MESH SWAPPING WITH SAFETY CHECKS
-    public void ChangeMeshHead(Mesh newMesh)
+    public void GoToLoginScene()
     {
-        if (maleAvatar.activeSelf && maleHead != null) maleHead.sharedMesh = newMesh;
-        else if (femaleHead != null) femaleHead.sharedMesh = newMesh;
-    }
-
-    public void ChangeMeshBody(Mesh newMesh)
-    {
-        if (maleAvatar.activeSelf && maleBody != null) maleBody.sharedMesh = newMesh;
-        else if (femaleBody != null) femaleBody.sharedMesh = newMesh;
-    }
-
-    public void ChangeMeshLegs(Mesh newMesh)
-    {
-        if (maleAvatar.activeSelf && maleLegs != null) maleLegs.sharedMesh = newMesh;
-        else if (femaleLegs != null) femaleLegs.sharedMesh = newMesh;
-    }
-
-    public void ChangeMeshFeet(Mesh newMesh)
-    {
-        if (maleAvatar.activeSelf && maleFeet != null) maleFeet.sharedMesh = newMesh;
-        else if (femaleFeet != null) femaleFeet.sharedMesh = newMesh;
-    }
-
-    // Handles items like backpacks cleanly!
-    public void ChangeMeshAccessory(Mesh newMesh)
-    {
-        SkinnedMeshRenderer targetRenderer = maleAvatar.activeSelf ? maleAccessory : femaleAccessory;
-        
-        if (targetRenderer != null)
-        {
-            targetRenderer.sharedMesh = newMesh;
-            // Automatically turn off the renderer object if no accessory mesh is passed!
-            targetRenderer.gameObject.SetActive(newMesh != null);
-        }
-    }
-
-    // COLOR/MATERIAL CUSTOMIZATION
-    public void CustomizeHead(Material newMaterial)
-    {
-        if (maleAvatar.activeSelf) maleHead.material = newMaterial;
-        else femaleHead.material = newMaterial;
-    }
-
-    public void CustomizeBody(Material newMaterial)
-    {
-        if (maleAvatar.activeSelf) maleBody.material = newMaterial;
-        else femaleBody.material = newMaterial;
-    }
-
-    public void CustomizeLegs(Material newMaterial)
-    {
-        if (maleAvatar.activeSelf) maleLegs.material = newMaterial;
-        else femaleLegs.material = newMaterial;
-    }
-
-    public void CustomizeFeet(Material newMaterial)
-    {
-        if (maleAvatar.activeSelf) maleFeet.material = newMaterial;
-        else femaleFeet.material = newMaterial;
+        SceneManager.LoadScene("LoginScene");
     }
 }
