@@ -4,93 +4,81 @@ using TMPro;
 
 public class ShopItemButton : MonoBehaviour
 {
-    [Header("Item ID & Economy Settings")]
-    public string itemId;
-    public int itemPrice = 500;
+    [System.Serializable]
+    public class ShopItem
+    {
+        public string itemName; // e.g., "Beach" or "Adventurer"
+        public int price;
+        public bool isPurchased;
 
-    [Header("UI Text Reference")]
-    public TextMeshProUGUI priceText; // Drag your card's price text component here
+        [Header("Full Outfit Prefabs (Route A)")]
+        [Tooltip("Leave unassigned if the outfit doesn't include this part")]
+        public GameObject headPrefab;
+        public GameObject torsoPrefab;
+        public GameObject legsPrefab;
+        public GameObject feetPrefab;
+        public GameObject accessoryPrefab;
+    }
 
-    [Header("Outfit Meshes to Preview")]
-    public Mesh headMesh;
-    public Mesh bodyMesh;
-    public Mesh legsMesh;
-    public Mesh feetMesh;
-    public Mesh accessoryMesh;
+    [Header("Shop Item Data")]
+    public ShopItem shopItem;
 
-    private AvatarCustomizer customizer;
-    private Button button;
+    [Header("UI Component Links")]
+    public TextMeshProUGUI priceText;
+    public Button buyButton;
+
+    private AvatarCustomizer avatarCustomizer;
 
     private void Awake()
     {
-        button = GetComponent<Button>();
-        customizer = Object.FindFirstObjectByType<AvatarCustomizer>();
+        avatarCustomizer = Object.FindAnyObjectByType<AvatarCustomizer>();
     }
 
     private void Start()
     {
-        if (button != null)
-        {
-            button.onClick.AddListener(BuyOutfit);
-        }
-        
         RefreshButtonState();
     }
 
-    private void OnEnable()
-    {
-        RefreshButtonState();
-    }
-
-    // Changes the button text or interactable state if already bought
     public void RefreshButtonState()
     {
-        if (InventoryManager.Instance == null) return;
-
-        if (InventoryManager.Instance.IsItemUnlocked(itemId))
+        if (priceText != null)
         {
-            if (priceText != null) priceText.text = "OWNED";
-            if (button != null) button.interactable = false; // Prevents buying twice
-        }
-        else
-        {
-            if (priceText != null) priceText.text = $"{itemPrice} P";
-            if (button != null) button.interactable = true;
+            priceText.text = shopItem.isPurchased ? "Owned" : shopItem.price.ToString() + " Coins";
         }
     }
 
-    public void BuyOutfit()
+    // 🔘 LINK THIS TO YOUR SHOP BUTTON'S ONCLICK() EVENT IN THE INSPECTOR
+    public void BuyOrPreviewItem()
     {
-        if (InventoryManager.Instance == null || customizer == null) return;
+        if (avatarCustomizer == null) return;
 
-        // 1. Double check ownership state
-        if (InventoryManager.Instance.IsItemUnlocked(itemId)) return;
-
-        // 2. Try to spend coins
-        if (InventoryManager.Instance.SpendCoins(itemPrice))
+        // Transaction Logic
+        if (!shopItem.isPurchased)
         {
-            // 3. Unlock item in global save layer
-            InventoryManager.Instance.UnlockItem(itemId);
-            
-            // 4. Instantly preview the item on the character model!
-            PreviewPurchasedOutfit();
-
-            // 5. Refresh UI layout displays
+            if (avatarCustomizer.currentCoins >= shopItem.price)
+        {
+            avatarCustomizer.currentCoins -= shopItem.price;
+            shopItem.isPurchased = true;
+    
+            // 1. Tell your runtime scene customize manager it's owned
+            avatarCustomizer.RegisterPurchasedItem(shopItem.itemName);
+    
+            // 2. NEW CONNECTION: Tell your persistent inventory storage manager to unpack the sliced parts!
+            if (InventoryManager.Instance != null)
+            {
+            InventoryManager.Instance.UnlockFullOutfitBundle(shopItem.itemName);
+            }
+    
+            avatarCustomizer.UpdateCoinDisplay(); 
             RefreshButtonState();
-            customizer.UpdateCoinDisplay(); 
         }
-        else
-        {
-            Debug.LogWarning("Insufficient funds to buy this character outfit!");
         }
-    }
 
-    private void PreviewPurchasedOutfit()
-    {
-        if (headMesh != null) customizer.ChangeMeshHead(headMesh);
-        if (bodyMesh != null) customizer.ChangeMeshBody(bodyMesh);
-        if (legsMesh != null) customizer.ChangeMeshLegs(legsMesh);
-        if (feetMesh != null) customizer.ChangeMeshFeet(feetMesh);
-        customizer.ChangeMeshAccessory(accessoryMesh);
+        // 👕 EQUIP THE WHOLE BUNDLE AT ONCE FOR PREVIEW/EQUIP
+        if (shopItem.headPrefab != null)       avatarCustomizer.EquipHeadObject(shopItem.headPrefab);
+        if (shopItem.torsoPrefab != null)      avatarCustomizer.EquipBodyObject(shopItem.torsoPrefab);
+        if (shopItem.legsPrefab != null)       avatarCustomizer.EquipLegsObject(shopItem.legsPrefab);
+        if (shopItem.feetPrefab != null)       avatarCustomizer.EquipFeetObject(shopItem.feetPrefab);
+        if (shopItem.accessoryPrefab != null)  avatarCustomizer.EquipAccessoryObject(shopItem.accessoryPrefab);
     }
 }

@@ -1,67 +1,62 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class InventoryItemButton : MonoBehaviour
 {
-    [Header("Item ID Link")]
-    public string itemId; // Must match the exact itemId string from the Shop card!
+    [Header("Data Fields (Fed by InventoryManager)")]
+    public string itemName;
+    public string category;
+    public GameObject itemPrefab;
 
-    [Header("Outfit Meshes to Equip")]
-    public Mesh headMesh;
-    public Mesh bodyMesh;
-    public Mesh legsMesh;
-    public Mesh feetMesh;
-    public Mesh accessoryMesh;
-
-    private AvatarCustomizer customizer;
-    private Button button;
-
-    private void Awake()
-    {
-        button = GetComponent<Button>();
-        customizer = Object.FindFirstObjectByType<AvatarCustomizer>();
-    }
+    [Header("UI Visual Components")]
+    public TextMeshProUGUI txtOutfitName;
+    public Image imgCharacterIcon;
+    public GameObject selectionHighlight;
 
     private void Start()
     {
-        if (button != null)
+        // Automatically hook up the click listener if a Button component is attached
+        Button btn = GetComponent<Button>();
+        if (btn != null)
         {
-            button.onClick.AddListener(EquipOutfit);
+            btn.onClick.AddListener(EquipThisItem);
         }
     }
 
-    private void OnEnable()
-    {
-        RefreshVisibility();
-    }
-
-    // Checks the InventoryManager to see if this card should be visible
+    // 🛠️ FIXES ERROR: Tells AvatarCustomizer what this card represents
     public void RefreshVisibility()
     {
-        if (InventoryManager.Instance == null) return;
-
-        bool standardUnlocked = InventoryManager.Instance.IsItemUnlocked(itemId);
-        gameObject.SetActive(standardUnlocked);
+        // This method can turn on/off your green SelectionHighlight frame 
+        // if this item's ID matches the one currently worn by the player
+        if (selectionHighlight != null)
+        {
+            selectionHighlight.SetActive(false); // Default off; customize later if desired
+        }
     }
 
-    public void EquipOutfit()
+    // 👕 THE EQUIP LOGIC: Runs instantly when the student taps this item card
+    public void EquipThisItem()
     {
-        if (customizer == null || InventoryManager.Instance == null) return;
+        AvatarCustomizer customizer = FindAnyObjectByType<AvatarCustomizer>();
+        if (customizer == null)
+        {
+            Debug.LogError("Could not find AvatarCustomizer in the scene!");
+            return;
+        }
 
-        // 1. Swap model mesh assets instantly
-        if (headMesh != null) customizer.ChangeMeshHead(headMesh);
-        if (bodyMesh != null) customizer.ChangeMeshBody(bodyMesh);
-        if (legsMesh != null) customizer.ChangeMeshLegs(legsMesh);
-        if (feetMesh != null) customizer.ChangeMeshFeet(feetMesh);
-        customizer.ChangeMeshAccessory(accessoryMesh);
+        string cleanCategory = category.ToLower().Trim();
 
-        // 2. Save choice directly into persistent storage tracking references
-        InventoryManager.Instance.equippedHeadId = headMesh != null ? headMesh.name : "None";
-        InventoryManager.Instance.equippedBodyId = bodyMesh != null ? bodyMesh.name : "None";
-        InventoryManager.Instance.equippedLegsId = legsMesh != null ? legsMesh.name : "None";
-        InventoryManager.Instance.equippedFeetId = feetMesh != null ? feetMesh.name : "None";
-        InventoryManager.Instance.equippedAccessoryId = accessoryMesh != null ? accessoryMesh.name : "None";
+        // Direct the mesh object to the correct slot based on database category sorting
+        if (cleanCategory == "head")
+            customizer.EquipHeadObject(itemPrefab);
+        else if (cleanCategory == "torso" || cleanCategory == "body")
+            customizer.EquipBodyObject(itemPrefab);
+        else if (cleanCategory == "legs")
+            customizer.EquipLegsObject(itemPrefab);
+        else if (cleanCategory == "feet" || cleanCategory == "shoes")
+            customizer.EquipFeetObject(itemPrefab);
 
-        Debug.Log($"Equipped character set from Inventory: {itemId}");
+        Debug.Log($"[Equip] Successfully changed player's clothing slot to: {itemName}");
     }
 }
