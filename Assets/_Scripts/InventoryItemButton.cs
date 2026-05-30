@@ -5,14 +5,14 @@ using TMPro;
 public class InventoryItemButton : MonoBehaviour
 {
     [Header("Data Fields (Fed by InventoryManager)")]
-    public string itemName;
-    public string category;
-    public GameObject itemPrefab;
+    public string itemId;                  // Matches the unique database item ID string
+    public string category;                // "Head", "Torso", "Legs", or "Feet"
+    public GameObject itemPrefab;          // The 3D mesh model reference
 
     [Header("UI Visual Components")]
-    public TextMeshProUGUI txtOutfitName;
-    public Image imgCharacterIcon;
-    public GameObject selectionHighlight;
+    public TextMeshProUGUI txtOutfitName;  // Displays pretty display name
+    public Image imgCharacterIcon;         // Slot for your NOBG UI Sprites
+    public TextMeshProUGUI txtEquipStatus; // Tracks "EQUIP" vs "EQUIPPED" labels
 
     private void Start()
     {
@@ -24,39 +24,106 @@ public class InventoryItemButton : MonoBehaviour
         }
     }
 
-    // 🛠️ FIXES ERROR: Tells AvatarCustomizer what this card represents
+    // Fed by your inventory manager generation loop to initialize values
+    public void SetupButtonDetails(string id, string cat, GameObject prefab, Sprite uniqueIcon)
+    {
+        itemId = id;
+        category = cat;
+        itemPrefab = prefab;
+
+        if (txtOutfitName != null)
+        {
+            txtOutfitName.text = id; // Fallback text setup
+        }
+
+        // Swaps the blank white texture placeholder for your actual clothing sprite
+        if (imgCharacterIcon != null && uniqueIcon != null)
+        {
+            imgCharacterIcon.sprite = uniqueIcon;
+            imgCharacterIcon.color = Color.white; // Ensures full image visibility
+        }
+
+        RefreshVisibility();
+    }
+
+    // Checks active inventory manager variables to toggle text labels & colors dynamically
     public void RefreshVisibility()
     {
-        // This method can turn on/off your green SelectionHighlight frame 
-        // if this item's ID matches the one currently worn by the player
-        if (selectionHighlight != null)
+        if (InventoryManager.Instance == null) return;
+
+        bool isEquipped = false;
+        string cleanCategory = string.IsNullOrEmpty(category) ? "" : category.ToLower().Trim();
+        
+        // Compare this card's item ID against what the manager tracks as currently worn
+        if (cleanCategory == "head" && InventoryManager.Instance.equippedHeadId == itemId) isEquipped = true;
+        else if ((cleanCategory == "torso" || cleanCategory == "body") && InventoryManager.Instance.equippedBodyId == itemId) isEquipped = true;
+        else if ((cleanCategory == "legs" || cleanCategory == "pants") && InventoryManager.Instance.equippedLegsId == itemId) isEquipped = true;
+        else if ((cleanCategory == "feet" || cleanCategory == "shoes") && InventoryManager.Instance.equippedFeetId == itemId) isEquipped = true;
+
+        // Toggle status text feedback states smoothly
+        if (txtEquipStatus != null)
         {
-            selectionHighlight.SetActive(false); // Default off; customize later if desired
+            txtEquipStatus.text = isEquipped ? "EQUIPPED" : "EQUIP";
+            txtEquipStatus.color = isEquipped ? Color.green : Color.white;
         }
     }
 
-    // 👕 THE EQUIP LOGIC: Runs instantly when the student taps this item card
+    // Runs instantly when the student taps anywhere on this item card frame
     public void EquipThisItem()
     {
         AvatarCustomizer customizer = FindAnyObjectByType<AvatarCustomizer>();
-        if (customizer == null)
+        if (customizer == null || InventoryManager.Instance == null) return;
+
+        if (itemPrefab == null)
         {
-            Debug.LogError("Could not find AvatarCustomizer in the scene!");
+            Debug.LogWarning($"[Wardrobe Engine] No 3D prefab model assigned to item asset: {itemId}");
             return;
         }
 
-        string cleanCategory = category.ToLower().Trim();
+        string cleanCategory = string.IsNullOrEmpty(category) ? "" : category.ToLower().Trim();
 
-        // Direct the mesh object to the correct slot based on database category sorting
-        if (cleanCategory == "head")
-            customizer.EquipHeadObject(itemPrefab);
-        else if (cleanCategory == "torso" || cleanCategory == "body")
-            customizer.EquipBodyObject(itemPrefab);
-        else if (cleanCategory == "legs")
-            customizer.EquipLegsObject(itemPrefab);
-        else if (cleanCategory == "feet" || cleanCategory == "shoes")
-            customizer.EquipFeetObject(itemPrefab);
+        // 1. Direct the 3D model piece to the character's bone hierarchy and save its state data
+        switch (cleanCategory)
+        {
+            case "head":
+                customizer.EquipHeadObject(itemPrefab);
+                InventoryManager.Instance.equippedHeadId = itemId;
+                break;
 
-        Debug.Log($"[Equip] Successfully changed player's clothing slot to: {itemName}");
+            case "torso":
+            case "body":
+                customizer.EquipBodyObject(itemPrefab);
+                InventoryManager.Instance.equippedBodyId = itemId;
+                break;
+
+            case "legs":
+            case "pants":
+                customizer.EquipLegsObject(itemPrefab);
+                InventoryManager.Instance.equippedLegsId = itemId;
+                break;
+
+            case "feet":
+            case "shoes":
+                customizer.EquipFeetObject(itemPrefab);
+                InventoryManager.Instance.equippedFeetId = itemId;
+                break;
+
+            case "accessory":
+                customizer.EquipAccessoryObject(itemPrefab);
+                break;
+
+            default:
+                Debug.LogError($"[Wardrobe Engine] Unrecognized category '{category}' on item {itemId}. Cannot equip.");
+                return;
+        }
+
+        // 2. Loop through all active buttons in the scrollview to update text statuses instantly
+        InventoryItemButton[] allButtons = FindObjectsByType<InventoryItemButton>(FindObjectsSortMode.None);
+        foreach (InventoryItemButton button in allButtons)
+        {
+            button.RefreshVisibility();
+        }
+
+        Debug.Log($"[Wardrobe Engine] Successfully equipped {itemId} into the {category} panel slot.");
     }
 }

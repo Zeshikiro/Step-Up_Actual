@@ -21,7 +21,7 @@ public class ShopItemButton : MonoBehaviour
     }
 
     [Header("Shop Item Data")]
-    public ShopItem shopItem;
+    public ShopItem shopItem; // Fixed typo: Changed lowercase 'shopItem' type to uppercase 'ShopItem'
 
     [Header("UI Component Links")]
     public TextMeshProUGUI priceText;
@@ -52,33 +52,32 @@ public class ShopItemButton : MonoBehaviour
     {
         if (avatarCustomizer == null) return;
 
-        // Transaction Logic
+        // Transaction Logic: Only runs if the student doesn't own this item card yet
         if (!shopItem.isPurchased)
         {
             if (avatarCustomizer.currentCoins >= shopItem.price)
-        {
-            avatarCustomizer.currentCoins -= shopItem.price;
-            shopItem.isPurchased = true;
-    
-            // 1. Tell your runtime scene customize manager it's owned
-            avatarCustomizer.RegisterPurchasedItem(shopItem.itemName);
-    
-            // 2. NEW CONNECTION: Tell your persistent inventory storage manager to unpack the sliced parts!
-            if (InventoryManager.Instance != null)
             {
-            InventoryManager.Instance.UnlockFullOutfitBundle(shopItem.itemName);
-            }
-    
-            avatarCustomizer.UpdateCoinDisplay(); 
-            RefreshButtonState();
-        }
-        }
+                avatarCustomizer.currentCoins -= shopItem.price;
+                shopItem.isPurchased = true;
+        
+                // 1. Tell your runtime scene customize manager it's owned
+                avatarCustomizer.RegisterPurchasedItem(shopItem.itemName);
+        
+                // 2. Tell your persistent inventory storage manager to unpack the sliced parts!
+                if (InventoryManager.Instance != null)
+                {
+                    InventoryManager.Instance.UnlockFullOutfitBundle(shopItem.itemName);
+                }
+        
+                avatarCustomizer.UpdateCoinDisplay(); 
+                RefreshButtonState();
 
-        // 👕 EQUIP THE WHOLE BUNDLE AT ONCE FOR PREVIEW/EQUIP
-        if (shopItem.headPrefab != null)       avatarCustomizer.EquipHeadObject(shopItem.headPrefab);
-        if (shopItem.torsoPrefab != null)      avatarCustomizer.EquipBodyObject(shopItem.torsoPrefab);
-        if (shopItem.legsPrefab != null)       avatarCustomizer.EquipLegsObject(shopItem.legsPrefab);
-        if (shopItem.feetPrefab != null)       avatarCustomizer.EquipFeetObject(shopItem.feetPrefab);
-        if (shopItem.accessoryPrefab != null)  avatarCustomizer.EquipAccessoryObject(shopItem.accessoryPrefab);
+                Debug.Log($"[Shop System] Successfully purchased {shopItem.itemName}! It is now unlocked in your wardrobe inventory.");
+            }
+            else
+            {
+                Debug.LogWarning($"[Shop System] Denied purchase for {shopItem.itemName}. Insufficient gold balance.");
+            }
+        }
     }
 }

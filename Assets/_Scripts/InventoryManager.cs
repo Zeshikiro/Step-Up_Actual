@@ -8,11 +8,11 @@ public class InventoryManager : MonoBehaviour
     [System.Serializable]
     public class InventoryItemData
     {
-        public string itemId;               // e.g., "Adventurer_Head" or "Casual_Head"
-        public string associatedOutfitName; // e.g., "Adventurer" or "Beach"
+        public string itemId;               // e.g., "Casual_Head" or "Adventurer_Torso"
+        public string associatedOutfitName; // e.g., "Casual" or "Adventurer"
         public string category;             // Must be exactly: "Head", "Torso", "Legs", "Feet", or "Accessory"
         public GameObject itemMeshPrefab;   // The specific 3D model piece to equip
-        public Sprite itemIcon;             // UI icon for this individual piece
+        public Sprite itemIcon;             // UI icon for this individual piece (Your NOBG Sprites!)
     }
 
     [Header("Master Inventory Database")]
@@ -42,6 +42,9 @@ public class InventoryManager : MonoBehaviour
     // Track unlocked item IDs
     private HashSet<string> unlockedItems = new HashSet<string>();
 
+    // Keep track of active buttons in the scene so we can refresh text labels instantly
+    private List<InventoryItemButton> spawnedButtons = new List<InventoryItemButton>();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -55,6 +58,7 @@ public class InventoryManager : MonoBehaviour
         // Pre-unlock the default casual items so they are always in the inventory
         UnlockItem("Casual_Head");
         UnlockItem("Casual_Body");
+        UnlockItem("Casual_Torso"); // Safety net matching bundle naming extensions
         UnlockItem("Casual_Legs");
         UnlockItem("Casual_Feet");
     }
@@ -72,10 +76,9 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    // 👕 HELPER: Call this when a full bundle is purchased to unlock all its parts at once!
     public void UnlockFullOutfitBundle(string outfitName)
     {
-        UnlockItem(outfitName); // Unlocks the master outfit package keyword
+        UnlockItem(outfitName); 
         UnlockItem(outfitName + "_Head");
         UnlockItem(outfitName + "_Torso");
         UnlockItem(outfitName + "_Legs");
@@ -96,12 +99,13 @@ public class InventoryManager : MonoBehaviour
     // 🔄 CALL THIS ONCE WHEN THE STUDENT OPENS THEIR WARDROBE/CUSTOMIZATION PAGE
     public void GenerateInventoryUI()
     {
-        // 1. Clear out old layout entries so they don't duplicate when toggling menus
+        // 1. Clear out old layout entries and tracked button references
         ClearGrid(headContentGrid);
         ClearGrid(torsoContentGrid);
         ClearGrid(legsContentGrid);
         ClearGrid(feetContentGrid);
         ClearGrid(accessoryContentGrid);
+        spawnedButtons.Clear();
 
         // 2. Loop through our master item slice database
         foreach (InventoryItemData item in masterInventoryList)
@@ -119,19 +123,77 @@ public class InventoryManager : MonoBehaviour
                     InventoryItemButton buttonScript = newButton.GetComponent<InventoryItemButton>();
                     if (buttonScript != null)
                     {
-                        buttonScript.itemName = item.associatedOutfitName;
-                        buttonScript.category = item.category;
-                        buttonScript.itemPrefab = item.itemMeshPrefab;
+                        // 🌟 Directs the exact database ID, categories, prefabs, and 2D textures safely
+                        buttonScript.SetupButtonDetails(item.itemId, item.category, item.itemMeshPrefab, item.itemIcon);
                         
-                        // Set the custom visual thumbnail if available
-                        var uiImage = newButton.GetComponentInChildren<UnityEngine.UI.Image>();
-                        if (uiImage != null && item.itemIcon != null) 
+                        // 🏷️ Overwrite the display label text using the clean, pretty outfit name
+                        if (buttonScript.txtOutfitName != null)
                         {
-                            uiImage.sprite = item.itemIcon;
+                            buttonScript.txtOutfitName.text = item.associatedOutfitName;
                         }
+
+                        // Track this button script so we can update its labels dynamically later
+                        spawnedButtons.Add(buttonScript);
                     }
                 }
             }
+        }
+
+        // 🎯 Initial text synchronization pass once generation loops complete
+        RefreshButtonLabels();
+    }
+
+    // ⚡ NEW PLAY: The structural execution engine for equipping clothing assets
+    public void EquipItem(string itemId, string category)
+    {
+        // Update our active saved appearance IDs based strictly on item slot classification
+        switch (category)
+        {
+            case "Head":
+                equippedHeadId = itemId;
+                break;
+            case "Torso":
+                equippedBodyId = itemId;
+                break;
+            case "Legs":
+                equippedLegsId = itemId;
+                break;
+            case "Feet":
+                equippedFeetId = itemId;
+                break;
+            case "Accessory":
+                equippedAccessoryId = itemId;
+                break;
+        }
+
+        Debug.Log($"[Wardrobe Engine] Successfully equipped {itemId} into the {category} slot.");
+
+        // 🔁 Instantly update button action text labels without expensive redrawing halts
+        RefreshButtonLabels();
+
+        // TODO: Trigger your 3D Avatar/Character Mesh Swapper script updates here!
+    }
+
+    // 🎨 NEW PLAY: Smart text state refresher loop
+    public void RefreshButtonLabels()
+    {
+        foreach (InventoryItemButton button in spawnedButtons)
+        {
+            if (button == null || button.txtEquipStatus == null) continue;
+
+            // Isolate matching target allocations to see if this specific item asset is active
+            bool isCurrentEquipped = false;
+            switch (button.category)
+            {
+                case "Head": isCurrentEquipped = (button.itemId == equippedHeadId); break;
+                case "Torso": isCurrentEquipped = (button.itemId == equippedBodyId); break;
+                case "Legs": isCurrentEquipped = (button.itemId == equippedLegsId); break;
+                case "Feet": isCurrentEquipped = (button.itemId == equippedFeetId); break;
+                case "Accessory": isCurrentEquipped = (button.itemId == equippedAccessoryId); break;
+            }
+
+            // Apply minimalist UX text states cleanly
+            button.txtEquipStatus.text = isCurrentEquipped ? "EQUIPPED" : "EQUIP";
         }
     }
 
@@ -139,11 +201,11 @@ public class InventoryManager : MonoBehaviour
     {
         switch (category)
         {
-            case "Head": return headContentGrid;
-            case "Torso": return torsoContentGrid;
-            case "Legs": return legsContentGrid;
-            case "Feet": return feetContentGrid;
-            case "Accessory": return accessoryContentGrid;
+            case "head": return headContentGrid;
+            case "torso": return torsoContentGrid;
+            case "legs": return legsContentGrid;
+            case "feet": return feetContentGrid;
+            case "accessory": return accessoryContentGrid;
             default: return null;
         }
     }
