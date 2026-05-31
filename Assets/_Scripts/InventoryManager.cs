@@ -58,9 +58,13 @@ public class InventoryManager : MonoBehaviour
         // Pre-unlock the default casual items so they are always in the inventory
         UnlockItem("Casual_Head");
         UnlockItem("Casual_Body");
-        UnlockItem("Casual_Torso"); // Safety net matching bundle naming extensions
+        UnlockItem("Casual_Torso"); 
         UnlockItem("Casual_Legs");
         UnlockItem("Casual_Feet");
+
+        // Also unlock the prefixed versions based on the new naming convention
+        UnlockFullOutfitBundle("M_Casual");
+        UnlockFullOutfitBundle("F_Casual");
     }
 
     public bool IsItemUnlocked(string itemId)
@@ -129,7 +133,12 @@ public class InventoryManager : MonoBehaviour
                         // 🏷️ Overwrite the display label text using the clean, pretty outfit name
                         if (buttonScript.txtOutfitName != null)
                         {
-                            buttonScript.txtOutfitName.text = item.associatedOutfitName;
+                            string displayName = item.associatedOutfitName;
+                            if (displayName.StartsWith("M_") || displayName.StartsWith("F_"))
+                            {
+                                displayName = displayName.Substring(2);
+                            }
+                            buttonScript.txtOutfitName.text = displayName;
                         }
 
                         // Track this button script so we can update its labels dynamically later

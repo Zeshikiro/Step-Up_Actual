@@ -49,7 +49,7 @@ void Start()
     public void LoadLeaderboard()
 {
     // Ask Firebase to order by steps and grab the highest 10
-    dbReference.Child("users").OrderByChild("totalSteps").LimitToLast(10).GetValueAsync().ContinueWithOnMainThread(task => {
+    dbReference.Child("users").OrderByChild("TotalLifetimeSteps").LimitToLast(10).GetValueAsync().ContinueWithOnMainThread(task => {
         if (task.IsFaulted) {
             Debug.LogError("Failed to get leaderboard: " + task.Exception);
             return;
@@ -74,7 +74,7 @@ void Start()
 
             // Extract the data safely
             string userEmail = childSnapshot.Child("email").Value.ToString();
-            string userSteps = childSnapshot.Child("totalSteps").Value.ToString();
+            string userSteps = childSnapshot.Child("TotalLifetimeSteps").Value.ToString();
 
             // Spawn a new UI Row
             GameObject newRow = Instantiate(playerRowPrefab, leaderboardContent);

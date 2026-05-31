@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Firebase.Auth;
+using Firebase.Database;
 
 public class BMIManager : MonoBehaviour
 {
@@ -55,6 +57,16 @@ public class BMIManager : MonoBehaviour
             PlayerPrefs.SetInt("BMI_Setup_Complete", 1); 
 
             PlayerPrefs.Save();
+
+            // Push BMI to Firebase
+            if (FirebaseAuth.DefaultInstance.CurrentUser != null)
+            {
+                string userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+                DatabaseReference dbRef = FirebaseDatabase.DefaultInstance.RootReference;
+                dbRef.Child("users").Child(userId).Child("bmi").SetValueAsync(bmi);
+                dbRef.Child("users").Child(userId).Child("bmiCategory").SetValueAsync(category);
+                dbRef.Child("users").Child(userId).Child("stepGoal").SetValueAsync(stepGoal);
+            }
             
             // Display results
             resultText.text = $"Your BMI: {bmi:F1}\nCategory: {category}\n\n<b>Daily Target: {stepGoal} Steps</b>";

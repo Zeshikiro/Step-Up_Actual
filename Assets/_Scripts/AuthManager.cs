@@ -2,6 +2,7 @@ using UnityEngine;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Extensions; 
+using Firebase.Database;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections; 
@@ -13,6 +14,7 @@ public class AuthManager : MonoBehaviour
     public TMP_InputField passwordField;
     public GameObject loginPanel;
     public GameObject eulaPanel;
+    public GameObject bmiPanel;
     public GameObject mainMenuPanel; // We need this to skip the BMI!
 
     [Header("Lockout System")]
@@ -36,25 +38,30 @@ public class AuthManager : MonoBehaviour
                 // "REMEMBER ME"
                 // ==============================================
                 if (auth.CurrentUser != null) {
-            Debug.Log("User recognized! Bypassing login...");
-            if (loginPanel != null) loginPanel.SetActive(false);
+                    if (!auth.CurrentUser.IsEmailVerified) {
+                        auth.SignOut();
+                    } else {
+                        Debug.Log("User recognized! Bypassing login...");
+                        if (loginPanel != null) loginPanel.SetActive(false);
 
-            // --- THE NEW ONBOARDING LOCK CHECK ---
-            // Did they already finish the BMI survey previously?
-            if (PlayerPrefs.GetInt("OnboardingComplete", 0) == 1) 
-            {
-                // Yes! Route directly to Main Menu.
-                if (eulaPanel != null) eulaPanel.SetActive(false);
-                // bmiPanel.SetActive(false); // Add this if you have a bmiPanel variable here!
-                if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
-            }
-            else 
-            {
-                // No, they haven't finished it yet. Route to EULA.
-                if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
-                if (eulaPanel != null) eulaPanel.SetActive(true);
-            }
-        }
+                        // Save email to DB to ensure leaderboard visibility
+                        FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(auth.CurrentUser.UserId).Child("email").SetValueAsync(auth.CurrentUser.Email);
+
+                        // --- THE NEW ONBOARDING LOCK CHECK ---
+                        if (PlayerPrefs.GetInt("OnboardingComplete", 0) == 1) 
+                        {
+                            if (eulaPanel != null) eulaPanel.SetActive(false);
+                            if (bmiPanel != null) bmiPanel.SetActive(false);
+                            if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+                        }
+                        else 
+                        {
+                            if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+                            if (bmiPanel != null) bmiPanel.SetActive(false);
+                            if (eulaPanel != null) eulaPanel.SetActive(true);
+                        }
+                    }
+                }
 
             } else {
                 Debug.LogError("Could not resolve Firebase dependencies: " + dependencyStatus);
@@ -95,15 +102,29 @@ public class AuthManager : MonoBehaviour
     public void RegisterUser()
     {
         if (auth == null) return;
+        if (loginButton != null) loginButton.interactable = false;
+        if (statusText != null) statusText.text = "Registering...";
         
         auth.CreateUserWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWithOnMainThread(task => {
             if (task.IsFaulted || task.IsCanceled) {
                 if(statusText != null) statusText.text = "Registration Failed.";
+                if (loginButton != null) loginButton.interactable = true;
                 return;
             }
             
-            loginPanel.SetActive(false);
-            eulaPanel.SetActive(true);
+            FirebaseUser newUser = auth.CurrentUser;
+            if (newUser != null)
+            {
+                newUser.SendEmailVerificationAsync().ContinueWithOnMainThread(emailTask => {
+                    if (loginButton != null) loginButton.interactable = true;
+                    if (emailTask.IsFaulted || emailTask.IsCanceled) {
+                        if(statusText != null) statusText.text = "Failed to send verification email.";
+                        return;
+                    }
+                    if(statusText != null) statusText.text = "Verification email sent! Please check your inbox.";
+                    auth.SignOut(); // Force them to log in later
+                });
+            }
         });
     }
 
@@ -132,11 +153,37 @@ public class AuthManager : MonoBehaviour
                 return; 
             }
             
+            FirebaseUser user = auth.CurrentUser;
+            if (user != null && !user.IsEmailVerified)
+            {
+                if(statusText != null) statusText.text = "Please verify your email first!";
+                if (loginButton != null) loginButton.interactable = true;
+                auth.SignOut();
+                return;
+            }
+
             failedAttempts = 0; 
             if(statusText != null) statusText.text = "Login Successful!";
 
+            // Save email to Realtime Database so Leaderboard doesn't skip them
+            if (user != null)
+            {
+                FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(user.UserId).Child("email").SetValueAsync(user.Email);
+            }
+
+            if (loginButton != null) loginButton.interactable = true;
             loginPanel.SetActive(false);
-            eulaPanel.SetActive(true);
+            
+            if (PlayerPrefs.GetInt("OnboardingComplete", 0) == 1) 
+            {
+                if (eulaPanel != null) eulaPanel.SetActive(false);
+                if (bmiPanel != null) bmiPanel.SetActive(false);
+                if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+            }
+            else 
+            {
+                if (eulaPanel != null) eulaPanel.SetActive(true);
+            }
         });
     }
 

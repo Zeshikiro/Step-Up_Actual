@@ -662,7 +662,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.000022905426}
-  m_SizeDelta: {x: 0, y: 5160}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &53923561
 MonoBehaviour:
@@ -939,7 +939,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: King
+    itemName: M_King
     price: 500
     isPurchased: 0
     headPrefab: {fileID: 1865733129442028304, guid: 3a6d20779ca31ec4283cef11f3864805, type: 3}
@@ -1233,7 +1233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Adventurer
+    itemName: M_Adventurer
     price: 500
     isPurchased: 0
     headPrefab: {fileID: 5258190849253663350, guid: fbce2317cfb94bc4b8a25c58868a6be5, type: 3}
@@ -1532,7 +1532,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &118297760
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1742,10 +1742,10 @@ RectTransform:
   - {fileID: 1652308435}
   m_Father: {fileID: 53923560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 531.50006, y: -4660}
-  m_SizeDelta: {x: 800, y: 1000}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &142845927
 MonoBehaviour:
@@ -2602,7 +2602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Worker
+    itemName: F_Worker
     price: 500
     isPurchased: 0
     headPrefab: {fileID: -5847441536767283409, guid: e61315f95d92823489ced837353e4bab, type: 3}
@@ -4095,7 +4095,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Beach
+    itemName: M_Beach
     price: 500
     isPurchased: 0
     headPrefab: {fileID: -2996878448379084587, guid: 921717bcc68282f488b5fb8c3b4767be, type: 3}
@@ -4141,10 +4141,10 @@ RectTransform:
   - {fileID: 115605813}
   m_Father: {fileID: 53923560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1371.5, y: -2580}
-  m_SizeDelta: {x: 800, y: 1000}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &300007256
 MonoBehaviour:
@@ -5917,10 +5917,10 @@ RectTransform:
   - {fileID: 364320650}
   m_Father: {fileID: 53923560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 531.50006, y: -500}
-  m_SizeDelta: {x: 800, y: 1000}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &423115476
 MonoBehaviour:
@@ -6950,10 +6950,10 @@ RectTransform:
   - {fileID: 472401844}
   m_Father: {fileID: 53923560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 531.50006, y: -2580}
-  m_SizeDelta: {x: 800, y: 1000}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &482537382
 MonoBehaviour:
@@ -7726,9 +7726,9 @@ RectTransform:
   - {fileID: 1083409886}
   m_Father: {fileID: 1027973333}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 630.0001, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 600, y: 120}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &536282574
@@ -8197,7 +8197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Worker
+    itemName: M_Worker
     price: 500
     isPurchased: 0
     headPrefab: {fileID: -5847441536767283409, guid: d95f5e7814e81aa428b188fa7828e1d1, type: 3}
@@ -9451,10 +9451,10 @@ RectTransform:
   - {fileID: 497397952}
   m_Father: {fileID: 53923560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 531.50006, y: -3620}
-  m_SizeDelta: {x: 800, y: 1000}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &747401719
 MonoBehaviour:
@@ -10119,10 +10119,10 @@ RectTransform:
   - {fileID: 1988118811}
   m_Father: {fileID: 53923560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1371.5, y: -1540}
-  m_SizeDelta: {x: 800, y: 1000}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &785606560
 MonoBehaviour:
@@ -11714,9 +11714,9 @@ RectTransform:
   m_Father: {fileID: 483644122}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: -17}
+  m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &873122498
 MonoBehaviour:
@@ -11762,7 +11762,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1552874830}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.61363053
+  m_Size: 0.614483
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -12234,7 +12234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Soldier
+    itemName: F_Soldier
     price: 500
     isPurchased: 0
     headPrefab: {fileID: 1995580921184781196, guid: 8334f470eecb3b148bf5be29f49d3cb0, type: 3}
@@ -12619,10 +12619,10 @@ RectTransform:
   - {fileID: 1643280943}
   m_Father: {fileID: 53923560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1371.5, y: -3620}
-  m_SizeDelta: {x: 800, y: 1000}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &926211956
 MonoBehaviour:
@@ -13647,9 +13647,9 @@ RectTransform:
   m_Father: {fileID: 525750792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 0}
+  m_SizeDelta: {x: 20, y: 3}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &980745492
 MonoBehaviour:
@@ -13864,10 +13864,10 @@ RectTransform:
   - {fileID: 2028578683}
   m_Father: {fileID: 53923560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 531.50006, y: -1540}
-  m_SizeDelta: {x: 800, y: 1000}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1001485413
 MonoBehaviour:
@@ -13941,10 +13941,10 @@ RectTransform:
   - {fileID: 1620097466}
   m_Father: {fileID: 391343660}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 572.00006, y: -55}
+  m_SizeDelta: {x: 368.00003, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1026085443
 MonoBehaviour:
@@ -16013,7 +16013,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Adventurer
+    itemName: F_Adventurer
     price: 500
     isPurchased: 0
     headPrefab: {fileID: 5258190849253663350, guid: 7b33ba6a7096638428fe1337a12dff5e, type: 3}
@@ -16307,7 +16307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Space Suit
+    itemName: M_Space Suit
     price: 500
     isPurchased: 0
     headPrefab: {fileID: -7647025840046622778, guid: 9475901bc1c1bb146aa907aaefaca9e0, type: 3}
@@ -16735,7 +16735,7 @@ RectTransform:
   m_Father: {fileID: 902750666}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -18011,7 +18011,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.0001014355}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 80}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1233017783
 MonoBehaviour:
@@ -18198,7 +18198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Formal
+    itemName: F_Formal
     price: 500
     isPurchased: 0
     headPrefab: {fileID: -7635849803870185733, guid: 061a580e4c897d44a893d843cda63092, type: 3}
@@ -18447,10 +18447,10 @@ RectTransform:
   - {fileID: 937847596}
   m_Father: {fileID: 391343660}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1348.0001, y: -55}
+  m_SizeDelta: {x: 368.00003, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1274204922
 MonoBehaviour:
@@ -18995,7 +18995,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Punk
+    itemName: M_Punk
     price: 500
     isPurchased: 0
     headPrefab: {fileID: 598959290848418299, guid: 4c5b4c38cf9d81b4abf704e58029581d, type: 3}
@@ -19131,10 +19131,10 @@ RectTransform:
   - {fileID: 1122424466}
   m_Father: {fileID: 53923560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1371.5, y: -500}
-  m_SizeDelta: {x: 800, y: 1000}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1334600703
 MonoBehaviour:
@@ -19718,9 +19718,9 @@ RectTransform:
   - {fileID: 866268753}
   m_Father: {fileID: 1027973333}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1290.0001, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 600, y: 120}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1383004556
@@ -19876,9 +19876,9 @@ RectTransform:
   m_Father: {fileID: 525750792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -17, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1417654343
 MonoBehaviour:
@@ -21435,8 +21435,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 767760804}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.38636947}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -21650,9 +21650,9 @@ RectTransform:
   m_Father: {fileID: 525750792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -17, y: 3}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1565794511
 MonoBehaviour:
@@ -21875,7 +21875,7 @@ RectTransform:
   m_Father: {fileID: 233670563}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -22402,7 +22402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Farmer
+    itemName: M_Farmer
     price: 500
     isPurchased: 0
     headPrefab: {fileID: -2015153887184360165, guid: c8c25b06b96f0ac40ac244caa6da8bc3, type: 3}
@@ -22649,7 +22649,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: SciFi
+    itemName: F_SciFi
     price: 500
     isPurchased: 0
     headPrefab: {fileID: -3239768102628833213, guid: 18f35f1be3257a54f9f92291c0652ea4, type: 3}
@@ -22967,10 +22967,10 @@ RectTransform:
   - {fileID: 1576946841}
   m_Father: {fileID: 391343660}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 184.00002, y: -55}
+  m_SizeDelta: {x: 368.00003, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1621212300
 MonoBehaviour:
@@ -23755,10 +23755,10 @@ RectTransform:
   - {fileID: 84719444}
   m_Father: {fileID: 391343660}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 960.00006, y: -55}
+  m_SizeDelta: {x: 368.00003, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1688942902
 MonoBehaviour:
@@ -24170,7 +24170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Suit
+    itemName: M_Suit
     price: 500
     isPurchased: 0
     headPrefab: {fileID: -817116256555897901, guid: bd4282aaa0a0d5146adb27f634e6a871, type: 3}
@@ -24460,7 +24460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Suit
+    itemName: F_Suit
     price: 500
     isPurchased: 0
     headPrefab: {fileID: -817116256555897901, guid: 3a105e2ae3067a94b80897c8cfc29fcf, type: 3}
@@ -24726,7 +24726,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1767926569
 RectTransform:
   m_ObjectHideFlags: 0
@@ -24796,7 +24796,7 @@ RectTransform:
   m_Father: {fileID: 1118996615}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -24985,7 +24985,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Witch
+    itemName: F_Witch
     price: 500
     isPurchased: 0
     headPrefab: {fileID: 3374028566639038111, guid: 6af271dcd21ff1242abda6e3fe3809c4, type: 3}
@@ -25527,9 +25527,9 @@ RectTransform:
   m_Father: {fileID: 483644122}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: -17}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1840193300
 MonoBehaviour:
@@ -26258,7 +26258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Medieval
+    itemName: F_Medieval
     price: 500
     isPurchased: 0
     headPrefab: {fileID: 8071715835359016818, guid: c77504950c5e17849b108def31aa6bcf, type: 3}
@@ -26803,10 +26803,10 @@ RectTransform:
   - {fileID: 228221607}
   m_Father: {fileID: 391343660}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1736.0001, y: -55}
+  m_SizeDelta: {x: 368.00003, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1907648914
 MonoBehaviour:
@@ -27906,7 +27906,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Punk
+    itemName: F_Punk
     price: 500
     isPurchased: 0
     headPrefab: {fileID: 598959290848418299, guid: 43543131d905a804aa6e02a68666563a, type: 3}
@@ -27951,9 +27951,9 @@ RectTransform:
   m_Father: {fileID: 483644122}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: 20}
+  m_SizeDelta: {x: 0, y: 20}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &2005503860
 MonoBehaviour:
@@ -28416,7 +28416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemButton
   shopItem:
-    itemName: Swat
+    itemName: M_Swat
     price: 500
     isPurchased: 0
     headPrefab: {fileID: 4629359788000243325, guid: 862a4ea4d3e50604e9f5564fa27301d7, type: 3}

@@ -90,5 +90,13 @@ public class ActivitySummaryManager : MonoBehaviour
     private void OnShareProgressClicked()
     {
         Debug.Log("Native Share Integration Hook Triggered.");
+        
+        // Share via Android Native Share
+        new NativeShare()
+            .SetSubject("My Step-Up Activity!")
+            .SetText($"I just burned {calorieTxt.text} and walked {stepCountTxt.text} steps today on the Step-Up app!")
+            .SetUrl("https://stepup-app.com")
+            .SetCallback((result, shareTarget) => Debug.Log("Share result: " + result + ", selected app: " + shareTarget))
+            .Share();
     }
 }

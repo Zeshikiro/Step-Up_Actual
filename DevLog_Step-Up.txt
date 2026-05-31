@@ -1,0 +1,299 @@
+|DEV LOG#
+
+4/11/2026: the 2D birds eye view map is done (Might tweak a little later on), EULA panel is completed, BMI panel is completed in addition the mission of the app is still in progress whislt the input of BMI will depend on the calculated outpuf will depend on the step goal of the user (Code is at BMImanager.cs)
+
+suggestion: If age = 15 - 18 && weight = 50kg - 60kg then result = specific pop up /info
+
+LogIn => EULA => BMI w/ survey => play
+
+4/21/2026: BMI & User Flow: Completed Age input integration and updated BMIManager.cs logic. Finished the Main Menu panel and successfully bridged the scene routing (Login -> EULA -> BMI -> Main Menu).
+
+UI/UX Scaling: Manually scaled buttons and anchored UI elements using the Canvas Scaler (Stretch-Stretch layout) to ensure compatibility across varying phone screen sizes.
+
+Core Systems: Leaderboard UI completed (with temporary LogOut button) and Step Counter UI integrated.
+
+Mapbox Configuration: Wired CitySimulatorMap to the LocationProviderFactory and disabled Initialize On Start to force the map to wait for real-world device GPS data instead of editor coordinates.
+
+Design Pivot: Refactored the 3D map approach. Deleted the MapViewToggle camera script in favor of a dedicated Scene Load for the AR Avatar mode to create a cleaner, more immersive transition.
+
+5/4/2026: Security, Quality of Life, and Settings Integration
+
+Authentication Security: Built a 3-strike lockout system in AuthManager.cs using Unity Coroutines. If a user inputs incorrect credentials three times, the system disables the login button and displays a live 30-second countdown to prevent brute-force spamming. Added dynamic UI warning text for invalid entries.
+
+User Experience (UX) Enhancements: Added a "Show/Hide Password" toggle (Eye icon) to the Login UI. Converted custom imported PNGs to Sprite (2D and UI) format and scripted the toggle to swap the TMP_InputField content type between standard text and hidden passwords.
+
+Session Management (Auto-Login): Implemented persistent user sessions. The app now checks for a cached Firebase CurrentUser on startup; if recognized, it bypasses the Login, EULA, and BMI screens and routes the user directly to the Main Menu.
+
+Settings Menu & Loop Completion: Constructed the SettingsPanel overlay. Created SettingsManager.cs to handle UI toggling and secure Firebase sign-outs (FirebaseAuth.SignOut). Logging out successfully clears the session and routes the user back to the LoginScene, creating a complete, infinite application loop. Resolved a script-to-class naming inconsistency (Settingsmanager to SettingsManager) to properly expose variables to the Unity Inspector.
+
+5/11/2026:
+
+Settings & Persistent Data: Expanded the SettingsPanel by integrating Volume and Notification UI controls. Utilized Unity's PlayerPrefs alongside AudioListener.volume within SettingsManager.cs to ensure user preferences are saved locally and applied automatically upon subsequent logins.
+
+Educational Content Routing: Designed the TutorialHub UI based on custom wireframes (Posture, Cooldown, Warm Up, Fitness Tips). Pivoted from in-app video hosting to a companion website model to optimize app file size. Developed TutorialManager.cs utilizing Application.OpenURL() to seamlessly route users from the app to external educational resources.
+
+UI Component Standardization: Audited and resolved inconsistent button behaviors across the Main Menu. Reconfigured button Transition settings from Animation (which lacked Animator Controllers) to Sprite Swap, ensuring all interactive elements now provide immediate, tactile visual feedback via assigned pressed-state sprites.
+
+5/12/2026: Shared HUD, Dynamic Routing, and RPG Profile System
+
+Universal Gameplay HUD: Constructed a modular GameplayHUD prefab designed to be shared seamlessly between the 2D Mapbox view and the 3D AR view. Built GameplayUIManager.cs to handle core navigation and display a randomized array of health facts and safety reminders upon scene initialization.
+
+Optimized UI State Management: Wired complete navigation routing for 5 primary overlay panels (Missions, Settings, Progress, Leaderboard, Profile). Transitioned from code-based UI hiding to Editor-based default states (unchecking panels in the Inspector) to optimize performance and prevent script race conditions on startup.
+
+Navigation Bug Fix: Resolved an issue where the map's Home button incorrectly routed to the EULA screen by ensuring the AuthManager had the proper MainMenuPanel reference to trigger the auto-login bypass.
+
+Gamified Profile & XP System: Built the ProfilePanel UI featuring an interactive XP Slider, Level text, and Rank display. Developed ProfileManager.cs to dynamically calculate user Levels based on a combined XP formula (Total Lifetime Steps + Mission Bonus XP), setting the requirement to 5,000 XP per Level.
+
+Cosmetic Progression & Edit Mode: Designed a dynamic Rank System (Starter, Explorer, Trailblazer, etc.) tied to the user's Level. Implemented an "Edit Mode" that reveals UX indicators (Pen icons), allows the user to change their username via a TMP_InputField, and cycle through Profile Avatars. Engineered a security check within the avatar cycler to ensure users can only equip cosmetic badges they have unlocked via their current Level.
+
+Workflow Optimization: Integrated the Unity Rect Tool (T) and Scene Focus (F) into the development workflow for highly accelerated, precision-based UI Canvas building.
+
+Date: 5/12/2026
+Focus: Hardware Integration, Dynamic Mission Systems, and UI State Management
+
+1. Hardware & Sensor Integration
+
+Native Pedometer (StepManager.cs): Successfully transitioned from simulated input (Spacebar) to real-world hardware tracking. Engineered a script to read the Android device's native accelerometer (Input.acceleration.magnitude).
+
+Sensor Tuning: Implemented stepThreshold and resetThreshold variables to accurately distinguish real footsteps from ambient phone jitter, preventing double-counting.
+
+Dual-Track Data: Established two distinct data streams: DailySteps (for missions/daily progress) and TotalLifetimeSteps (for profile XP and permanent ranking).
+
+2. Dynamic Mission System
+
+BMI-Driven Goals (MissionManager.cs): Built a system that dynamically retrieves the user's personalized step goal based on their earlier BMI calculation (e.g., 8k, 10k, or 12k steps).
+
+Fractional Milestones: Upgraded the UI to break the massive daily goal into 5 digestible milestones (20%, 40%, 60%, 80%, 100%) using Mathf.RoundToInt. The UI updates live as the user walks.
+
+3. Data Persistence & Routing Architecture
+
+The Onboarding Lock: Engineered a local save state (OnboardingComplete) in BMIManager.cs and routed it through AuthManager.cs to permanently bypass the EULA and BMI screens once a user completes them, curing the app's "amnesia" during local sessions.
+
+Future-Proofing Data: Identified the architectural limitations of local memory (PlayerPrefs) causing data resets upon manual logout. Laid the groundwork to migrate user profiles and progress to Firebase Cloud Firestore in the next sprint.
+
+4. Advanced UI/UX Debugging
+
+EventSystem Translation: Diagnosed and resolved a critical Editor bug where mouse clicks failed while mobile touch succeeded. Fixed by injecting a Standalone Input Module into the active EventSystem.
+
+Anchor & Layout Locking: Untangled overlapping UI components in the Profile Panel using Unity's Anchor preset system (Shift + Alt snapping), ensuring the layout scales perfectly to any Android screen shape.
+
+Raycast Management: Cleaned up transparent backgrounds and hidden layers that were acting as "invisible shields," blocking user interaction with the Avatar cycling button.
+
+5/18/2026:
+Key Accomplishments & Technical Updates
+Step Tracker Integration & Consolidation:
+
+Successfully deprecated the redundant StepCounter1.cs script to clean up codebase architecture.
+
+Unified all tracking responsibilities into a single master source of truth: StepManager.cs.
+
+Preserved historical data continuity across scenes by routing physics accelerometer inputs directly into a local storage save stream via PlayerPrefs (DailySteps, TotalLifetimeSteps).
+
+Wired up structural hooks to push user totals dynamically to the Firebase Realtime Database cloud node matching user IDs (users/uid/TotalLifetimeSteps).
+
+Leaderboard Compilation Fix:
+
+Resolved compiler error CS0246 regarding UserDataRecord.
+
+Correctly separated the structural data class container away from the closed wrapper boundaries of the main LeaderboardManager class loop.
+
+Repository Optimization:
+
+Updated project .gitignore rules to keep temporary architecture blocks, Visual Studio artifacts, and sensitive files like google-services.json securely out of version control.
+
+Current Challenges & Task Backlog for Tomorrow
+Play Screen Text Linkage: Re-bind the step counter display element (TextMeshProUGUI) inside the active Play Scene hierarchy to the freshly integrated StepManager inspector slot.
+
+5/20/2026
+Core Systems & UI Integration
+Leaderboard Engine: Pushed structural updates for a functional scrolling leaderboard UI framework. Configured LeaderboardRowTemplate prefabs and integrated the modular LeaderboardRowDisplay component to cleanly map incoming player ranks, user handles, and daily step telemetry.
+
+Design Pivots & Bug Fixes
+Hierarchy Decoupling (Player Avatar): Resolved a major camera inheritance conflict. Created an independent PinVisual child object to handle individual sprite rotations (X: 90). This leaves the parent root at a neutral rotation, preventing the nested Main Camera from tracking unexpected physical pitch behaviors.
+
+Mapbox Coordinate Synchronization: Corrected an engine desync caused by manually manipulating the transform scale on CitySimulatorMap. Reset the root scale back to standard dimensions (1, 1, 1) and switched to Mapbox's native integer Zoom configurations (Zoom level: 16-18) to preserve coordinate tracking precision.
+
+Camera Rig Orthogonal Realignment: Calibrated the overhead perspective camera rig. Restored local heights from an overextended altitude (~233 units high with a 5x scale factor) down to a stable tracking distance (Y: 20, Scale: 1, 1, 1), snapping the street grid cleanly back into viewport bounds.
+
+Development Log: May 22, 2026
+Status: Project ongoing.
+
+Accomplishments:
+
+Native Gallery Integration: Successfully imported and configured NativeGallery (v1.9.3) for Android/iOS gallery access.
+
+Code Refactoring: Cleaned up ProfileManager.cs by removing duplicate method declarations and fixing compilation errors (CS0029, CS0106) related to method scope and return types.
+
+UI Hookup: Successfully mapped the OpenDeviceGallery() function to the profile avatar button's OnClick event.
+
+Date: May 23, 2026
+Session Focus: UI Layout Refinement & Architecture Repair
+
+🚀 Major Wins
+Ladder UI Implementation: Migrated from a horizontal button layout to a stacked, vertical "ladder" style. This optimized the UI for mobile tapping and improved screen flow.
+
+Disaster Recovery: Successfully diagnosed and resolved a "Missing Prefab" asset corruption incident. Restored the Settings Panel prefab and its metafile from system backups, avoiding a full re-build.
+
+Code Cleanup: Refactored ProfileManager and MainMenuManager scripts. Fixed syntax errors (curly brace mismatches) that were causing scene serialization to lock up.
+
+Functional Wiring: Successfully linked the MainMenuManager to the SettingsPanel. The settings menu is now fully functional, toggling correctly via the "Settings" button.
+
+(May 25, 2026)
+Core Data Architecture Upgrades
+Enhanced UserData.cs: Successfully updated the data model to include currentStreak, allowing for long-term user retention tracking.
+
+Version Compatibility: Implemented an overloaded constructor in the UserData class to ensure existing authentication and registration systems remain stable while supporting the new streak variable.
+
+Dynamic UI & Logic Integration
+ActivitySummaryManager Refactoring: Completely rebuilt the summary logic to pull live data dynamically from UserData and StepManager instead of relying on hardcoded placeholders.
+
+Compile Error Resolution: Resolved recurring CS0102 (duplicate definition) and CS0103 (missing context) errors by cleaning up script references and unifying the variable declarations.
+
+Editor & Prefab Workflow
+Inspector Calibration: Streamlined the ActivitySummaryManager inspector by setting up clear categorizations for core system references and tuning constants (goals, stride length, and calorie factors).
+
+Prefab Optimization: Established a standardized workflow for wiring up UI Prefabs (like the SettingsPanel) in isolation mode, ensuring consistent functionality across multiple scenes.
+
+5/26/2026
+System: Avatar Customization & UI Flow
+
+✅ Accomplished Today:
+
+Design Pivot: Scrapped the fragmented body-part system and successfully transitioned to lightweight, full-body customizable avatars (Chr_Casual_Female_01 and Chr_Casual_Male_01).
+
+Material Architecture: Mapped out the Single-Texture Palette system. Verified that swapping pre-made texture materials (e.g., _A to _B) correctly updates the character's color scheme without heavy shader logic.
+
+Core Systems: Wrote and implemented AvatarCustomizer.cs. The script successfully handles:
+
+Clean gender toggling between active models.
+
+Targeted part customization (Head, Body, Legs, Feet) by dynamically routing material swaps to specific SkinnedMeshRenderer child objects.
+
+UI/UX: Set up a responsive Canvas (scaling with screen size) and built the foundational CategoryMenu layout with primary navigation tabs (Btn_Head, Btn_Body, Btn_Legs, Btn_Feet).
+
+🚀 To-Do Tomorrow:
+
+Build Sub-Panels: Create the UI layout that actually displays the material/color options (e.g., a grid of color buttons) when a specific Category Tab is clicked.
+
+Wire the UI: Hook up the OnClick() events on the UI buttons to pass the correct Material assets into the ChangeOutfit() function.
+
+Playtest: Run the full loop in Play Mode to ensure clicking a color button instantly paints the correct body part on the active gender model.
+
+May 27, 2026
+Today's AchievementsUI Architecture Polish: Split the monolithic outfit grid into two independent, overlapping scrolling panels (OutfitScrollView_Male and OutfitScrollView_Female) to decouple gender-specific shop items.Layering & Scale Optimization: Adjusted the GenderFilerBar hierarchy execution order to render cleanly on top of scroll windows. Configured a dual-column Grid Layout Group layout ($450 \times 600$ cell sizing) optimizing portrait screen real estate for mobile devices.Dynamic Mesh Swapping: Created and integrated a modular runtime execution pipeline via ShopItemButton.cs and AvatarCustomizer.cs. Replaced hardcoded testing assignments with programmatic updating of sharedMesh properties on targeted SkinnedMeshRenderer components.Exception Resolution: Squashed a game-breaking UnassignedReferenceException runtime loop failure by binding default Casual_... avatar components into the manager inspector slots.Extensible Accessory Support: Implemented an automated condition check to handle optional item sub-assets safely (e.g., dynamically enabling the rendering of the Adventurer Backpack or disabling the accessory slot entirely when basic outfits are equipped).Tonight's Overtime Checklist (User Task)[ ] Manually bind raw FBX asset sub-meshes across all remaining male/female characters (Beach, Farmer, King, Punk, etc.) into their unique UI card button layout components so that 100% of the storefront catalog functions completely.Tomorrow's Road Map (May 28, 2026)1. Scene Transition FrameworkEstablish full transactional scene routing between your primary landing deck and the avatar editing studio.Create a lightweight SceneTransitionManager.cs component.Wire up the MainMenu scene transition buttons using UnityEngine.SceneManagement.SceneManager.LoadSceneAsync().Wrap the active character data object inside a DontDestroyOnLoad wrapper container to ensure player customization progress persists cleanly during the scene jump.2. Player Inventory & Unlock State ArchitectureTransition the store cards from volatile visual layout toggles into a concrete state-driven architecture.Build an InventoryManager.cs system that reads and updates a persistent save structure.Modify the ShopItemButton execution path:If an item index is flagged as unlocked = false, display the currency expense loop (500 coins deduction logic).If unlocked = true, alter the button text to read EQUIP and execute the mesh swap instantly without charging the player profile.
+
+May 28, 2026
+Project: Student Mobile App — Avatar Customization & Shop Refactor
+
+Status: Architecture updated; pending inspector assignments and button script alignments.
+
+✅ What We Accomplished Today
+Root Cause Diagnosis: Identified that dynamic .sharedMesh swapping on the SkinnedMeshRenderer was breaking the character's internal bone hierarchy arrays, causing the floating/exploded character glitches.
+
+Architectural Pivot: Successfully shifted from raw asset swapping to Route A (GameObject Toggling). This keeps the rig intact by maintaining clothing items as pre-rigged child objects inside the avatar hierarchies and toggling their visibility state.
+
+Refactored AvatarCustomizer.cs: * Rebuilt the script to track active GameObject slots (currentHead, currentBody, etc.) instead of meshes.
+
+Implemented gender initialization logic to gracefully handle default casual clothes layout when switching models.
+
+Fixed the hidden backend compiler error (NullableContextAttribute) that was locking up the component inspector.
+
+Unity 6 API Upgrades: Resolved the obsolete syntax compile blocks by rewriting search queries to cleanly use FindObjectsInactive.Include and FindObjectsSortMode.None.
+
+🚀 Tomorrow's Todo List
+[ ] Inspector Wire-up (Defaults): Select the manager object holding AvatarCustomizer and populate the new Default Casual Objects slots with the base casual body part objects from both the male and female rig hierarchies.
+
+[ ] Align Button Scripts to Route A: Update ShopItemButton.cs and InventoryItemButton.cs so their equip loops pass a GameObject reference (the item prefab matching the rig child) rather than an old Mesh reference.
+
+[ ] Re-bind UI Button OnClick Events: Update the UI button click handlers in the customization panels to call the new endpoints (EquipHeadObject, EquipBodyObject, etc.) and drop the corresponding scene objects into the parameter boxes.
+
+[ ] Run-time Validation: Enter Play Mode to confirm that switching outfits updates the avatar instantly without any visual displacement or rigging layout issues.
+
+MAY 29, 2026
+Project: Step - Up (Avatar Customization System)
+
+Status: Architecture Configured & Verification Ready
+
+🚀 Key Accomplishments
+1. UI Architecture & Hierarchy Standardization
+Prefab Extraction: Successfully cloned the design language of the shop element button templates to build a standardized, responsive InventoryItemButton_Prefab card.
+
+Selection State Indicators: Designed and integrated a green SelectionHighlight bounding asset layer configured with full edge-stretch anchors to cleanly isolate currently selected items.
+
+Viewport Layout Standardization: Rescued the customization screen from sizing distortion by embedding a structured Grid Layout Group onto the scrollview scroll content objects, enforcing strict sizing dimensions on instantiated grids.
+
+2. Full-Card Equip Mechanic Implementation
+UX Simplification: Rather than cluttering item grids with tiny standalone font buttons, the system was refactored to convert the entire card area into an interactive trigger.
+
+Dynamic Event Binding: Injected programmatic initialization logic (AddListener) to auto-bind click interactions to individual cards instantly upon compilation, routing clean item metadata payloads directly into active scene managers.
+
+🛠️ Challenges Addressed & Bugs Squashed
+Resolved Block System Compilation Halts (CS1061): Cleaned up serious runtime compiler blocks caused by data discrepancies where parent script classes looked for variables (itemName, category, itemPrefab) that didn't exist yet on your layout assets.
+
+Fixed Interface Method Mismatches: Patched missing system execution methods (RefreshVisibility()) within your layout routines to align system callbacks between backend processors and front-facing UI objects.
+
+Corrected Screen View Scale Leaks: Tamed overflowing visual display cards that were breaking layouts by establishing strict bounding dimensions within the asset engine grid systems.
+
+📅 Tomorrow's Agenda
+Verify Asset Initialization Loops: Boot up Play Mode to confirm that custom database assets deploy beautifully inside your category viewports without layout breaking.
+
+Validate Armature Equipment Swapping: Test clicking the inventory item panels to ensure mesh targets dynamically assign onto active female/male character armature bones in real-time.
+
+Connect Data Persistence Hooks: Hook up runtime inventory unlocks to your data systems so choices save securely between app launches.
+
+Date: May 30, 2026
+Status: Major Milestone Reached — Hierarchy & Data Logic Complete!
+
+It has been a highly productive day for the project! We moved from a confusing structural setup to a fully organized and functional avatar customization foundation. Here is a summary of what we accomplished:
+
+🏗️ Hierarchy & Structural Overhaul
+We tackled the issue of mixing source 3D assets with scene objects.
+
+Successful Nesting: We implemented the "instantiate-then-move" workflow to correctly nest individual clothing meshes under MaleContainer and FemaleContainer.
+
+Clean Organization: The character containers are now streamlined, with the secondary clothing meshes properly positioned alongside the base assets and disabled by default to prevent rendering conflicts.
+
+🗄️ Database & Logic Integration
+We ensured the back-end data talks correctly to the visual front-end.
+
+Inventory Database Config: We successfully mapped all mesh assets into the Master Inventory Database, ensuring the Item Mesh references are correctly linked to the source files.
+
+Naming Standards: We applied a strict naming convention (using M and F prefixes) to the objects in the hierarchy, ensuring they perfectly match the Item Id string lookups used by the AvatarCustomizer script.
+
+Source Integrity: We confirmed that renaming the original source files in the Project folder is unnecessary, keeping our project assets clean and stable.
+
+🎮 UI & Bug Tracking
+We polished the user interaction layer and identified our remaining code hurdle.
+
+Button Functionality: The Equip_Btn was verified and correctly mapped to the InventoryItemButton.EquipThisItem() method, meaning the UI is ready to fire commands to the system.
+
+Bug Resolution: Squashed the CS0246 compiler error and cleaned up UI overlapping issues.
+
+MAY 31, 2026
+Project: Step - Up (Firebase, UI Polishing, & Landing Page)
+Status: Core Systems Synced & Promotional Materials Built!
+
+🚀 What We Accomplished Today
+1. Firebase & Authentication Stabilization:
+- Fixed a massive data synchronization issue where UIDs were saving without email handles or step counts.
+- Implemented Email Verification flow into AuthManager.cs to validate new users.
+- Successfully routed BMI data to push directly to the Firebase Realtime Database.
+
+2. Gameplay UI & Mapbox Foundation:
+- Configured the LocationProviderFactory to properly map the EditorLocationArrayProvider.
+- Finalized the FitnessTracker.cs to include a dynamic Play/Stop button, resetting the tracking and auto-launching the Summary Panel on completion.
+- Upgraded the GameplayUIManager to handle continuous, looping educational Tip popups while walking.
+
+3. Social & Summary Systems:
+- Connected the ActivitySummaryManager to automatically pull live accelerometer data into the UI.
+- Configured the dynamic 4-color Ring Graph (Radial 360 Fill) to visually track the daily 10k step goal.
+- Integrated the yasirkula Native Share plugin, allowing users to text/post their live step counts and calories burned directly from the Android app.
+
+4. Thesis Promotional Website:
+- Built a brand new, premium React (Vite) web application to serve as the project's official landing page.
+- Designed with modern Glassmorphism and a Light Blue to Violet gradient theme.
+
+📅 Tomorrow's Agenda
+- Finish fully setting up and polishing the Mapbox 3D Map integration.
+
+End of DevLog |

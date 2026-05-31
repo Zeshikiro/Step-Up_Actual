@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameplayUIManager : MonoBehaviour
 {
@@ -21,6 +22,10 @@ public class GameplayUIManager : MonoBehaviour
     public string mainMenuSceneName = "LoginScene"; 
     public string alternateViewSceneName = "Your3DSceneName"; 
 
+    [Header("Tip Settings")]
+    [Tooltip("How many seconds before a new tip pops up?")]
+    public float tipPopupInterval = 60f;
+
     private string[] funFacts = new string[]
     {
         "Walking 10,000 steps a day burns around 300 to 400 calories, depending on your pace and body weight!",
@@ -32,10 +37,26 @@ public class GameplayUIManager : MonoBehaviour
 
     void Start()
     {
-        // WE REMOVED HIDE ALL PANELS HERE!
-        // The game now trusts that you unchecked them in the Unity Editor.
-        
+        // Start the continuous looping routine
+        StartCoroutine(TipRoutine());
+    }
+
+    private IEnumerator TipRoutine()
+    {
+        // Wait a few seconds before the very first popup so the map can load
+        yield return new WaitForSeconds(5f);
         ShowRandomTip();
+
+        while (true)
+        {
+            yield return new WaitForSeconds(tipPopupInterval);
+            
+            // Only pop up if they aren't already looking at a tip
+            if (tipPopupPanel != null && !tipPopupPanel.activeSelf) 
+            {
+                ShowRandomTip();
+            }
+        }
     }
 
     // This turns off every panel so they don't stack on top of each other
