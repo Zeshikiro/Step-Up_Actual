@@ -54,7 +54,11 @@ public class BMIManager : MonoBehaviour
             PlayerPrefs.SetString("BMICategory", category);
 
             // ADD THIS LINE HERE: Mark the BMI profile setup as officially done
-            PlayerPrefs.SetInt("BMI_Setup_Complete", 1); 
+            if (FirebaseAuth.DefaultInstance.CurrentUser != null)
+            {
+                string userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+                PlayerPrefs.SetInt("BMI_Setup_Complete_" + userId, 1); 
+            }
 
             PlayerPrefs.Save();
 
@@ -83,7 +87,11 @@ public class BMIManager : MonoBehaviour
     // Call this from the "Continue" button
     public void GoToMainMenu()
     {
-        PlayerPrefs.SetInt("OnboardingComplete", 1); 
+        if (FirebaseAuth.DefaultInstance.CurrentUser != null)
+        {
+            string userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+            PlayerPrefs.SetInt("OnboardingComplete_" + userId, 1); 
+        }
         PlayerPrefs.Save();
         bmiPanel.SetActive(false);
         mainMenuPanel.SetActive(true);

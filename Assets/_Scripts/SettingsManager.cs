@@ -91,4 +91,27 @@ public class SettingsManager : MonoBehaviour
             eulaPanel.SetActive(true);
         }
     }
+
+    public void OnChangeEmailClicked()
+    {
+        Debug.Log("Change Email Clicked! Needs a UI popup to accept new email.");
+        // Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.UpdateEmailAsync("newemail");
+    }
+
+    public void OnPrivacyAndSocialClicked()
+    {
+        Debug.Log("Privacy and Social Clicked! Add your privacy policy link here.");
+        // Application.OpenURL("https://your-privacy-policy-link.com");
+    }
+
+    public void OnContactsAndSupportClicked()
+    {
+        Debug.Log("Contacts and Support Clicked! Opening email client...");
+        Application.OpenURL("mailto:support@stepup.com"); // Automatically opens phone's email app!
+    }
+
+    public void OnAboutClicked()
+    {
+        Debug.Log("About Clicked! Step-Up V1.0");
+    }
 }

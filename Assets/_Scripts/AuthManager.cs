@@ -48,7 +48,7 @@ public class AuthManager : MonoBehaviour
                         FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(auth.CurrentUser.UserId).Child("email").SetValueAsync(auth.CurrentUser.Email);
 
                         // --- THE NEW ONBOARDING LOCK CHECK ---
-                        if (PlayerPrefs.GetInt("OnboardingComplete", 0) == 1) 
+                        if (PlayerPrefs.GetInt("OnboardingComplete_" + auth.CurrentUser.UserId, 0) == 1) 
                         {
                             if (eulaPanel != null) eulaPanel.SetActive(false);
                             if (bmiPanel != null) bmiPanel.SetActive(false);
@@ -107,7 +107,11 @@ public class AuthManager : MonoBehaviour
         
         auth.CreateUserWithEmailAndPasswordAsync(emailField.text, passwordField.text).ContinueWithOnMainThread(task => {
             if (task.IsFaulted || task.IsCanceled) {
-                if(statusText != null) statusText.text = "Registration Failed.";
+                string errorMsg = "Registration Failed.";
+                if (task.Exception != null) {
+                    errorMsg = task.Exception.GetBaseException().Message;
+                }
+                if(statusText != null) statusText.text = errorMsg;
                 if (loginButton != null) loginButton.interactable = true;
                 return;
             }
@@ -174,7 +178,7 @@ public class AuthManager : MonoBehaviour
             if (loginButton != null) loginButton.interactable = true;
             loginPanel.SetActive(false);
             
-            if (PlayerPrefs.GetInt("OnboardingComplete", 0) == 1) 
+            if (PlayerPrefs.GetInt("OnboardingComplete_" + user.UserId, 0) == 1) 
             {
                 if (eulaPanel != null) eulaPanel.SetActive(false);
                 if (bmiPanel != null) bmiPanel.SetActive(false);

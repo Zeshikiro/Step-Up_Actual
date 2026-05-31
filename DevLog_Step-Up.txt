@@ -295,5 +295,9 @@ Status: Core Systems Synced & Promotional Materials Built!
 
 📅 Tomorrow's Agenda
 - Finish fully setting up and polishing the Mapbox 3D Map integration.
+- Connect the promotional website to the Firebase database.
+- Add a "Need connection" (no internet) warning to the Login screen.
+- Add a dynamic compass to the HUD.
+- Update the Missions system to track Daily Steps instead of Total Lifetime Steps.
 
 End of DevLog |
