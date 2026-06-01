@@ -180,7 +180,41 @@ Wire the UI: Hook up the OnClick() events on the UI buttons to pass the correct 
 Playtest: Run the full loop in Play Mode to ensure clicking a color button instantly paints the correct body part on the active gender model.
 
 May 27, 2026
-Today's AchievementsUI Architecture Polish: Split the monolithic outfit grid into two independent, overlapping scrolling panels (OutfitScrollView_Male and OutfitScrollView_Female) to decouple gender-specific shop items.Layering & Scale Optimization: Adjusted the GenderFilerBar hierarchy execution order to render cleanly on top of scroll windows. Configured a dual-column Grid Layout Group layout ($450 \times 600$ cell sizing) optimizing portrait screen real estate for mobile devices.Dynamic Mesh Swapping: Created and integrated a modular runtime execution pipeline via ShopItemButton.cs and AvatarCustomizer.cs. Replaced hardcoded testing assignments with programmatic updating of sharedMesh properties on targeted SkinnedMeshRenderer components.Exception Resolution: Squashed a game-breaking UnassignedReferenceException runtime loop failure by binding default Casual_... avatar components into the manager inspector slots.Extensible Accessory Support: Implemented an automated condition check to handle optional item sub-assets safely (e.g., dynamically enabling the rendering of the Adventurer Backpack or disabling the accessory slot entirely when basic outfits are equipped).Tonight's Overtime Checklist (User Task)[ ] Manually bind raw FBX asset sub-meshes across all remaining male/female characters (Beach, Farmer, King, Punk, etc.) into their unique UI card button layout components so that 100% of the storefront catalog functions completely.Tomorrow's Road Map (May 28, 2026)1. Scene Transition FrameworkEstablish full transactional scene routing between your primary landing deck and the avatar editing studio.Create a lightweight SceneTransitionManager.cs component.Wire up the MainMenu scene transition buttons using UnityEngine.SceneManagement.SceneManager.LoadSceneAsync().Wrap the active character data object inside a DontDestroyOnLoad wrapper container to ensure player customization progress persists cleanly during the scene jump.2. Player Inventory & Unlock State ArchitectureTransition the store cards from volatile visual layout toggles into a concrete state-driven architecture.Build an InventoryManager.cs system that reads and updates a persistent save structure.Modify the ShopItemButton execution path:If an item index is flagged as unlocked = false, display the currency expense loop (500 coins deduction logic).If unlocked = true, alter the button text to read EQUIP and execute the mesh swap instantly without charging the player profile.
+
+✅ Today's Achievements
+1. UI Architecture Polish: 
+- Split the monolithic outfit grid into two independent, overlapping scrolling panels (OutfitScrollView_Male and OutfitScrollView_Female) to decouple gender-specific shop items.
+
+2. Layering & Scale Optimization: 
+- Adjusted the GenderFilerBar hierarchy execution order to render cleanly on top of scroll windows. 
+- Configured a dual-column Grid Layout Group layout (450 x 600 cell sizing) optimizing portrait screen real estate for mobile devices.
+
+3. Dynamic Mesh Swapping: 
+- Created and integrated a modular runtime execution pipeline via ShopItemButton.cs and AvatarCustomizer.cs. 
+- Replaced hardcoded testing assignments with programmatic updating of sharedMesh properties on targeted SkinnedMeshRenderer components.
+
+4. Exception Resolution: 
+- Squashed a game-breaking UnassignedReferenceException runtime loop failure by binding default Casual_... avatar components into the manager inspector slots.
+
+5. Extensible Accessory Support: 
+- Implemented an automated condition check to handle optional item sub-assets safely (e.g., dynamically enabling the rendering of the Adventurer Backpack or disabling the accessory slot entirely when basic outfits are equipped).
+
+📝 Tonight's Overtime Checklist (User Task)
+- [ ] Manually bind raw FBX asset sub-meshes across all remaining male/female characters (Beach, Farmer, King, Punk, etc.) into their unique UI card button layout components so that 100% of the storefront catalog functions completely.
+
+🚀 Tomorrow's Road Map (May 28, 2026)
+1. Scene Transition Framework:
+- Establish full transactional scene routing between your primary landing deck and the avatar editing studio.
+- Create a lightweight SceneTransitionManager.cs component.
+- Wire up the MainMenu scene transition buttons using UnityEngine.SceneManagement.SceneManager.LoadSceneAsync().
+- Wrap the active character data object inside a DontDestroyOnLoad wrapper container to ensure player customization progress persists cleanly during the scene jump.
+
+2. Player Inventory & Unlock State Architecture:
+- Transition the store cards from volatile visual layout toggles into a concrete state-driven architecture.
+- Build an InventoryManager.cs system that reads and updates a persistent save structure.
+- Modify the ShopItemButton execution path:
+  > If an item index is flagged as unlocked = false, display the currency expense loop (500 coins deduction logic).
+  > If unlocked = true, alter the button text to read EQUIP and execute the mesh swap instantly without charging the player profile.
 
 May 28, 2026
 Project: Student Mobile App — Avatar Customization & Shop Refactor
