@@ -346,16 +346,21 @@ Status: Mapbox configured and ready for physical device testing!
 2. Onboarding Sync:
 - Fixed the local caching bug where new accounts were instantly skipping the EULA and BMI screens. Tied the PlayerPrefs save states directly to the Firebase UserId.
 
-3. Mapbox GPS Integration:
+3. Mapbox GPS & AR Integration:
 - Wrote MapAvatarTracker.cs to securely bind the PlayerAvatar to Mapbox's real-world GPS coordinates.
-- Successfully imported the Location-based Game prefab, set the origin coordinates to PSAU, and configured the Orthographic map view with MapZoom.cs.
-- Resolved Mapbox Editor configuration errors (TransformLocationProvider missing Target Transform, and EditorLocationArrayProvider feeding Paris coordinates).
+- Successfully built a Pokemon GO style AR Manager (ARManager.cs) that seamlessly swaps between the 2D Mapbox view (with an orange Map Pin) and a full 3D AR Camera view.
+- Engineered a robust `AvatarLoader.cs` script to automatically pull the player's saved clothing from the InventoryManager, applying it to a master 3D Avatar Prefab in the AR scene for complete persistence between menus.
+- Optimized performance for low-budget devices by forcefully disabling unused meshes when loading the 3D character.
+
+4. UI Polish & Bug Fixes:
+- Added a dedicated Accessory checking system to InventoryItemButton.cs to fix the bug where backpacks and accessories wouldn't equip or save properly.
+- Re-routed the HUD buttons across scenes (e.g., linking the Backpack icon to the CustomizeScene).
 
 📅 Tomorrow's Agenda
-- Build and test Mapbox GPS walking on a physical Android device!
+- Build and test Mapbox GPS tracking and AR Camera feed on a physical Android device!
+- Hook up the Step Counter API to natively track physical steps and convert them to coins.
+- Continue building out the remaining UI panels (Leaderboard, Profile, Settings).
 - Connect the promotional website to the Firebase database.
 - Add a "Need connection" (no internet) warning to the Login screen.
-- Add a dynamic compass to the HUD.
-- Update the Missions system to track Daily Steps instead of Total Lifetime Steps.
 
 End of DevLog |
