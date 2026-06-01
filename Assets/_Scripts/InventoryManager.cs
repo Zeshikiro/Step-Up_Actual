@@ -33,6 +33,7 @@ public class InventoryManager : MonoBehaviour
     public int coins = 1500; // Starting coins balance
 
     [Header("Saved Look (Item IDs)")]
+    public bool isMaleAvatar = true; // Tracks explicit gender choice globally
     public string equippedHeadId = "Casual_Head";
     public string equippedBodyId = "Casual_Body";
     public string equippedLegsId = "Casual_Legs";

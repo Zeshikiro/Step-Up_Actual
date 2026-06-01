@@ -1,0 +1,260 @@
+fileFormatVersion: 2
+guid: 0c89ece2f1effa048b548ce88ca91f5b
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: InventoryIcon_26
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 113
+        width: 257
+        height: 276
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2de4615b6f1c70048945723d7587f034
+      internalID: 360721651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      InventoryIcon_0: -2053454704
+      InventoryIcon_1: -1193415278
+      InventoryIcon_10: 1061580358
+      InventoryIcon_11: -762005444
+      InventoryIcon_12: 2141303709
+      InventoryIcon_13: -764450844
+      InventoryIcon_14: -339490290
+      InventoryIcon_15: 2139460941
+      InventoryIcon_16: 2119033288
+      InventoryIcon_17: -73696514
+      InventoryIcon_18: -518421583
+      InventoryIcon_19: 342379049
+      InventoryIcon_2: -1546843297
+      InventoryIcon_20: -850404734
+      InventoryIcon_21: -1459694321
+      InventoryIcon_22: 877049219
+      InventoryIcon_23: 1707876801
+      InventoryIcon_24: -1511943661
+      InventoryIcon_25: 1096234773
+      InventoryIcon_26: 360721651
+      InventoryIcon_27: -1210649084
+      InventoryIcon_28: 299806987
+      InventoryIcon_29: -1745214727
+      InventoryIcon_3: -266705527
+      InventoryIcon_30: 200097023
+      InventoryIcon_31: 1379319850
+      InventoryIcon_32: -1567528877
+      InventoryIcon_33: -1684013945
+      InventoryIcon_34: -486459905
+      InventoryIcon_35: 2045298887
+      InventoryIcon_36: -800322217
+      InventoryIcon_37: 221717289
+      InventoryIcon_38: 142993088
+      InventoryIcon_39: -1844180645
+      InventoryIcon_4: -2013711777
+      InventoryIcon_40: -1856715028
+      InventoryIcon_41: -1489253926
+      InventoryIcon_42: 377201367
+      InventoryIcon_43: 196742414
+      InventoryIcon_44: -401892764
+      InventoryIcon_45: 201625330
+      InventoryIcon_46: -157843400
+      InventoryIcon_47: 1975860490
+      InventoryIcon_48: -1928154295
+      InventoryIcon_49: -2101045320
+      InventoryIcon_5: 913190217
+      InventoryIcon_50: -1434327557
+      InventoryIcon_51: -878196934
+      InventoryIcon_52: 30689939
+      InventoryIcon_53: 1173083955
+      InventoryIcon_54: -430630185
+      InventoryIcon_55: -471344367
+      InventoryIcon_56: -1331139504
+      InventoryIcon_57: -833278816
+      InventoryIcon_58: 509568752
+      InventoryIcon_59: -315059063
+      InventoryIcon_6: 893842054
+      InventoryIcon_60: -295318128
+      InventoryIcon_61: 1378544989
+      InventoryIcon_62: 1107983018
+      InventoryIcon_63: 1274439974
+      InventoryIcon_64: 507847373
+      InventoryIcon_65: -461942889
+      InventoryIcon_66: 206620965
+      InventoryIcon_67: 323280268
+      InventoryIcon_68: 1049161283
+      InventoryIcon_69: -265412944
+      InventoryIcon_7: -973212232
+      InventoryIcon_70: -800256397
+      InventoryIcon_71: -884328634
+      InventoryIcon_72: 1341739409
+      InventoryIcon_73: 2042557984
+      InventoryIcon_74: -869690882
+      InventoryIcon_75: 1750894003
+      InventoryIcon_76: 1452223835
+      InventoryIcon_77: 1257404028
+      InventoryIcon_78: 1998376005
+      InventoryIcon_79: -1781241959
+      InventoryIcon_8: -1934810669
+      InventoryIcon_80: 1278959563
+      InventoryIcon_81: -1437728416
+      InventoryIcon_82: 1786136529
+      InventoryIcon_83: 1069622160
+      InventoryIcon_84: -1994678299
+      InventoryIcon_85: 1723661982
+      InventoryIcon_86: 596674404
+      InventoryIcon_87: 816569804
+      InventoryIcon_88: -1892177778
+      InventoryIcon_89: -1731282082
+      InventoryIcon_9: 1003708543
+      InventoryIcon_90: 1635477493
+      InventoryIcon_91: -830042975
+      InventoryIcon_92: 1238019917
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

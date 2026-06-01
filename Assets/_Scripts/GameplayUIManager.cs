@@ -106,4 +106,9 @@ public class GameplayUIManager : MonoBehaviour
     {
         SceneManager.LoadScene(alternateViewSceneName);
     }
+
+    public void GoToCustomizeScene()
+    {
+        SceneManager.LoadScene("CustomizeScene");
+    }
 }

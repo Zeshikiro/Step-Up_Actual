@@ -59,6 +59,7 @@ public class InventoryItemButton : MonoBehaviour
         else if ((cleanCategory == "torso" || cleanCategory == "body") && InventoryManager.Instance.equippedBodyId == itemId) isEquipped = true;
         else if ((cleanCategory == "legs" || cleanCategory == "pants") && InventoryManager.Instance.equippedLegsId == itemId) isEquipped = true;
         else if ((cleanCategory == "feet" || cleanCategory == "shoes") && InventoryManager.Instance.equippedFeetId == itemId) isEquipped = true;
+        else if (cleanCategory == "accessory" && InventoryManager.Instance.equippedAccessoryId == itemId) isEquipped = true;
 
         // Toggle status text feedback states smoothly
         if (txtEquipStatus != null)
@@ -110,6 +111,7 @@ public class InventoryItemButton : MonoBehaviour
 
             case "accessory":
                 customizer.EquipAccessoryObject(itemPrefab);
+                InventoryManager.Instance.equippedAccessoryId = itemId;
                 break;
 
             default:

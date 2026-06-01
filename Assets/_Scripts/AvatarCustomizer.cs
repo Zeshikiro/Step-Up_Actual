@@ -179,6 +179,11 @@ public class AvatarCustomizer : MonoBehaviour
         
         UpdateArmatureTarget(isMale);
         ResetToDefaults(isMale);
+
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.isMaleAvatar = isMale;
+        }
     }
 
     private void UpdateArmatureTarget(bool isMale)
@@ -260,8 +265,8 @@ public class AvatarCustomizer : MonoBehaviour
         return purchasedItemIDs.Contains(itemID);
     }
 
-    public void GoToLoginScene()
+    public void GoToSampleScene()
     {
-        SceneManager.LoadScene("LoginScene");
+        SceneManager.LoadScene("SampleScene");
     }
 }
