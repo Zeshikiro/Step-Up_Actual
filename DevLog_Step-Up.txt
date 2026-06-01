@@ -294,7 +294,31 @@ Status: Core Systems Synced & Promotional Materials Built!
 - Designed with modern Glassmorphism and a Light Blue to Violet gradient theme.
 
 📅 Tomorrow's Agenda
-- Finish fully setting up and polishing the Mapbox 3D Map integration.
+- Finish fully setting up and polishing the Mapbox 3D Map integration (Device Testing).
+- Connect the promotional website to the Firebase database.
+- Add a "Need connection" (no internet) warning to the Login screen.
+- Add a dynamic compass to the HUD.
+- Update the Missions system to track Daily Steps instead of Total Lifetime Steps.
+
+6/1/2026
+Project: Step - Up (Bug Fixing & Mapbox Integration)
+Status: Mapbox configured and ready for physical device testing!
+
+🚀 What We Accomplished Today
+1. Inventory System & Spelling Fixes:
+- Repaired the Shop to Inventory pipeline.
+- Fixed spelling mismatches (MAdventure vs MAdventurer) and rewrote UnlockFullOutfitBundle in InventoryManager.cs to automatically strip underscores and handle category variations (Torso vs Body).
+
+2. Onboarding Sync:
+- Fixed the local caching bug where new accounts were instantly skipping the EULA and BMI screens. Tied the PlayerPrefs save states directly to the Firebase UserId.
+
+3. Mapbox GPS Integration:
+- Wrote MapAvatarTracker.cs to securely bind the PlayerAvatar to Mapbox's real-world GPS coordinates.
+- Successfully imported the Location-based Game prefab, set the origin coordinates to PSAU, and configured the Orthographic map view with MapZoom.cs.
+- Resolved Mapbox Editor configuration errors (TransformLocationProvider missing Target Transform, and EditorLocationArrayProvider feeding Paris coordinates).
+
+📅 Tomorrow's Agenda
+- Build and test Mapbox GPS walking on a physical Android device!
 - Connect the promotional website to the Firebase database.
 - Add a "Need connection" (no internet) warning to the Login screen.
 - Add a dynamic compass to the HUD.

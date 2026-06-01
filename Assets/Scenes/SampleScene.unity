@@ -3432,6 +3432,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114061583707577078, guid: fa49ad38da3e540fca722d2ca9e1d026, type: 3}
+      propertyPath: _targetTransform
+      value: 
+      objectReference: {fileID: 1913053321}
+    - target: {fileID: 114189903949029994, guid: fa49ad38da3e540fca722d2ca9e1d026, type: 3}
+      propertyPath: _latitudeLongitude.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114189903949029994, guid: fa49ad38da3e540fca722d2ca9e1d026, type: 3}
+      propertyPath: '_latitudeLongitude.Array.data[0]'
+      value: 15.2189
+      objectReference: {fileID: 0}
+    - target: {fileID: 114189903949029994, guid: fa49ad38da3e540fca722d2ca9e1d026, type: 3}
+      propertyPath: '_latitudeLongitude.Array.data[1]'
+      value: 120.6953
+      objectReference: {fileID: 0}
     - target: {fileID: 114834956557871126, guid: fa49ad38da3e540fca722d2ca9e1d026, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -3443,7 +3459,7 @@ PrefabInstance:
     - target: {fileID: 114834956557871126, guid: fa49ad38da3e540fca722d2ca9e1d026, type: 3}
       propertyPath: _editorLocationProvider
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1750467650}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12456,6 +12472,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1748725573}
   m_CullTransparentMesh: 1
+--- !u!114 &1750467650 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114189903949029994, guid: fa49ad38da3e540fca722d2ca9e1d026, type: 3}
+  m_PrefabInstance: {fileID: 476427103}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b5c815d91f9d4c3690891f3ed4c3162, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1799663915
 GameObject:
   m_ObjectHideFlags: 0
@@ -13277,10 +13304,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1913053321}
   - component: {fileID: 1913053318}
-  - component: {fileID: 1913053322}
-  - component: {fileID: 1913053324}
   - component: {fileID: 1913053326}
   - component: {fileID: 1913053325}
+  - component: {fileID: 1913053327}
   m_Layer: 0
   m_Name: PlayerAvatar
   m_TagString: Untagged
@@ -13328,36 +13354,6 @@ Transform:
   - {fileID: 860128460}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1913053322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1913053317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bb39d89f6f3742418be7c93b4259637, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mapbox.Examples.PositionWithLocationProvider
-  _map: {fileID: 1718895414}
-  _positionFollowFactor: 0
-  _useTransformLocationProvider: 1
---- !u!114 &1913053324
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1913053317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bb39d89f6f3742418be7c93b4259637, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mapbox.Examples.PositionWithLocationProvider
-  _map: {fileID: 0}
-  _positionFollowFactor: 0
-  _useTransformLocationProvider: 0
 --- !u!114 &1913053325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13486,6 +13482,19 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &1913053327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1913053317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de983b089f65d704a9cf74adda79706e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapAvatarTracker
+  mapManager: {fileID: 1718895414}
 --- !u!1 &1970847828
 GameObject:
   m_ObjectHideFlags: 0
@@ -17576,7 +17585,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -6, y: 0}
+  m_AnchoredPosition: {x: -6.000061, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3369489722601212730

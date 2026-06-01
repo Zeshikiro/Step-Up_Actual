@@ -83,11 +83,17 @@ public class InventoryManager : MonoBehaviour
     public void UnlockFullOutfitBundle(string outfitName)
     {
         UnlockItem(outfitName); 
-        UnlockItem(outfitName + "_Head");
-        UnlockItem(outfitName + "_Torso");
-        UnlockItem(outfitName + "_Legs");
-        UnlockItem(outfitName + "_Feet");
-        UnlockItem(outfitName + "_Accessory");
+        
+        // Strip out the underscore so "M_Adventurer" becomes "MAdventurer" 
+        // to match the Item Id the user typed in the Inspector!
+        string strippedName = outfitName.Replace("_", "");
+
+        UnlockItem(strippedName + "_Head");
+        UnlockItem(strippedName + "_Torso");
+        UnlockItem(strippedName + "_Body"); // Unlock both Torso and Body just in case!
+        UnlockItem(strippedName + "_Legs");
+        UnlockItem(strippedName + "_Feet");
+        UnlockItem(strippedName + "_Accessory");
     }
 
     public bool SpendCoins(int amount)
@@ -156,21 +162,24 @@ public class InventoryManager : MonoBehaviour
     public void EquipItem(string itemId, string category)
     {
         // Update our active saved appearance IDs based strictly on item slot classification
-        switch (category)
+        if (string.IsNullOrEmpty(category)) return;
+
+        switch (category.ToLower().Trim())
         {
-            case "Head":
+            case "head":
                 equippedHeadId = itemId;
                 break;
-            case "Torso":
+            case "torso":
+            case "body":
                 equippedBodyId = itemId;
                 break;
-            case "Legs":
+            case "legs":
                 equippedLegsId = itemId;
                 break;
-            case "Feet":
+            case "feet":
                 equippedFeetId = itemId;
                 break;
-            case "Accessory":
+            case "accessory":
                 equippedAccessoryId = itemId;
                 break;
         }
@@ -192,13 +201,16 @@ public class InventoryManager : MonoBehaviour
 
             // Isolate matching target allocations to see if this specific item asset is active
             bool isCurrentEquipped = false;
-            switch (button.category)
+            string cat = button.category != null ? button.category.ToLower().Trim() : "";
+            
+            switch (cat)
             {
-                case "Head": isCurrentEquipped = (button.itemId == equippedHeadId); break;
-                case "Torso": isCurrentEquipped = (button.itemId == equippedBodyId); break;
-                case "Legs": isCurrentEquipped = (button.itemId == equippedLegsId); break;
-                case "Feet": isCurrentEquipped = (button.itemId == equippedFeetId); break;
-                case "Accessory": isCurrentEquipped = (button.itemId == equippedAccessoryId); break;
+                case "head": isCurrentEquipped = (button.itemId == equippedHeadId); break;
+                case "torso": 
+                case "body": isCurrentEquipped = (button.itemId == equippedBodyId); break;
+                case "legs": isCurrentEquipped = (button.itemId == equippedLegsId); break;
+                case "feet": isCurrentEquipped = (button.itemId == equippedFeetId); break;
+                case "accessory": isCurrentEquipped = (button.itemId == equippedAccessoryId); break;
             }
 
             // Apply minimalist UX text states cleanly
@@ -208,10 +220,13 @@ public class InventoryManager : MonoBehaviour
 
     private Transform GetTargetGrid(string category)
     {
-        switch (category)
+        if (string.IsNullOrEmpty(category)) return null;
+
+        switch (category.ToLower().Trim())
         {
             case "head": return headContentGrid;
-            case "torso": return torsoContentGrid;
+            case "torso": 
+            case "body": return torsoContentGrid;
             case "legs": return legsContentGrid;
             case "feet": return feetContentGrid;
             case "accessory": return accessoryContentGrid;

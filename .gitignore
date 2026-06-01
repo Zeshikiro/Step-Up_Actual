@@ -69,3 +69,6 @@ desktop.ini
 .idea/
 *.swp
 .env
+
+# --- Documentation ---
+Capstone-Context/
