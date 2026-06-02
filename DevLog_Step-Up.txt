@@ -383,7 +383,8 @@ Project: Step - Up (Cloud Saves, Web App Overhaul, & Fixes)
 - Added OnApplicationQuit() cleanup to StepManager.cs to ensure background step-tracking notifications properly close when the app is swiped away.
 
 📅 Tomorrow's Agenda
-- Revamp the step-to-coin economy system.
+- Upgrade Mapbox GPS to use a Fused Location Provider so the map loads instantly indoors (using Wi-Fi/Cellular data instead of just strict GPS).
 - Focus on making the hardware step counter more accurate using advanced sensor filtering algorithms.
+- (On Hold) Revamp the step-to-coin economy system.
 
 End of DevLog |
