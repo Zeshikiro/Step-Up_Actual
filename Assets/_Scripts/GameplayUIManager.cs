@@ -22,6 +22,9 @@ public class GameplayUIManager : MonoBehaviour
     public string mainMenuSceneName = "LoginScene"; 
     public string alternateViewSceneName = "Your3DSceneName"; 
 
+    [Header("Compass Settings")]
+    public RectTransform compassUI; // Drag your Compass UI Image here
+
     [Header("Tip Settings")]
     [Tooltip("How many seconds before a new tip pops up?")]
     public float tipPopupInterval = 60f;
@@ -39,6 +42,18 @@ public class GameplayUIManager : MonoBehaviour
     {
         // Start the continuous looping routine
         StartCoroutine(TipRoutine());
+
+        // Turn on the phone's internal compass sensor
+        Input.compass.enabled = true;
+    }
+
+    void Update()
+    {
+        // Rotate the compass UI to match real-world magnetic north
+        if (compassUI != null)
+        {
+            compassUI.localRotation = Quaternion.Euler(0, 0, Input.compass.trueHeading);
+        }
     }
 
     private IEnumerator TipRoutine()

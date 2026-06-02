@@ -2,6 +2,9 @@ using UnityEngine;
 using TMPro; // Needed to update your screen text
 using Firebase.Database;
 using Firebase.Auth;
+#if UNITY_ANDROID
+using Unity.Notifications.Android;
+#endif
 
 public class StepManager : MonoBehaviour
 {
@@ -25,6 +28,14 @@ public class StepManager : MonoBehaviour
 
     void Start()
     {
+#if UNITY_ANDROID
+        AndroidNotificationCenter.CancelAllNotifications();
+#endif
+
+        // Force the app to stay alive when they minimize it!
+        Application.runInBackground = true;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         // 1. Initialize Firebase connection strings safely
         if (FirebaseAuth.DefaultInstance.CurrentUser != null)
         {
@@ -63,6 +74,54 @@ public class StepManager : MonoBehaviour
         }
     }
 
+    // This runs automatically when the user minimizes the app (presses the home button)
+    void OnApplicationPause(bool isPaused)
+    {
+#if UNITY_ANDROID
+        if (isPaused)
+        {
+            // They went to the home screen! Send a notification with their steps.
+            SendStepNotification();
+        }
+        else
+        {
+            // They came back! Clear the notification.
+            AndroidNotificationCenter.CancelNotification(777); 
+        }
+#endif
+    }
+
+    // This runs when the app is completely closed (swiped away from recents)
+    void OnApplicationQuit()
+    {
+#if UNITY_ANDROID
+        AndroidNotificationCenter.CancelAllNotifications();
+#endif
+    }
+
+#if UNITY_ANDROID
+    private void SendStepNotification()
+    {
+        var channel = new AndroidNotificationChannel()
+        {
+            Id = "step_tracker_background",
+            Name = "Background Step Tracker",
+            Importance = Importance.Low, // Low importance so it doesn't constantly beep, just sits in the tray
+            Description = "Tracks your steps while the app is minimized."
+        };
+        AndroidNotificationCenter.RegisterNotificationChannel(channel);
+
+        var notification = new AndroidNotification();
+        notification.Title = "Step-Up is tracking!";
+        notification.Text = $"You have taken {currentDailySteps} steps today. Keep going!";
+        notification.FireTime = System.DateTime.Now;
+        notification.SmallIcon = "icon"; // Uses default app icon
+
+        // Sending with a specific ID (777) so we can update it or cancel it later
+        AndroidNotificationCenter.SendNotificationWithExplicitID(notification, "step_tracker_background", 777);
+    }
+#endif
+
     void RegisterStep()
     {
         currentDailySteps++;
@@ -78,6 +137,16 @@ public class StepManager : MonoBehaviour
 
         // Sync live data up to your Firebase Database Tree matching LeaderboardManager's query
         SyncStepsToFirebase();
+
+#if UNITY_ANDROID
+        // If they are walking while the app is minimized, update the notification silently!
+        // (We don't know for sure if it's minimized here, but sending it again updates the existing one)
+        // We only do this every 10 steps so we don't spam the Android OS battery
+        if (currentDailySteps % 10 == 0)
+        {
+            SendStepNotification();
+        }
+#endif
 
         Debug.Log($"Step Tracked! Daily: {currentDailySteps} | Lifetime: {totalLifetimeSteps}");
     }

@@ -7607,6 +7607,7 @@ MonoBehaviour:
   bmiPanel: {fileID: 1852924602}
   mainMenuPanel: {fileID: 514482175}
   acceptToggle: {fileID: 494429264}
+  warningText: {fileID: 1228462815}
 --- !u!1 &1570130966
 GameObject:
   m_ObjectHideFlags: 0

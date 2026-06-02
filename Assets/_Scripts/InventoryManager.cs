@@ -1,5 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Firebase;
+using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Extensions;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -66,6 +70,72 @@ public class InventoryManager : MonoBehaviour
         // Also unlock the prefixed versions based on the new naming convention
         UnlockFullOutfitBundle("M_Casual");
         UnlockFullOutfitBundle("F_Casual");
+    }
+
+    private void Start()
+    {
+        // Safely wait for Firebase to be ready before loading the cloud save
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+            if (task.Result == DependencyStatus.Available)
+            {
+                LoadAvatarFromCloud();
+            }
+        });
+    }
+
+    public void SaveAvatarToCloud()
+    {
+        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+        if (auth == null || auth.CurrentUser == null) return;
+
+        string uid = auth.CurrentUser.UserId;
+        DatabaseReference dbRef = FirebaseDatabase.DefaultInstance.RootReference;
+
+        Dictionary<string, object> avatarData = new Dictionary<string, object>
+        {
+            {"isMaleAvatar", isMaleAvatar},
+            {"equippedHeadId", equippedHeadId},
+            {"equippedBodyId", equippedBodyId},
+            {"equippedLegsId", equippedLegsId},
+            {"equippedFeetId", equippedFeetId},
+            {"equippedAccessoryId", equippedAccessoryId}
+        };
+
+        dbRef.Child("users").Child(uid).Child("avatar").SetValueAsync(avatarData).ContinueWithOnMainThread(task => {
+            if (task.IsCompleted) Debug.Log("Avatar cloud save successful!");
+        });
+    }
+
+    public void LoadAvatarFromCloud()
+    {
+        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+        if (auth == null || auth.CurrentUser == null) return;
+
+        string uid = auth.CurrentUser.UserId;
+        DatabaseReference dbRef = FirebaseDatabase.DefaultInstance.RootReference;
+
+        dbRef.Child("users").Child(uid).Child("avatar").GetValueAsync().ContinueWithOnMainThread(task => {
+            if (task.IsFaulted) return;
+            DataSnapshot snapshot = task.Result;
+
+            if (snapshot.Exists)
+            {
+                if (snapshot.Child("isMaleAvatar").Value != null)
+                    isMaleAvatar = (bool)snapshot.Child("isMaleAvatar").Value;
+                if (snapshot.Child("equippedHeadId").Value != null)
+                    equippedHeadId = snapshot.Child("equippedHeadId").Value.ToString();
+                if (snapshot.Child("equippedBodyId").Value != null)
+                    equippedBodyId = snapshot.Child("equippedBodyId").Value.ToString();
+                if (snapshot.Child("equippedLegsId").Value != null)
+                    equippedLegsId = snapshot.Child("equippedLegsId").Value.ToString();
+                if (snapshot.Child("equippedFeetId").Value != null)
+                    equippedFeetId = snapshot.Child("equippedFeetId").Value.ToString();
+                if (snapshot.Child("equippedAccessoryId").Value != null)
+                    equippedAccessoryId = snapshot.Child("equippedAccessoryId").Value.ToString();
+
+                Debug.Log("Avatar cloud save loaded successfully!");
+            }
+        });
     }
 
     public bool IsItemUnlocked(string itemId)
@@ -189,6 +259,9 @@ public class InventoryManager : MonoBehaviour
 
         // 🔁 Instantly update button action text labels without expensive redrawing halts
         RefreshButtonLabels();
+        
+        // ☁️ Save changes to the cloud automatically!
+        SaveAvatarToCloud();
 
         // TODO: Trigger your 3D Avatar/Character Mesh Swapper script updates here!
     }

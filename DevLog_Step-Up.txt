@@ -363,4 +363,27 @@ Status: Mapbox configured and ready for physical device testing!
 - Connect the promotional website to the Firebase database.
 - Add a "Need connection" (no internet) warning to the Login screen.
 
+6/2/2026
+Project: Step - Up (Cloud Saves, Web App Overhaul, & Fixes)
+
+🚀 What We Accomplished Today
+1. Avatar Cloud Saves:
+- Upgraded InventoryManager.cs to save and load equipped avatar items directly from the Firebase Database.
+- Players now have a persistent 3D avatar that follows their account across multiple devices!
+
+2. Web App Overhaul (React):
+- Transitioned the website from a long scrolling page to a modern Tabbed Navigation system.
+- Implemented a Firebase-linked Profile Dashboard that fetches the player's live Total Steps, Rank, and Daily Steps.
+- Added an "About Us" tab with dynamic, glassmorphism UI cards for the team members.
+- Integrated a fully functional registration portal into the website that writes directly to the Unity game database.
+- Implemented a 3D Podium Leaderboard design on the website.
+
+3. Bug Fixes & Optimization:
+- Fixed an AR scale bug in ARManager.cs to ensure the 3D Avatar renders perfectly at 1,1,1 scale when pulled from the Mapbox GPS layer.
+- Added OnApplicationQuit() cleanup to StepManager.cs to ensure background step-tracking notifications properly close when the app is swiped away.
+
+📅 Tomorrow's Agenda
+- Revamp the step-to-coin economy system.
+- Focus on making the hardware step counter more accurate using advanced sensor filtering algorithms.
+
 End of DevLog |

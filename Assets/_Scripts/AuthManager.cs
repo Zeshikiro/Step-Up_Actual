@@ -101,6 +101,12 @@ public class AuthManager : MonoBehaviour
 
     public void RegisterUser()
     {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            if (statusText != null) statusText.text = "No Internet Connection Detected!";
+            return;
+        }
+
         if (auth == null) return;
         if (loginButton != null) loginButton.interactable = false;
         if (statusText != null) statusText.text = "Registering...";
@@ -134,6 +140,12 @@ public class AuthManager : MonoBehaviour
 
     public void LoginUser()
     {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            if (statusText != null) statusText.text = "No Internet Connection Detected!";
+            return;
+        }
+
         if (auth == null) return;
 
         if (loginButton != null) loginButton.interactable = false;

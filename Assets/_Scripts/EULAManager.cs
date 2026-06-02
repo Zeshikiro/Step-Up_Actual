@@ -9,6 +9,7 @@ public class EULAManager : MonoBehaviour
 
     [Header("Validation")]
     public UnityEngine.UI.Toggle acceptToggle;
+    public GameObject warningText; // NEW: The red warning text
 
     // Wire this to your EULA "Accept & Continue" Button's OnClick() event
     public void OnAcceptEulaClicked()
@@ -16,8 +17,11 @@ public class EULAManager : MonoBehaviour
         if (acceptToggle != null && !acceptToggle.isOn)
         {
             Debug.LogWarning("You must check the toggle to accept the EULA!");
+            if (warningText != null) warningText.SetActive(true); // Show the warning text
             return;
         }
+
+        if (warningText != null) warningText.SetActive(false); // Hide it if they pass
 
         string userId = Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.UserId;
 

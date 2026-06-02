@@ -42,10 +42,14 @@ public class ARManager : MonoBehaviour
     private bool isFacingUser = true;
     private bool isPermissionRequested = false;
 
-    // Cache original settings to restore later
     private Vector3 originalCameraPos;
     private Quaternion originalCameraRot;
     private float originalOrthoSize;
+
+    // Cache avatar settings
+    private Transform originalAvatarParent;
+    private Vector3 originalAvatarScale;
+    private Vector3 originalAvatarLocalPos;
 
     void Start()
     {
@@ -110,9 +114,16 @@ public class ARManager : MonoBehaviour
         // 4. Show the Custom 3D Avatar and put it in front of the Camera
         if (customAvatar != null)
         {
+            // Cache its original state before moving it
+            originalAvatarParent = customAvatar.transform.parent;
+            originalAvatarScale = customAvatar.transform.localScale;
+            originalAvatarLocalPos = customAvatar.transform.localPosition;
+
             customAvatar.SetActive(true);
-            customAvatar.transform.SetParent(mainCamera.transform);
+            customAvatar.transform.SetParent(mainCamera.transform, false);
             customAvatar.transform.localPosition = avatarARPosition;
+            // Force it to a normal scale in front of the camera (assuming 1,1,1 is normal)
+            customAvatar.transform.localScale = Vector3.one; 
         }
         
         UpdateAvatarRotation();
@@ -161,7 +172,9 @@ public class ARManager : MonoBehaviour
         // 3. Hide and Detach the Custom 3D Avatar
         if (customAvatar != null)
         {
-            customAvatar.transform.SetParent(null);
+            customAvatar.transform.SetParent(originalAvatarParent, false);
+            customAvatar.transform.localScale = originalAvatarScale;
+            customAvatar.transform.localPosition = originalAvatarLocalPos;
             customAvatar.SetActive(false);
             customAvatar.transform.rotation = Quaternion.identity;
         }
