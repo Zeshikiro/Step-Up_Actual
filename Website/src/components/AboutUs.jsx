@@ -32,8 +32,9 @@ export default function AboutUs() {
           
           {/* Member 1: John Ryan */}
           <div style={{background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)'}}>
-            <div style={{width: '100px', height: '100px', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(107, 226, 255, 0.2)', border: '2px solid rgba(107, 226, 255, 0.5)'}}>
-              <User size={48} color="#6be2ff" />
+            <div style={{width: '100px', height: '100px', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(107, 226, 255, 0.2)', border: '2px solid rgba(107, 226, 255, 0.5)', overflow: 'hidden'}}>
+              <img src="/john.jpg" alt="John Ryan" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+              <div style={{display: 'none'}}><User size={48} color="#6be2ff" /></div>
             </div>
             <h3 style={{marginTop: '15px', marginBottom: '5px'}}>John Ryan</h3>
             <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Lead Developer</p>
@@ -44,8 +45,9 @@ export default function AboutUs() {
 
           {/* Member 2: Raven Ashley Jose */}
           <div style={{background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)'}}>
-            <div style={{width: '100px', height: '100px', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(107, 226, 255, 0.2)', border: '2px solid rgba(107, 226, 255, 0.5)'}}>
-              <User size={48} color="#6be2ff" />
+            <div style={{width: '100px', height: '100px', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(107, 226, 255, 0.2)', border: '2px solid rgba(107, 226, 255, 0.5)', overflow: 'hidden'}}>
+              <img src="/raven.jpg" alt="Raven Ashley Jose" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+              <div style={{display: 'none'}}><User size={48} color="#6be2ff" /></div>
             </div>
             <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Raven Ashley Jose</h3>
             <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Project Leader</p>
@@ -54,13 +56,14 @@ export default function AboutUs() {
             </p>
           </div>
 
-          {/* Member 3: Pending */}
+          {/* Member 3: Christian Dizon */}
           <div style={{background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)'}}>
-            <div style={{width: '100px', height: '100px', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(107, 226, 255, 0.2)', border: '2px solid rgba(107, 226, 255, 0.5)'}}>
-              <User size={48} color="#6be2ff" />
+            <div style={{width: '100px', height: '100px', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(107, 226, 255, 0.2)', border: '2px solid rgba(107, 226, 255, 0.5)', overflow: 'hidden'}}>
+              <img src="/christian.jpg" alt="Christian Dizon" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+              <div style={{display: 'none'}}><User size={48} color="#6be2ff" /></div>
             </div>
-            <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Team Member 3</h3>
-            <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Role / Title</p>
+            <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Christian Dizon</h3>
+            <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Team Member</p>
             <p style={{fontSize: '0.85rem', color: '#ccc', marginTop: '10px'}}>
               Pending bio...
             </p>
