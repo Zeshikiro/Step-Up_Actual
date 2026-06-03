@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro; // Needed to update your screen text
 using Firebase.Database;
 using Firebase.Auth;
+using Mapbox.Unity.Location;
+using Mapbox.Utils;
 #if UNITY_ANDROID
 using Unity.Notifications.Android;
 #endif
@@ -17,8 +19,23 @@ public class StepManager : MonoBehaviour
     public float stepThreshold = 1.5f; 
     [Tooltip("Phone must settle below this before counting the next step to prevent double-counting.")]
     public float resetThreshold = 1.0f; 
+
+    [Header("Anti-Cheat System")]
+    [Tooltip("Max physical speed allowed (m/s). 5m/s = 18km/h. Faster than this ignores steps (Vehicle detection).")]
+    public float maxAllowedSpeed = 5.0f;
+    [Tooltip("Violent shaking detection. Spikes above this value are ignored.")]
+    public float maxShakeThreshold = 3.0f;
+    [Tooltip("Minimum time (seconds) between steps. Stops rapid shaking exploits.")]
+    public float minTimeBetweenSteps = 0.3f;
     
+    private float _lastStepTime = 0f;
     private bool isStepReady = true;
+
+    // GPS Speed Tracking
+    private ILocationProvider _locationProvider;
+    private Vector2d _lastGPSPos;
+    private float _lastGPSTime;
+    private float _currentSpeedMPS = 0f;
 
     [Header("UI Elements")]
     [SerializeField] private TMP_Text stepTextDisplay; // Assign your UI text slot here!
@@ -49,6 +66,12 @@ public class StepManager : MonoBehaviour
 
         // 3. Render the correct initial value on screen immediately
         UpdateStepUI();
+
+        // 4. Hook into Mapbox for GPS Anti-Cheat
+        if (LocationProviderFactory.Instance != null)
+        {
+            _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
+        }
     }
 
     void Update()
@@ -62,10 +85,47 @@ public class StepManager : MonoBehaviour
         // --- MOBILE HARDWARE MODE (The Accelerometer) ---
         float acceleration = Input.acceleration.magnitude;
 
-        if (acceleration > stepThreshold && isStepReady)
+        // --- ANTI-CHEAT: Calculate GPS Speed ---
+        if (_locationProvider != null && _locationProvider.CurrentLocation.LatitudeLongitude != Vector2d.zero)
         {
-            RegisterStep();
-            isStepReady = false; // Lock tracking loop frame execution
+            Vector2d currentGPS = _locationProvider.CurrentLocation.LatitudeLongitude;
+            if (_lastGPSPos != Vector2d.zero)
+            {
+                // Only check speed every 1 second to get a stable reading
+                float timeDelta = Time.time - _lastGPSTime;
+                if (timeDelta >= 1.0f)
+                {
+                    Vector2d posAMeters = Conversions.LatLonToMeters(_lastGPSPos.x, _lastGPSPos.y);
+                    Vector2d posBMeters = Conversions.LatLonToMeters(currentGPS.x, currentGPS.y);
+                    double distanceMeters = Vector2d.Distance(posAMeters, posBMeters);
+                    
+                    _currentSpeedMPS = (float)(distanceMeters / timeDelta);
+                    _lastGPSPos = currentGPS;
+                    _lastGPSTime = Time.time;
+                }
+            }
+            else
+            {
+                _lastGPSPos = currentGPS;
+                _lastGPSTime = Time.time;
+            }
+        }
+
+        // --- ANTI-CHEAT: Analyze Acceleration ---
+        // 1. Must be above Step Threshold, but below Shake Threshold (violent shaking)
+        if (acceleration > stepThreshold && acceleration < maxShakeThreshold && isStepReady)
+        {
+            // 2. Cooldown timer to prevent rapid shaking
+            if (Time.time - _lastStepTime >= minTimeBetweenSteps)
+            {
+                // 3. GPS Vehicle check (Are they in a car?)
+                if (_currentSpeedMPS <= maxAllowedSpeed)
+                {
+                    RegisterStep();
+                    _lastStepTime = Time.time;
+                    isStepReady = false; // Lock tracking loop frame execution
+                }
+            }
         }
         
         if (acceleration < resetThreshold)
