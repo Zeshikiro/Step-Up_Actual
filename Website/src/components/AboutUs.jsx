@@ -56,13 +56,13 @@ export default function AboutUs() {
             </p>
           </div>
 
-          {/* Member 3: Christian Dizon */}
+          {/* Member 3: Kristina Nunag */}
           <div style={{background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)'}}>
             <div style={{width: '100px', height: '100px', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(107, 226, 255, 0.2)', border: '2px solid rgba(107, 226, 255, 0.5)', overflow: 'hidden'}}>
-              <img src="/christian.jpg" alt="Christian Dizon" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+              <img src="/kristina.jpg" alt="Kristina Nunag" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
               <div style={{display: 'none'}}><User size={48} color="#6be2ff" /></div>
             </div>
-            <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Christian Dizon</h3>
+            <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Kristina Nunag</h3>
             <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Team Member</p>
             <p style={{fontSize: '0.85rem', color: '#ccc', marginTop: '10px'}}>
               Pending bio...
