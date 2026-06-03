@@ -51,9 +51,11 @@ public class GameplayUIManager : MonoBehaviour
     {
         // Rotate the compass UI to match real-world magnetic north
         // We use a negative value because Unity's UI Z-axis rotation is counter-clockwise, but trueHeading is clockwise.
+        // We use Quaternion.Lerp to smooth out the raw sensor data and eliminate jitter.
         if (compassUI != null)
         {
-            compassUI.localRotation = Quaternion.Euler(0, 0, -Input.compass.trueHeading);
+            Quaternion targetRotation = Quaternion.Euler(0, 0, -Input.compass.trueHeading);
+            compassUI.localRotation = Quaternion.Lerp(compassUI.localRotation, targetRotation, Time.deltaTime * 5f);
         }
     }
 

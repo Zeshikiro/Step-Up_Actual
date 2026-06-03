@@ -22,12 +22,29 @@ public class MapAvatarTracker : MonoBehaviour
     private bool _useFallbackLocation = true;
     private Vector2d _fallbackLatLon;
 
+    // Cinematic Camera Zoom
+    private Transform _mainCameraTransform;
+    private bool _isZoomingIn = true;
+    private float _targetCameraY;
+
     void Start()
     {
         // Auto-find the map if you forget to drag it in
         if (mapManager == null) 
         {
             mapManager = FindFirstObjectByType<AbstractMap>();
+        }
+
+        // Setup the cinematic "Strava" zoom-in animation
+        if (Camera.main != null)
+        {
+            _mainCameraTransform = Camera.main.transform;
+            _targetCameraY = _mainCameraTransform.localPosition.y;
+            
+            // Start the camera 80 units higher in the sky
+            Vector3 startPos = _mainCameraTransform.localPosition;
+            startPos.y += 80f;
+            _mainCameraTransform.localPosition = startPos;
         }
 
         // Get the Mapbox GPS Location Provider
@@ -92,5 +109,22 @@ public class MapAvatarTracker : MonoBehaviour
 
         // 3. Smoothly move the Avatar to the new location (Lerp makes walking look smooth instead of teleporting)
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
+
+        // 4. Handle Cinematic Camera Zoom In Animation
+        if (_isZoomingIn && _mainCameraTransform != null)
+        {
+            Vector3 camPos = _mainCameraTransform.localPosition;
+            // Smoothly drop down to the target height
+            camPos.y = Mathf.Lerp(camPos.y, _targetCameraY, Time.deltaTime * 3f);
+            _mainCameraTransform.localPosition = camPos;
+
+            // Stop animating when it's close enough to save processing power
+            if (Mathf.Abs(camPos.y - _targetCameraY) < 0.5f)
+            {
+                camPos.y = _targetCameraY;
+                _mainCameraTransform.localPosition = camPos;
+                _isZoomingIn = false;
+            }
+        }
     }
 }
