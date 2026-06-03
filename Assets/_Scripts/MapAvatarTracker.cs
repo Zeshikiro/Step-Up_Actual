@@ -55,6 +55,33 @@ public class MapAvatarTracker : MonoBehaviour
 
         // Instantly ping the IP Location API to get an indoor coordinate fallback!
         StartCoroutine(FetchIPLocationFallback());
+
+        // --- DYNAMICALLY ADD TRAIL RENDERER ---
+        TrailRenderer tr = gameObject.GetComponent<TrailRenderer>();
+        if (tr == null)
+        {
+            tr = gameObject.AddComponent<TrailRenderer>();
+            tr.time = Mathf.Infinity; // Trail lasts forever while app is open
+            tr.startWidth = 1.5f;
+            tr.endWidth = 1.5f;
+            
+            // Try to use a basic unlit material so it shows up bright
+            Material trailMat = new Material(Shader.Find("Sprites/Default"));
+            trailMat.color = new Color(0.2f, 0.8f, 1.0f, 0.8f); // Neon Blue
+            tr.material = trailMat;
+            
+            tr.minVertexDistance = 0.5f; // Drop a trail point every 0.5 meters
+            // Make sure the trail renders slightly above ground to avoid Z-fighting with the map
+            tr.transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
+        }
+
+        // --- FIX PIN SIZE ---
+        Transform pinVisual = transform.Find("PinVisual");
+        if (pinVisual != null)
+        {
+            // The orange pin is way too small in the screenshot, let's make it 5x bigger
+            pinVisual.localScale = new Vector3(5f, 5f, 5f);
+        }
     }
 
     private IEnumerator FetchIPLocationFallback()
@@ -83,6 +110,21 @@ public class MapAvatarTracker : MonoBehaviour
     {
         if (mapManager == null) return;
 
+        // 1. Handle Cinematic Camera Zoom In Animation IMMEDIATELY
+        if (_isZoomingIn && _mainCameraTransform != null)
+        {
+            Vector3 camPos = _mainCameraTransform.localPosition;
+            camPos.y = Mathf.Lerp(camPos.y, _targetCameraY, Time.deltaTime * 2f);
+            _mainCameraTransform.localPosition = camPos;
+
+            if (Mathf.Abs(camPos.y - _targetCameraY) < 0.5f)
+            {
+                camPos.y = _targetCameraY;
+                _mainCameraTransform.localPosition = camPos;
+                _isZoomingIn = false;
+            }
+        }
+
         Vector2d currentLocation = _fallbackLatLon;
 
         // If the hardware GPS finally locks onto a satellite, it overrides the Wi-Fi fallback
@@ -107,24 +149,7 @@ public class MapAvatarTracker : MonoBehaviour
         // Keep the avatar at ground level (Y = 0) so it doesn't fly or sink
         targetPosition.y = 0f;
 
-        // 3. Smoothly move the Avatar to the new location (Lerp makes walking look smooth instead of teleporting)
+        // 3. Smoothly move the Avatar to the new location
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
-
-        // 4. Handle Cinematic Camera Zoom In Animation
-        if (_isZoomingIn && _mainCameraTransform != null)
-        {
-            Vector3 camPos = _mainCameraTransform.localPosition;
-            // Smoothly drop down to the target height
-            camPos.y = Mathf.Lerp(camPos.y, _targetCameraY, Time.deltaTime * 3f);
-            _mainCameraTransform.localPosition = camPos;
-
-            // Stop animating when it's close enough to save processing power
-            if (Mathf.Abs(camPos.y - _targetCameraY) < 0.5f)
-            {
-                camPos.y = _targetCameraY;
-                _mainCameraTransform.localPosition = camPos;
-                _isZoomingIn = false;
-            }
-        }
     }
 }
