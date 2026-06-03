@@ -159,3 +159,49 @@ public class MapAvatarTracker : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
     }
 }
+
+// Bundled into the same file to guarantee compilation
+public class MapCameraPanner : MonoBehaviour
+{
+    public float panSpeed = 2.0f;
+    public float snapBackDelay = 3.0f;
+    public float snapSpeed = 5.0f;
+
+    private Vector3 _panOffset = Vector3.zero;
+    private float _lastTouchTime;
+    private bool _isPanning = false;
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            _isPanning = true;
+            _lastTouchTime = Time.time;
+        }
+        else if (Input.GetMouseButton(0) && _isPanning)
+        {
+            float deltaX = Input.GetAxis("Mouse X");
+            float deltaY = Input.GetAxis("Mouse Y");
+
+            _panOffset.x -= deltaX * panSpeed;
+            _panOffset.z -= deltaY * panSpeed;
+
+            _lastTouchTime = Time.time;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            _isPanning = false;
+        }
+
+        if (!_isPanning && Time.time - _lastTouchTime > snapBackDelay)
+        {
+            _panOffset.x = Mathf.Lerp(_panOffset.x, 0, Time.deltaTime * snapSpeed);
+            _panOffset.z = Mathf.Lerp(_panOffset.z, 0, Time.deltaTime * snapSpeed);
+        }
+
+        Vector3 localPos = transform.localPosition;
+        localPos.x = _panOffset.x;
+        localPos.z = _panOffset.z;
+        transform.localPosition = localPos;
+    }
+}
