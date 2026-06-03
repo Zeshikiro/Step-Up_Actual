@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using Mapbox.Unity.Location;
 
 public class GameplayUIManager : MonoBehaviour
 {
@@ -38,23 +39,40 @@ public class GameplayUIManager : MonoBehaviour
         "Listening to upbeat music while walking can naturally increase your pace and make the workout feel easier."
     };
 
+    private ILocationProvider _locationProvider;
+
     void Start()
     {
         // Start the continuous looping routine
         StartCoroutine(TipRoutine());
 
-        // Turn on the phone's internal compass sensor
+        // Turn on the phone's internal compass sensor and location to allow True North tracking
         Input.compass.enabled = true;
+        Input.location.Start();
+
+        // Grab Mapbox's highly accurate location provider which handles device tilt (portrait mode) automatically!
+        if (LocationProviderFactory.Instance != null)
+        {
+            _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
+        }
     }
 
     void Update()
     {
         // Rotate the compass UI to match real-world magnetic north
-        // We use a negative value because Unity's UI Z-axis rotation is counter-clockwise, but trueHeading is clockwise.
-        // We use Quaternion.Lerp to smooth out the raw sensor data and eliminate jitter.
         if (compassUI != null)
         {
-            Quaternion targetRotation = Quaternion.Euler(0, 0, -Input.compass.trueHeading);
+            float heading = Input.compass.trueHeading;
+            
+            // If Mapbox is successfully tracking orientation (which fixes the vertical flipping bug), use it!
+            if (_locationProvider != null)
+            {
+                heading = _locationProvider.CurrentLocation.UserHeading;
+            }
+
+            // We use a negative value because Unity's UI Z-axis rotation is counter-clockwise.
+            // We use Quaternion.Lerp to smooth out the raw sensor data and eliminate jitter.
+            Quaternion targetRotation = Quaternion.Euler(0, 0, -heading);
             compassUI.localRotation = Quaternion.Lerp(compassUI.localRotation, targetRotation, Time.deltaTime * 5f);
         }
     }
