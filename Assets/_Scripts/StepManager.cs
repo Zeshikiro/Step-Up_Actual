@@ -4,6 +4,7 @@ using Firebase.Database;
 using Firebase.Auth;
 using Mapbox.Unity.Location;
 using Mapbox.Utils;
+using Mapbox.Unity.Utilities;
 #if UNITY_ANDROID
 using Unity.Notifications.Android;
 #endif

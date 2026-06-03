@@ -45,6 +45,12 @@ public class MapAvatarTracker : MonoBehaviour
             Vector3 startPos = _mainCameraTransform.localPosition;
             startPos.y += 80f;
             _mainCameraTransform.localPosition = startPos;
+
+            // Dynamically attach the touch panning script so the user can look around!
+            if (_mainCameraTransform.gameObject.GetComponent<MapCameraPanner>() == null)
+            {
+                _mainCameraTransform.gameObject.AddComponent<MapCameraPanner>();
+            }
         }
 
         // Get the Mapbox GPS Location Provider

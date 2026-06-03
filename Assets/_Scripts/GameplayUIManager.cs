@@ -55,6 +55,12 @@ public class GameplayUIManager : MonoBehaviour
         {
             _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
         }
+
+        // Force the compass pivot to be exactly in the center to fix rotation swings
+        if (compassUI != null)
+        {
+            compassUI.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        }
     }
 
     void Update()
