@@ -21,7 +21,8 @@ export default function Login() {
         await login(email, password);
       }
     } catch (err) {
-      setError(isRegistering ? "Registration failed. Email might be in use." : "Failed to sign in. Check your credentials.");
+      console.error(err);
+      setError(isRegistering ? "Registration failed: " + err.message : "Failed to sign in: " + err.message);
     }
     setLoading(false);
   };
