@@ -1,6 +1,17 @@
 using UnityEngine;
+using UnityEngine.Networking;
+using System.Collections;
 using Mapbox.Unity.Map;
 using Mapbox.Unity.Location;
+using Mapbox.Utils;
+
+[System.Serializable]
+public class IPLocationData
+{
+    public string status;
+    public double lat;
+    public double lon;
+}
 
 public class MapAvatarTracker : MonoBehaviour
 {
@@ -8,6 +19,8 @@ public class MapAvatarTracker : MonoBehaviour
     public AbstractMap mapManager; // Drag your CitySimulatorMap here
 
     private ILocationProvider _locationProvider;
+    private bool _useFallbackLocation = true;
+    private Vector2d _fallbackLatLon;
 
     void Start()
     {
@@ -22,19 +35,57 @@ public class MapAvatarTracker : MonoBehaviour
         {
             _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
         }
+
+        // Instantly ping the IP Location API to get an indoor coordinate fallback!
+        StartCoroutine(FetchIPLocationFallback());
+    }
+
+    private IEnumerator FetchIPLocationFallback()
+    {
+        // ip-api is a free endpoint that guesses your location based on your Wi-Fi/Cellular IP Address
+        using (UnityWebRequest webRequest = UnityWebRequest.Get("http://ip-api.com/json/"))
+        {
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                IPLocationData data = JsonUtility.FromJson<IPLocationData>(webRequest.downloadHandler.text);
+                if (data.status == "success")
+                {
+                    _fallbackLatLon = new Vector2d(data.lat, data.lon);
+                    
+                    // Force the map to draw immediately at the fallback location!
+                    mapManager.Initialize(_fallbackLatLon, mapManager.AbsoluteZoom);
+                    Debug.Log($"[MapAvatarTracker] Loaded IP Fallback Location: {data.lat}, {data.lon}");
+                }
+            }
+        }
     }
 
     void Update()
     {
-        // Don't do anything if the map or GPS isn't ready yet
-        if (mapManager == null || _locationProvider == null) 
-            return;
+        if (mapManager == null) return;
 
-        // 1. Get real-world GPS coordinates (Latitude/Longitude)
-        var gpsLocation = _locationProvider.CurrentLocation.LatitudeLongitude;
+        Vector2d currentLocation = _fallbackLatLon;
+
+        // If the hardware GPS finally locks onto a satellite, it overrides the Wi-Fi fallback
+        if (_locationProvider != null && _locationProvider.CurrentLocation.LatitudeLongitude != Vector2d.zero)
+        {
+            currentLocation = _locationProvider.CurrentLocation.LatitudeLongitude;
+            
+            // Re-center the map if we just transitioned from the fallback to real GPS
+            if (_useFallbackLocation)
+            {
+                mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom);
+                _useFallbackLocation = false;
+            }
+        }
+
+        // If neither GPS nor Fallback is ready, do nothing (wait)
+        if (currentLocation == Vector2d.zero) return;
 
         // 2. Convert real-world GPS into Unity 3D World space
-        Vector3 targetPosition = mapManager.GeoToWorldPosition(gpsLocation, true);
+        Vector3 targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
         
         // Keep the avatar at ground level (Y = 0) so it doesn't fly or sink
         targetPosition.y = 0f;
