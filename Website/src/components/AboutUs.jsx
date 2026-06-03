@@ -37,9 +37,9 @@ export default function AboutUs() {
               <div style={{display: 'none'}}><User size={48} color="#6be2ff" /></div>
             </div>
             <h3 style={{marginTop: '15px', marginBottom: '5px'}}>John Ryan</h3>
-            <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Lead Developer</p>
+            <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Lead Game Developer</p>
             <p style={{fontSize: '0.85rem', color: '#ccc', marginTop: '10px'}}>
-              Spearheaded the Unity engine integrations, Mapbox implementations, and Firebase backend architecture.
+              Spearheaded the Unity engine integrations, Mapbox geolocation features, and Firebase backend architecture for the core Step-Up experience.
             </p>
           </div>
 
@@ -52,7 +52,7 @@ export default function AboutUs() {
             <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Raven Ashley Jose</h3>
             <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Project Leader</p>
             <p style={{fontSize: '0.85rem', color: '#ccc', marginTop: '10px'}}>
-              Managed project documentation, coordinated team efforts, and designed the core gamification mechanics.
+              Leads the Capstone project, manages overall team direction, and drives the research and writing of the official thesis paper.
             </p>
           </div>
 
@@ -63,9 +63,9 @@ export default function AboutUs() {
               <div style={{display: 'none'}}><User size={48} color="#6be2ff" /></div>
             </div>
             <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Kristina Nunag</h3>
-            <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Team Member</p>
+            <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Documentation & Research</p>
             <p style={{fontSize: '0.85rem', color: '#ccc', marginTop: '10px'}}>
-              Pending bio...
+              Specializes in project documentation, academic research, and collaborating on the comprehensive thesis paper for the Capstone requirements.
             </p>
           </div>
 
