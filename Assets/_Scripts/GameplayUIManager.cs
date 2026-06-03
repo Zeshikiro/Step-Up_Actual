@@ -66,20 +66,11 @@ public class GameplayUIManager : MonoBehaviour
     void Update()
     {
         // Rotate the compass UI to match real-world magnetic north
-        if (compassUI != null)
+        if (Camera.main != null && compassUI != null)
         {
-            float heading = Input.compass.trueHeading;
-            
-            // If Mapbox is successfully tracking orientation (which fixes the vertical flipping bug), use it!
-            if (_locationProvider != null)
-            {
-                heading = _locationProvider.CurrentLocation.UserHeading;
-            }
-
-            // We use a negative value because Unity's UI Z-axis rotation is counter-clockwise.
-            // We use Quaternion.Lerp to smooth out the raw sensor data and eliminate jitter.
-            Quaternion targetRotation = Quaternion.Euler(0, 0, -heading);
-            compassUI.localRotation = Quaternion.Lerp(compassUI.localRotation, targetRotation, Time.deltaTime * 5f);
+            // If camera twists to the right (positive Y), map North goes left on screen (positive Z)
+            float cameraYRotation = Camera.main.transform.eulerAngles.y;
+            compassUI.localRotation = Quaternion.Euler(0, 0, cameraYRotation);
         }
     }
 

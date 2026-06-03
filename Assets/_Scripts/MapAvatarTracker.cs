@@ -163,45 +163,90 @@ public class MapAvatarTracker : MonoBehaviour
 // Bundled into the same file to guarantee compilation
 public class MapCameraPanner : MonoBehaviour
 {
-    public float panSpeed = 2.0f;
+    public float panSpeed = 0.5f;
+    public float rotationSpeed = 0.5f;
     public float snapBackDelay = 3.0f;
     public float snapSpeed = 5.0f;
 
     private Vector3 _panOffset = Vector3.zero;
+    private float _rotationAngle = 0f;
     private float _lastTouchTime;
     private bool _isPanning = false;
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        // --- MOBILE TOUCH CONTROLS ---
+        if (Input.touchCount == 1)
         {
-            _isPanning = true;
-            _lastTouchTime = Time.time;
+            // 1 Finger: Pan the Map
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Moved)
+            {
+                // Calculate movement delta
+                Vector3 panDelta = new Vector3(-touch.deltaPosition.x, 0, -touch.deltaPosition.y) * panSpeed * 0.05f;
+                
+                // Rotate the movement direction so it matches the camera's current twisted angle
+                panDelta = Quaternion.Euler(0, _rotationAngle, 0) * panDelta;
+                
+                _panOffset += panDelta;
+                _lastTouchTime = Time.time;
+                _isPanning = true;
+            }
         }
-        else if (Input.GetMouseButton(0) && _isPanning)
+        else if (Input.touchCount == 2)
+        {
+            // 2 Fingers: Twist to Rotate
+            Touch t1 = Input.GetTouch(0);
+            Touch t2 = Input.GetTouch(1);
+
+            if (t1.phase == TouchPhase.Moved || t2.phase == TouchPhase.Moved)
+            {
+                // Calculate angle change between the two fingers
+                Vector2 prevDir = (t1.position - t1.deltaPosition) - (t2.position - t2.deltaPosition);
+                Vector2 currDir = t1.position - t2.position;
+
+                float angle = Vector2.SignedAngle(prevDir, currDir);
+                _rotationAngle += angle * rotationSpeed;
+                _lastTouchTime = Time.time;
+                _isPanning = true;
+            }
+        }
+        // --- PC MOUSE FALLBACK FOR TESTING ---
+        else if (Input.GetMouseButton(0) && Input.touchCount == 0)
         {
             float deltaX = Input.GetAxis("Mouse X");
             float deltaY = Input.GetAxis("Mouse Y");
-
-            _panOffset.x -= deltaX * panSpeed;
-            _panOffset.z -= deltaY * panSpeed;
-
-            _lastTouchTime = Time.time;
+            if (Mathf.Abs(deltaX) > 0.01f || Mathf.Abs(deltaY) > 0.01f)
+            {
+                Vector3 panDelta = new Vector3(-deltaX, 0, -deltaY) * panSpeed * 2f;
+                panDelta = Quaternion.Euler(0, _rotationAngle, 0) * panDelta;
+                
+                _panOffset += panDelta;
+                _lastTouchTime = Time.time;
+                _isPanning = true;
+            }
         }
-        else if (Input.GetMouseButtonUp(0))
+
+        // Release touches
+        if (Input.touchCount == 0 && !Input.GetMouseButton(0))
         {
             _isPanning = false;
         }
 
+        // Snap back to avatar after no input
         if (!_isPanning && Time.time - _lastTouchTime > snapBackDelay)
         {
             _panOffset.x = Mathf.Lerp(_panOffset.x, 0, Time.deltaTime * snapSpeed);
             _panOffset.z = Mathf.Lerp(_panOffset.z, 0, Time.deltaTime * snapSpeed);
         }
 
+        // Apply Panning Position
         Vector3 localPos = transform.localPosition;
         localPos.x = _panOffset.x;
         localPos.z = _panOffset.z;
         transform.localPosition = localPos;
+
+        // Apply Camera Rotation
+        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, _rotationAngle, transform.localEulerAngles.z);
     }
 }
