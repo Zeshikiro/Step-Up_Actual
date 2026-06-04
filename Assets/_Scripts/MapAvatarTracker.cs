@@ -197,6 +197,12 @@ public class MapAvatarTracker : MonoBehaviour
         // If neither GPS nor Fallback is ready, do nothing (wait)
         if (currentLocation == Vector2d.zero) return;
 
+        // --- DESTROY PESKY DEFAULT MAPBOX RED PINS ---
+        GameObject mapboxPin1 = GameObject.Find("LocationProvider(Clone)");
+        if (mapboxPin1 != null) Destroy(mapboxPin1);
+        GameObject mapboxPin2 = GameObject.Find("LocationPrefab(Clone)");
+        if (mapboxPin2 != null) Destroy(mapboxPin2);
+
         // 2. Convert real-world GPS into Unity 3D World space
         Vector3 targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
         
@@ -289,20 +295,22 @@ public class MapCameraPanner : MonoBehaviour
             _isPanning = false;
         }
 
-        // Snap back to avatar after no input
-        if (!_isPanning && Time.time - _lastTouchTime > snapBackDelay)
-        {
-            _panOffset.x = Mathf.Lerp(_panOffset.x, 0, Time.deltaTime * snapSpeed);
-            _panOffset.z = Mathf.Lerp(_panOffset.z, 0, Time.deltaTime * snapSpeed);
-        }
-
-        // Apply Panning Position
+        // Apply Panning Position (Removed auto-snap so you can explore infinitely!)
         Vector3 localPos = transform.localPosition;
-        localPos.x = _panOffset.x;
-        localPos.z = _panOffset.z;
+        
+        // Smoothly lerp towards the pan offset for a buttery smooth feel
+        localPos.x = Mathf.Lerp(localPos.x, _panOffset.x, Time.deltaTime * snapSpeed);
+        localPos.z = Mathf.Lerp(localPos.z, _panOffset.z, Time.deltaTime * snapSpeed);
         transform.localPosition = localPos;
 
         // Apply Camera Rotation
         transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, _rotationAngle, transform.localEulerAngles.z);
+    }
+
+    // Call this from a UI Button to instantly snap back to the player!
+    public void RecenterCamera()
+    {
+        _panOffset = Vector3.zero;
+        _rotationAngle = 0f;
     }
 }

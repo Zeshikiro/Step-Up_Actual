@@ -2336,7 +2336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 010ace895ddc4114fab97add349a866b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapZoom
-  mapCamera: {fileID: 0}
+  mapCamera: {fileID: 330585545}
   zoomSpeed: 0.1
   minZoom: 20
   maxZoom: 200

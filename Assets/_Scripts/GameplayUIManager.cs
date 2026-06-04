@@ -144,4 +144,16 @@ public class GameplayUIManager : MonoBehaviour
     {
         SceneManager.LoadScene("CustomizeScene");
     }
+
+    public void RecenterMap()
+    {
+        if (Camera.main != null)
+        {
+            MapCameraPanner panner = Camera.main.GetComponent<MapCameraPanner>();
+            if (panner != null)
+            {
+                panner.RecenterCamera();
+            }
+        }
+    }
 }
