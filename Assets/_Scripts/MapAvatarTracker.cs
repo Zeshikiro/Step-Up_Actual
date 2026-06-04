@@ -62,32 +62,80 @@ public class MapAvatarTracker : MonoBehaviour
         // Instantly ping the IP Location API to get an indoor coordinate fallback!
         StartCoroutine(FetchIPLocationFallback());
 
-        // --- DYNAMICALLY ADD TRAIL RENDERER ---
+        // --- DYNAMICALLY ADD STRATVA-STYLE TRAIL RENDERER ---
         TrailRenderer tr = gameObject.GetComponent<TrailRenderer>();
         if (tr == null)
         {
             tr = gameObject.AddComponent<TrailRenderer>();
-            tr.time = Mathf.Infinity; // Trail lasts forever while app is open
-            tr.startWidth = 1.5f;
-            tr.endWidth = 1.5f;
-            
-            // Try to use a basic unlit material so it shows up bright
-            Material trailMat = new Material(Shader.Find("Sprites/Default"));
-            trailMat.color = new Color(0.2f, 0.8f, 1.0f, 0.8f); // Neon Blue
-            tr.material = trailMat;
-            
-            tr.minVertexDistance = 0.5f; // Drop a trail point every 0.5 meters
-            // Make sure the trail renders slightly above ground to avoid Z-fighting with the map
-            tr.transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
+        }
+        
+        tr.time = Mathf.Infinity; // Trail lasts forever while app is open
+        tr.startWidth = 4.0f; // Thick like Strava!
+        tr.endWidth = 4.0f;
+        tr.numCapVertices = 5; // Perfectly rounded ends
+        tr.numCornerVertices = 5; // Perfectly rounded corners when you turn
+        
+        // Strava Neon Glowing Orange
+        Material trailMat = new Material(Shader.Find("Sprites/Default"));
+        trailMat.color = new Color(1.0f, 0.35f, 0.0f, 0.9f); // #fc5a03 (Strava Orange)
+        tr.material = trailMat;
+        
+        tr.minVertexDistance = 1.0f; 
+        tr.transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
+
+        // --- DELETE OLD 3D AVATAR (BUT KEEP CAMERA) ---
+        foreach (Transform child in transform)
+        {
+            if (child.name != "Main Camera" && child.name != "MapCameraPanner")
+            {
+                Destroy(child.gameObject);
+            }
         }
 
-        // --- FIX PIN SIZE ---
-        Transform pinVisual = transform.Find("PinVisual");
-        if (pinVisual != null)
-        {
-            // The orange pin is way too small in the screenshot, let's make it 5x bigger
-            pinVisual.localScale = new Vector3(5f, 5f, 5f);
-        }
+        // --- CREATE PREMIUM 2D STRAVA AVATAR ---
+        // 1. Outer White Ring
+        GameObject ring = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        ring.name = "Avatar_Ring";
+        ring.transform.SetParent(transform);
+        ring.transform.localPosition = new Vector3(0, 0.1f, 0);
+        ring.transform.localScale = new Vector3(3f, 0.01f, 3f); // Flat!
+        Destroy(ring.GetComponent<CapsuleCollider>()); // Remove physics
+        Material ringMat = new Material(Shader.Find("Unlit/Color"));
+        ringMat.color = Color.white;
+        ring.GetComponent<MeshRenderer>().material = ringMat;
+
+        // 2. Inner Blue Dot
+        GameObject dot = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        dot.name = "Avatar_Dot";
+        dot.transform.SetParent(transform);
+        dot.transform.localPosition = new Vector3(0, 0.15f, 0); // Slightly higher than ring
+        dot.transform.localScale = new Vector3(2.2f, 0.01f, 2.2f);
+        Destroy(dot.GetComponent<CapsuleCollider>());
+        Material dotMat = new Material(Shader.Find("Unlit/Color"));
+        dotMat.color = new Color(0.0f, 0.5f, 1.0f); // Bright blue
+        dot.GetComponent<MeshRenderer>().material = dotMat;
+
+        // 3. View Cone (Semi-transparent triangle)
+        GameObject cone = new GameObject("ViewCone");
+        cone.transform.SetParent(transform);
+        cone.transform.localPosition = new Vector3(0, 0.05f, 0); // Lowest layer
+        
+        MeshRenderer coneRenderer = cone.AddComponent<MeshRenderer>();
+        MeshFilter coneFilter = cone.AddComponent<MeshFilter>();
+        
+        Material coneMat = new Material(Shader.Find("Sprites/Default"));
+        coneMat.color = new Color(0.0f, 0.5f, 1.0f, 0.35f); // 35% opacity blue
+        coneRenderer.material = coneMat;
+
+        // Draw a flat triangle pointing forward (Z-axis)
+        Mesh m = new Mesh();
+        m.vertices = new Vector3[] {
+            Vector3.zero,
+            new Vector3(-4.5f, 0, 9f), // left forward
+            new Vector3(4.5f, 0, 9f)   // right forward
+        };
+        m.triangles = new int[] { 0, 1, 2 }; // Clockwise face
+        coneFilter.mesh = m;
     }
 
     private IEnumerator FetchIPLocationFallback()
@@ -157,6 +205,14 @@ public class MapAvatarTracker : MonoBehaviour
 
         // 3. Smoothly move the Avatar to the new location
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
+
+        // 4. Sync View Cone to Camera Rotation
+        Transform viewCone = transform.Find("ViewCone");
+        if (viewCone != null && _mainCameraTransform != null)
+        {
+            // Lock the cone's rotation exactly to the Camera's Y-rotation so it always acts as a flashlight
+            viewCone.eulerAngles = new Vector3(0, _mainCameraTransform.eulerAngles.y, 0);
+        }
     }
 }
 
