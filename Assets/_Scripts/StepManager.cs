@@ -37,6 +37,7 @@ public class StepManager : MonoBehaviour
     private Vector2d _lastGPSPos;
     private float _lastGPSTime;
     private float _currentSpeedMPS = 0f;
+    public float CurrentSpeedMPS { get { return _currentSpeedMPS; } }
 
     [Header("UI Elements")]
     [SerializeField] private TMP_Text stepTextDisplay; // Assign your UI text slot here!

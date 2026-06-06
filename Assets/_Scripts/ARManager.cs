@@ -21,6 +21,8 @@ public class ARManager : MonoBehaviour
     [Header("--- UI Elements to Toggle ---")]
     [Tooltip("The button used to rotate the avatar. It will be hidden in 2D Map Mode.")]
     public GameObject rotateAvatarButton;
+    [Tooltip("The Compass UI to hide in 3D AR Mode")]
+    public GameObject compassUI;
     
     [Header("--- Icon Swapping ---")]
     public Image toggleButtonImage; // The Image component on your 3D/2D toggle button
@@ -100,9 +102,10 @@ public class ARManager : MonoBehaviour
         }
 #endif
 
-        // 2. Hide the 3D Mapbox Map & Map Pin
+        // 2. Hide the 3D Mapbox Map, Map Pin, & Compass
         if (mapRoot != null) mapRoot.SetActive(false);
         if (mapPin != null) mapPin.SetActive(false);
+        if (compassUI != null) compassUI.SetActive(false);
 
         // 3. Unparent the Camera from the Map GPS Node
         mainCamera.transform.SetParent(null);
@@ -165,9 +168,10 @@ public class ARManager : MonoBehaviour
         }
         if (cameraBackground != null) cameraBackground.gameObject.SetActive(false);
 
-        // 2. Show the 3D Mapbox Map & Map Pin
+        // 2. Show the 3D Mapbox Map, Map Pin, & Compass
         if (mapRoot != null) mapRoot.SetActive(true);
         if (mapPin != null) mapPin.SetActive(true);
+        if (compassUI != null) compassUI.SetActive(true);
 
         // 3. Hide and Detach the Custom 3D Avatar
         if (customAvatar != null)

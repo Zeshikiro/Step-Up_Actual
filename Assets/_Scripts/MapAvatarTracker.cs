@@ -225,7 +225,7 @@ public class MapAvatarTracker : MonoBehaviour
 // Bundled into the same file to guarantee compilation
 public class MapCameraPanner : MonoBehaviour
 {
-    public float panSpeed = 0.5f;
+    public float panSpeed = 6.0f; // Doubled again! From 3.0 to 6.0!
     public float rotationSpeed = 0.5f;
     public float snapBackDelay = 3.0f;
     public float snapSpeed = 5.0f;
