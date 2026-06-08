@@ -4,6 +4,9 @@ using System.Collections;
 using Mapbox.Unity.Map;
 using Mapbox.Unity.Location;
 using Mapbox.Utils;
+#if PLATFORM_ANDROID
+using UnityEngine.Android;
+#endif
 
 [System.Serializable]
 public class IPLocationData
@@ -34,6 +37,16 @@ public class MapAvatarTracker : MonoBehaviour
         {
             mapManager = FindFirstObjectByType<AbstractMap>();
         }
+
+#if PLATFORM_ANDROID
+        // 1. Request Hardware GPS Access immediately on startup
+        if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
+        {
+            Permission.RequestUserPermission(Permission.FineLocation);
+        }
+#endif
+        // 2. Turn on the hardware compass
+        Input.compass.enabled = true;
 
         // Setup the cinematic "Strava" zoom-in animation
         if (Camera.main != null)
@@ -212,12 +225,20 @@ public class MapAvatarTracker : MonoBehaviour
         // 3. Smoothly move the Avatar to the new location
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
 
-        // 4. Sync View Cone to Camera Rotation
+        // 4. Sync View Cone to Real-World Compass Heading!
         Transform viewCone = transform.Find("ViewCone");
-        if (viewCone != null && _mainCameraTransform != null)
+        if (viewCone != null)
         {
-            // Lock the cone's rotation exactly to the Camera's Y-rotation so it always acts as a flashlight
-            viewCone.eulerAngles = new Vector3(0, _mainCameraTransform.eulerAngles.y, 0);
+            // trueHeading is 0 when facing North, 90 East, 180 South. 
+            float targetAngle = Input.compass.trueHeading;
+            float currentAngle = viewCone.eulerAngles.y;
+            float smoothAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * 5f);
+            
+            viewCone.eulerAngles = new Vector3(0, smoothAngle, 0);
+            
+            // Also rotate the blue dot so the avatar itself faces the right way
+            Transform dot = transform.Find("Avatar_Dot");
+            if (dot != null) dot.eulerAngles = new Vector3(0, smoothAngle, 0);
         }
     }
 }
@@ -225,7 +246,7 @@ public class MapAvatarTracker : MonoBehaviour
 // Bundled into the same file to guarantee compilation
 public class MapCameraPanner : MonoBehaviour
 {
-    public float panSpeed = 6.0f; // Doubled again! From 3.0 to 6.0!
+    public float panSpeed = 18.0f; // x3 speed as requested!
     public float rotationSpeed = 0.5f;
     public float snapBackDelay = 3.0f;
     public float snapSpeed = 5.0f;
