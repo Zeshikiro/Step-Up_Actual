@@ -96,10 +96,10 @@ public class MapAvatarTracker : MonoBehaviour
         tr.minVertexDistance = 1.0f; 
         tr.transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
 
-        // --- DELETE OLD 3D AVATAR (BUT KEEP CAMERA) ---
+        // --- HIDE (BUT DO NOT DESTROY) THE 3D AVATAR SO AR CAN USE IT ---
         foreach (Transform child in transform)
         {
-            if (child.name != "Main Camera" && child.name != "MapCameraPanner")
+            if (child.name != "Main Camera" && child.name != "MapCameraPanner" && child.name != "Custom 3D Avatar")
             {
                 Destroy(child.gameObject);
             }

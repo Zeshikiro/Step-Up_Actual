@@ -16561,7 +16561,7 @@ MonoBehaviour:
       latitudeLongitude: 15.138935, 120.587532
       zoom: 19
     extentOptions:
-      extentType: 1
+      extentType: 2
       defaultExtents:
         cameraBoundsOptions:
           camera: {fileID: 330585545}
@@ -16573,7 +16573,7 @@ MonoBehaviour:
           east: 4
           south: 4
         rangeAroundTransformOptions:
-          targetTransform: {fileID: 0}
+          targetTransform: {fileID: 1913053321}
           visibleBuffer: 0
           disposeBuffer: 0
     placementOptions:
