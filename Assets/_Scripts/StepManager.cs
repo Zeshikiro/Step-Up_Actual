@@ -13,6 +13,7 @@ public class StepManager : MonoBehaviour
 {
     [Header("Step Data")]
     public int currentDailySteps = 0;
+    public int currentWeeklySteps = 0;
     public int totalLifetimeSteps = 0;
 
     [Header("Pedometer Sensitivity")]
@@ -39,6 +40,13 @@ public class StepManager : MonoBehaviour
     private float _currentSpeedMPS = 0f;
     public float CurrentSpeedMPS { get { return _currentSpeedMPS; } }
 
+    [Header("Mission Active Session (Anti-Cheat)")]
+    public bool isSessionActive = false;
+    public int sessionSteps = 0;
+    public float sessionStartTime = 0f;
+    public float sessionDurationMinutes = 0f;
+    public float sessionDistanceMeters = 0f; // Track GPS distance to prove they actually walked
+
     [Header("UI Elements")]
     [SerializeField] private TMP_Text stepTextDisplay; // Assign your UI text slot here!
 
@@ -64,6 +72,7 @@ public class StepManager : MonoBehaviour
 
         // 2. Load cached historical records from the phone's storage
         currentDailySteps = PlayerPrefs.GetInt("DailySteps", 0);
+        currentWeeklySteps = PlayerPrefs.GetInt("WeeklySteps", 0);
         totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
 
         // 3. Render the correct initial value on screen immediately
@@ -101,6 +110,8 @@ public class StepManager : MonoBehaviour
                     Vector2d posBMeters = Conversions.LatLonToMeters(currentGPS.x, currentGPS.y);
                     double distanceMeters = Vector2d.Distance(posAMeters, posBMeters);
                     
+                    if (isSessionActive) sessionDistanceMeters += (float)distanceMeters;
+
                     _currentSpeedMPS = (float)(distanceMeters / timeDelta);
                     _lastGPSPos = currentGPS;
                     _lastGPSTime = Time.time;
@@ -187,10 +198,17 @@ public class StepManager : MonoBehaviour
     void RegisterStep()
     {
         currentDailySteps++;
+        currentWeeklySteps++;
         totalLifetimeSteps++;
+
+        if (isSessionActive)
+        {
+            sessionSteps++;
+        }
 
         // Save progress locally onto the hardware storage layer
         PlayerPrefs.SetInt("DailySteps", currentDailySteps);
+        PlayerPrefs.SetInt("WeeklySteps", currentWeeklySteps);
         PlayerPrefs.SetInt("TotalLifetimeSteps", totalLifetimeSteps);
         PlayerPrefs.Save();
         
@@ -228,5 +246,21 @@ public class StepManager : MonoBehaviour
             // Updates 'TotalLifetimeSteps' under 'users/uid/' node
             dbReference.Child("users").Child(userId).Child("TotalLifetimeSteps").SetValueAsync(totalLifetimeSteps);
         }
+    }
+
+    public void StartMissionSession(float durationMinutes)
+    {
+        isSessionActive = true;
+        sessionSteps = 0;
+        sessionDistanceMeters = 0f;
+        sessionDurationMinutes = durationMinutes;
+        sessionStartTime = Time.time;
+        Debug.Log($"[StepManager] Started a {durationMinutes}-minute mission!");
+    }
+    
+    public void StopMissionSession()
+    {
+        isSessionActive = false;
+        Debug.Log($"[StepManager] Mission Stopped. Total Steps: {sessionSteps}, Total Dist: {sessionDistanceMeters}m");
     }
 }
