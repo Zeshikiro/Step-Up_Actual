@@ -43,6 +43,9 @@ public class GameplayUIManager : MonoBehaviour
 
     void Start()
     {
+        // CRITICAL MOBILE OPTIMIZATION: Cap FPS to 30 to save massive battery and stop phone overheating!
+        Application.targetFrameRate = 30;
+
         // Start the continuous looping routine
         StartCoroutine(TipRoutine());
 
