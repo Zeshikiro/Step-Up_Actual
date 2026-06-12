@@ -222,7 +222,6 @@ public class MapAvatarTracker : MonoBehaviour
             tr.emitting = true;
         }
     }
-    }
 }
 
 // Bundled into the same file to guarantee compilation
