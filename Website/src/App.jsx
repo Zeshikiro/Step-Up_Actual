@@ -6,8 +6,9 @@ import Leaderboard from './components/Leaderboard'
 import SocialFeed from './components/SocialFeed'
 import AboutUs from './components/AboutUs'
 import Profile from './components/Profile'
+import HealthTips from './components/HealthTips'
 import { useAuth } from './components/AuthContext'
-import { Home, Trophy, MessageCircle, User, Info } from 'lucide-react'
+import { Home, Trophy, MessageCircle, User, Info, Heart, Download } from 'lucide-react'
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -45,10 +46,15 @@ function App() {
         {activeTab === 'leaderboard' && <Leaderboard />}
         {activeTab === 'social' && <SocialFeed />}
         {activeTab === 'about' && <AboutUs />}
+        {activeTab === 'health' && <HealthTips />}
         {activeTab === 'auth' && <AuthWrapper />}
 
-        <footer>
-          <p style={{marginTop: '2rem'}}>A Capstone Thesis Project. Currently available on Android.</p>
+        <footer style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', marginTop: '3rem', padding: '20px' }}>
+          <p style={{ margin: 0, textAlign: 'center' }}>A Capstone Thesis Project. Currently available on Android.</p>
+          <a href="#" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'linear-gradient(135deg, #4ade80, #22c55e)', color: '#000', padding: '12px 24px', borderRadius: '30px', textDecoration: 'none', fontWeight: 'bold', fontSize: '1rem', boxShadow: '0 4px 15px rgba(74, 222, 128, 0.4)', transition: 'transform 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'} onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+            <Download size={20} />
+            Download on Google Play
+          </a>
         </footer>
 
         {/* BOTTOM NAVIGATION BAR */}
@@ -69,31 +75,37 @@ function App() {
             onClick={() => setActiveTab('home')} 
             style={{background: 'none', border: 'none', color: activeTab === 'home' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <Home size={24} />
-            <span style={{fontSize: '0.8rem'}}>Home</span>
+            <span style={{fontSize: '0.75rem'}}>Home</span>
           </button>
           <button 
             onClick={() => setActiveTab('leaderboard')} 
             style={{background: 'none', border: 'none', color: activeTab === 'leaderboard' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <Trophy size={24} />
-            <span style={{fontSize: '0.8rem'}}>Ranks</span>
+            <span style={{fontSize: '0.75rem'}}>Ranks</span>
           </button>
           <button 
             onClick={() => setActiveTab('social')} 
             style={{background: 'none', border: 'none', color: activeTab === 'social' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <MessageCircle size={24} />
-            <span style={{fontSize: '0.8rem'}}>Feed</span>
+            <span style={{fontSize: '0.75rem'}}>Feed</span>
+          </button>
+          <button 
+            onClick={() => setActiveTab('health')} 
+            style={{background: 'none', border: 'none', color: activeTab === 'health' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
+            <Heart size={24} />
+            <span style={{fontSize: '0.75rem'}}>Tips</span>
           </button>
           <button 
             onClick={() => setActiveTab('about')} 
             style={{background: 'none', border: 'none', color: activeTab === 'about' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <Info size={24} />
-            <span style={{fontSize: '0.8rem'}}>About</span>
+            <span style={{fontSize: '0.75rem'}}>About</span>
           </button>
           <button 
             onClick={() => setActiveTab('auth')} 
             style={{background: 'none', border: 'none', color: activeTab === 'auth' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <User size={24} />
-            <span style={{fontSize: '0.8rem'}}>Profile</span>
+            <span style={{fontSize: '0.75rem'}}>Profile</span>
           </button>
         </nav>
 
