@@ -147,14 +147,13 @@ public class MissionManager : MonoBehaviour
         Transform sliderT = cardObj.transform.Find("ProgressBar");
         Transform btnT = cardObj.transform.Find("ClaimButton");
 
-        if (titleT != null) ui.titleText = titleT.GetComponent<TextMeshProUGUI>();
-        if (descT != null) ui.descText = descT.GetComponent<TextMeshProUGUI>();
-        if (sliderT != null) ui.progressBar = sliderT.GetComponent<Slider>();
+        if (titleT != null) ui.titleText = titleT.GetComponentInChildren<TextMeshProUGUI>();
+        if (descT != null) ui.descText = descT.GetComponentInChildren<TextMeshProUGUI>();
+        if (sliderT != null) ui.progressBar = sliderT.GetComponentInChildren<Slider>();
         if (btnT != null)
         {
-            ui.claimButton = btnT.GetComponent<Button>();
-            Transform btnTextT = btnT.Find("Text (TMP)");
-            if (btnTextT != null) ui.claimBtnText = btnTextT.GetComponent<TextMeshProUGUI>();
+            ui.claimButton = btnT.GetComponentInChildren<Button>();
+            ui.claimBtnText = btnT.GetComponentInChildren<TextMeshProUGUI>();
         }
 
         ui.titleText.text = title;
