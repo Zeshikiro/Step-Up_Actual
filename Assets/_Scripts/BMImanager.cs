@@ -28,6 +28,19 @@ public class BMIManager : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        // Pre-fill the fields with saved data if it exists!
+        if (ageInput != null && PlayerPrefs.HasKey("SavedAge"))
+            ageInput.text = PlayerPrefs.GetString("SavedAge");
+            
+        if (heightInput != null && PlayerPrefs.HasKey("SavedHeight"))
+            heightInput.text = PlayerPrefs.GetString("SavedHeight");
+            
+        if (weightInput != null && PlayerPrefs.HasKey("SavedWeight"))
+            weightInput.text = PlayerPrefs.GetString("SavedWeight");
+    }
+
     public void CalculateBMI()
     {
         // Check if they filled out the survey (Age, Height, Weight)
@@ -52,6 +65,11 @@ public class BMIManager : MonoBehaviour
             // Save the calculated goal and category so the Missions panel can use them!
             PlayerPrefs.SetInt("DailyStepGoal", stepGoal);
             PlayerPrefs.SetString("BMICategory", category);
+
+            // Save the raw inputs so they can be loaded later!
+            PlayerPrefs.SetString("SavedAge", ageInput.text);
+            PlayerPrefs.SetString("SavedHeight", heightInput.text);
+            PlayerPrefs.SetString("SavedWeight", weightInput.text);
 
             // ADD THIS LINE HERE: Mark the BMI profile setup as officially done
             if (FirebaseAuth.DefaultInstance.CurrentUser != null)
@@ -93,7 +111,8 @@ public class BMIManager : MonoBehaviour
             PlayerPrefs.SetInt("OnboardingComplete_" + userId, 1); 
         }
         PlayerPrefs.Save();
-        bmiPanel.SetActive(false);
-        mainMenuPanel.SetActive(true);
+        
+        if (bmiPanel != null) bmiPanel.SetActive(false);
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
     }
 }

@@ -12,6 +12,7 @@ public class SettingsManager : MonoBehaviour
     public GameObject eulaPanel;     // Slot for your EULA Panel
     public AudioMixer masterMixer;   // Slot for your Audio Mixer
     public GameObject settingsPanel; // Drag your overall Settings Panel here
+    public GameObject bmiPanel;      // Slot for your BMI Panel!
 
     private void Start()
     {
@@ -42,6 +43,14 @@ public class SettingsManager : MonoBehaviour
             // Convert the 0-1 slider value to a logarithmic dB scale (-80 to 0)
             float dB = volume > 0.001f ? Mathf.Log10(volume) * 20f : -80f;
             masterMixer.SetFloat("MasterVolume", dB);
+        }
+    }
+
+    public void OnUpdateBMIClicked()
+    {
+        if (bmiPanel != null)
+        {
+            bmiPanel.SetActive(true); // Opens the BMI Panel!
         }
     }
     
