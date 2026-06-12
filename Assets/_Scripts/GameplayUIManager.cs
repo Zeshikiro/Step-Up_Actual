@@ -14,6 +14,7 @@ public class GameplayUIManager : MonoBehaviour
     public GameObject leaderboardPanel;  
     public GameObject profilePanel;     
     public GameObject summaryPanel;  
+    public GameObject customizerPanel;
 
     [Header("Tip Pop-Up Text")]
     public TextMeshProUGUI tipTitleText;
@@ -104,15 +105,17 @@ public class GameplayUIManager : MonoBehaviour
         if (leaderboardPanel) leaderboardPanel.SetActive(false);
         if (profilePanel) profilePanel.SetActive(false);
         if (summaryPanel) summaryPanel.SetActive(false);
+        if (customizerPanel) customizerPanel.SetActive(false);
     }
 
     // Call these from your specific HUD buttons
-    public void OpenMissionPanel() { HideAllPanels(); missionPanel.SetActive(true); }
-    public void OpenSettingsPanel() { HideAllPanels(); settingsPanel.SetActive(true); }
-    public void OpenProgressPanel() { HideAllPanels(); progressPanel.SetActive(true); }
-    public void OpenLeaderboardPanel() { HideAllPanels(); leaderboardPanel.SetActive(true); }
-    public void OpenProfilePanel() { HideAllPanels(); profilePanel.SetActive(true); }
-    public void OpenSummaryPanel() { HideAllPanels(); summaryPanel.SetActive(true); }
+    public void OpenMissionPanel() { HideAllPanels(); if (missionPanel) missionPanel.SetActive(true); }
+    public void OpenSettingsPanel() { HideAllPanels(); if (settingsPanel) settingsPanel.SetActive(true); }
+    public void OpenProgressPanel() { HideAllPanels(); if (progressPanel) progressPanel.SetActive(true); }
+    public void OpenLeaderboardPanel() { HideAllPanels(); if (leaderboardPanel) leaderboardPanel.SetActive(true); }
+    public void OpenProfilePanel() { HideAllPanels(); if (profilePanel) profilePanel.SetActive(true); }
+    public void OpenSummaryPanel() { HideAllPanels(); if (summaryPanel) summaryPanel.SetActive(true); }
+    public void OpenCustomizerPanel() { HideAllPanels(); if (customizerPanel) customizerPanel.SetActive(true); InventoryManager.Instance?.GenerateInventoryUI(); }
 
     // Call this from the "Back" arrows inside your new panels
     public void CloseCurrentPanel()
