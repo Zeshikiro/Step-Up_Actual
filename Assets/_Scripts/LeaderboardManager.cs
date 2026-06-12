@@ -44,8 +44,13 @@ public class LeaderboardManager : MonoBehaviour
 
     void Start()
     {
-        auth = FirebaseAuth.DefaultInstance;
-        InitializeRealtimeLeaderboard();
+        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+            if (task.Result == Firebase.DependencyStatus.Available)
+            {
+                auth = FirebaseAuth.DefaultInstance;
+                InitializeRealtimeLeaderboard();
+            }
+        });
     }
 
     private void InitializeRealtimeLeaderboard()

@@ -76,11 +76,16 @@ public class StepManager : MonoBehaviour
 
         arManager = FindFirstObjectByType<ARManager>();
 
-        if (FirebaseAuth.DefaultInstance.CurrentUser != null)
-        {
-            userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
-            dbReference = FirebaseDatabase.DefaultInstance.RootReference;
-        }
+        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+            if (task.Result == Firebase.DependencyStatus.Available)
+            {
+                if (FirebaseAuth.DefaultInstance.CurrentUser != null)
+                {
+                    userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+                    dbReference = FirebaseDatabase.DefaultInstance.RootReference;
+                }
+            }
+        });
 
         PerformDateRolloverCheck();
 
