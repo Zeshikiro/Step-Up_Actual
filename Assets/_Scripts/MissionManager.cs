@@ -268,7 +268,7 @@ public class MissionManager : MonoBehaviour
         bool isStarter = rank == "STARTER";
         bool isExplorer = rank == "EXPLORER";
         bool isTrailblazer = rank == "TRAILBLAZER";
-        bool isMarathoner = rank == "MARATHONER";
+        bool isMarathoner = rank == "MARATHONER" || rank == "ELITE RUNNER";
 
         if (bmiCat == "Underweight")
         {
