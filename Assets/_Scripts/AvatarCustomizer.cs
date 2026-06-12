@@ -252,6 +252,12 @@ public class AvatarCustomizer : MonoBehaviour
             purchasedItemIDs.Add(itemID); 
             UpdateCoinDisplay();
             
+            // Sync with master inventory so it persists!
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.UnlockItem(itemID);
+            }
+
             Debug.Log($"Successfully purchased: {itemID}. Remaining Coins: {currentCoins}");
             return true;
         }

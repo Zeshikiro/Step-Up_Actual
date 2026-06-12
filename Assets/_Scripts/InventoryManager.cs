@@ -60,6 +60,8 @@ public class InventoryManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        LoadUnlockedItems();
+
         // Pre-unlock the default casual items so they are always in the inventory
         UnlockItem("Casual_Head");
         UnlockItem("Casual_Body");
@@ -148,6 +150,30 @@ public class InventoryManager : MonoBehaviour
         if (!unlockedItems.Contains(itemId))
         {
             unlockedItems.Add(itemId);
+            SaveUnlockedItems();
+        }
+    }
+
+    public void SaveUnlockedItems()
+    {
+        // Convert HashSet to a comma-separated string and save to device
+        string[] array = new string[unlockedItems.Count];
+        unlockedItems.CopyTo(array);
+        string joined = string.Join(",", array);
+        PlayerPrefs.SetString("UnlockedItems", joined);
+        PlayerPrefs.Save();
+    }
+
+    public void LoadUnlockedItems()
+    {
+        if (PlayerPrefs.HasKey("UnlockedItems"))
+        {
+            string joined = PlayerPrefs.GetString("UnlockedItems");
+            string[] items = joined.Split(',');
+            foreach (string item in items)
+            {
+                if (!string.IsNullOrEmpty(item)) unlockedItems.Add(item.Trim());
+            }
         }
     }
 
