@@ -173,6 +173,8 @@ public class MapAvatarTracker : MonoBehaviour
         }
     }
 
+    private bool _isFirstLocationSet = false;
+
     void Update()
     {
         if (mapManager == null) return;
@@ -223,7 +225,17 @@ public class MapAvatarTracker : MonoBehaviour
         targetPosition.y = 0f;
 
         // 3. Smoothly move the Avatar to the new location
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
+        if (!_isFirstLocationSet)
+        {
+            transform.position = targetPosition;
+            _isFirstLocationSet = true;
+            TrailRenderer tr = GetComponent<TrailRenderer>();
+            if (tr != null) tr.Clear(); // Erase the teleport line!
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
+        }
 
         // 4. Sync View Cone to Real-World Compass Heading!
         Transform viewCone = transform.Find("ViewCone");
