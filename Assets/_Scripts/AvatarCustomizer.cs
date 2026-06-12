@@ -275,4 +275,9 @@ public class AvatarCustomizer : MonoBehaviour
     {
         SceneManager.LoadScene("SampleScene");
     }
+
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene("LoginScene");
+    }
 }

@@ -188,6 +188,11 @@ public class MapAvatarTracker : MonoBehaviour
             _isFirstLocationSet = true;
             StartCoroutine(SnapAndClear(targetPosition));
         }
+        else if (Vector3.Distance(transform.position, targetPosition) > 50f)
+        {
+            // If GPS suddenly jumps (e.g. from fallback to real GPS), snap instantly to prevent giant trails!
+            StartCoroutine(SnapAndClear(targetPosition));
+        }
         else
         {
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
