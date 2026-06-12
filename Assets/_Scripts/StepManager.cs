@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro; 
 using Firebase.Database;
 using Firebase.Auth;
+using Firebase.Extensions;
 using Mapbox.Unity.Location;
 using Mapbox.Utils;
 using Mapbox.Unity.Utilities;

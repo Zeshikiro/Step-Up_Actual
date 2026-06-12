@@ -8,6 +8,7 @@ using TMPro;
 using Firebase;
 using Firebase.Database;
 using Firebase.Auth;
+using Firebase.Extensions;
 
 public class LeaderboardManager : MonoBehaviour
 {
