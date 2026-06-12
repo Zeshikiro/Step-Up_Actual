@@ -1,10 +1,12 @@
 using UnityEngine;
-using TMPro; // Needed to update your screen text
+using TMPro; 
 using Firebase.Database;
 using Firebase.Auth;
 using Mapbox.Unity.Location;
 using Mapbox.Utils;
 using Mapbox.Unity.Utilities;
+using System;
+using System.Collections.Generic;
 #if UNITY_ANDROID
 using Unity.Notifications.Android;
 #endif
@@ -16,18 +18,28 @@ public class StepManager : MonoBehaviour
     public int currentWeeklySteps = 0;
     public int totalLifetimeSteps = 0;
 
+    [Header("Advanced Mission Tracking")]
+    public int yesterdaysSteps = 0;
+    public int arStepsToday = 0;
+    public int totalWeeklyARSteps = 0;
+    public int daysGoalMetThisWeek = 0;
+    public List<int> completedSessionsToday = new List<int>();
+    public int maxSessionStepsToday = 0;
+    public float maxContinuousWalkMinutes = 0f;
+
+    // Auto-Session Detection variables
+    private float lastWalkingTime = 0f;
+    private int autoSessionSteps = 0;
+    private float autoSessionStartTime = 0f;
+    private bool inAutoSession = false;
+
     [Header("Pedometer Sensitivity")]
-    [Tooltip("How hard the phone needs to shake to count a step. Default gravity is 1.0.")]
     public float stepThreshold = 1.5f; 
-    [Tooltip("Phone must settle below this before counting the next step to prevent double-counting.")]
     public float resetThreshold = 1.0f; 
 
     [Header("Anti-Cheat System")]
-    [Tooltip("Max physical speed allowed (m/s). 5m/s = 18km/h. Faster than this ignores steps (Vehicle detection).")]
     public float maxAllowedSpeed = 5.0f;
-    [Tooltip("Violent shaking detection. Spikes above this value are ignored.")]
     public float maxShakeThreshold = 3.0f;
-    [Tooltip("Minimum time (seconds) between steps. Stops rapid shaking exploits.")]
     public float minTimeBetweenSteps = 0.3f;
     
     private float _lastStepTime = 0f;
@@ -45,64 +57,122 @@ public class StepManager : MonoBehaviour
     public int sessionSteps = 0;
     public float sessionStartTime = 0f;
     public float sessionDurationMinutes = 0f;
-    public float sessionDistanceMeters = 0f; // Track GPS distance to prove they actually walked
+    public float sessionDistanceMeters = 0f; 
 
     [Header("UI Elements")]
-    [SerializeField] private TMP_Text stepTextDisplay; // Assign your UI text slot here!
+    [SerializeField] private TMP_Text stepTextDisplay; 
 
     private DatabaseReference dbReference;
     private string userId;
+    private ARManager arManager;
 
     void Start()
     {
 #if UNITY_ANDROID
         AndroidNotificationCenter.CancelAllNotifications();
 #endif
-
-        // Force the app to stay alive when they minimize it!
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-        // 1. Initialize Firebase connection strings safely
+        arManager = FindFirstObjectByType<ARManager>();
+
         if (FirebaseAuth.DefaultInstance.CurrentUser != null)
         {
             userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
             dbReference = FirebaseDatabase.DefaultInstance.RootReference;
         }
 
-        // 2. Load cached historical records from the phone's storage
-        currentDailySteps = PlayerPrefs.GetInt("DailySteps", 0);
-        currentWeeklySteps = PlayerPrefs.GetInt("WeeklySteps", 0);
-        totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
+        PerformDateRolloverCheck();
 
-        // 3. Render the correct initial value on screen immediately
+        // Render the correct initial value on screen immediately
         UpdateStepUI();
 
-        // 4. Hook into Mapbox for GPS Anti-Cheat
         if (LocationProviderFactory.Instance != null)
         {
             _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
         }
     }
 
+    private void PerformDateRolloverCheck()
+    {
+        string lastDate = PlayerPrefs.GetString("LastLoginDate", "");
+        string todayDate = System.DateTime.Now.ToString("yyyyMMdd");
+        
+        currentDailySteps = PlayerPrefs.GetInt("DailySteps", 0);
+        currentWeeklySteps = PlayerPrefs.GetInt("WeeklySteps", 0);
+        totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
+
+        if (lastDate != todayDate && !string.IsNullOrEmpty(lastDate))
+        {
+            // Rollover!
+            yesterdaysSteps = currentDailySteps;
+            PlayerPrefs.SetInt("YesterdaysSteps", yesterdaysSteps);
+            
+            // Check if they met yesterday's goal before resetting
+            int dailyGoal = PlayerPrefs.GetInt("DailyStepGoal", 10000);
+            if (currentDailySteps >= dailyGoal) 
+            {
+                daysGoalMetThisWeek = PlayerPrefs.GetInt("DaysGoalMetThisWeek", 0) + 1;
+                PlayerPrefs.SetInt("DaysGoalMetThisWeek", daysGoalMetThisWeek);
+            }
+
+            // Reset Daily Stats
+            currentDailySteps = 0;
+            arStepsToday = 0;
+            maxSessionStepsToday = 0;
+            maxContinuousWalkMinutes = 0f;
+            PlayerPrefs.SetString("CompletedSessions", ""); // Clear sessions
+            
+            // Weekly check (if it's Monday)
+            if (System.DateTime.Today.DayOfWeek == DayOfWeek.Monday)
+            {
+                currentWeeklySteps = 0;
+                totalWeeklyARSteps = 0;
+                daysGoalMetThisWeek = 0;
+                PlayerPrefs.SetInt("DaysGoalMetThisWeek", 0);
+                PlayerPrefs.SetInt("WeeklyARSteps", 0);
+            }
+
+            SaveAllProgress();
+            PlayerPrefs.SetString("LastLoginDate", todayDate);
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(lastDate)) PlayerPrefs.SetString("LastLoginDate", todayDate);
+            
+            yesterdaysSteps = PlayerPrefs.GetInt("YesterdaysSteps", 0);
+            daysGoalMetThisWeek = PlayerPrefs.GetInt("DaysGoalMetThisWeek", 0);
+            arStepsToday = PlayerPrefs.GetInt("ARStepsToday", 0);
+            totalWeeklyARSteps = PlayerPrefs.GetInt("WeeklyARSteps", 0);
+            maxSessionStepsToday = PlayerPrefs.GetInt("MaxSessionStepsToday", 0);
+            maxContinuousWalkMinutes = PlayerPrefs.GetFloat("MaxContinuousWalkMinutes", 0f);
+            
+            string sessions = PlayerPrefs.GetString("CompletedSessions", "");
+            if (!string.IsNullOrEmpty(sessions))
+            {
+                string[] parts = sessions.Split(',');
+                foreach(string p in parts) {
+                    if (int.TryParse(p, out int val)) completedSessionsToday.Add(val);
+                }
+            }
+        }
+    }
+
     void Update()
     {
-        // --- PC TESTING MODE (The Spacebar) ---
         if (Input.GetKeyDown(KeyCode.Space))
         {
             RegisterStep();
         }
 
-        // --- MOBILE HARDWARE MODE (The Accelerometer) ---
         float acceleration = Input.acceleration.magnitude;
 
-        // --- ANTI-CHEAT: Calculate GPS Speed ---
+        // GPS Speed Tracker
         if (_locationProvider != null && _locationProvider.CurrentLocation.LatitudeLongitude != Vector2d.zero)
         {
             Vector2d currentGPS = _locationProvider.CurrentLocation.LatitudeLongitude;
             if (_lastGPSPos != Vector2d.zero)
             {
-                // Only check speed every 1 second to get a stable reading
                 float timeDelta = Time.time - _lastGPSTime;
                 if (timeDelta >= 1.0f)
                 {
@@ -124,49 +194,81 @@ public class StepManager : MonoBehaviour
             }
         }
 
-        // --- ANTI-CHEAT: Analyze Acceleration ---
-        // 1. Must be above Step Threshold, but below Shake Threshold (violent shaking)
         if (acceleration > stepThreshold && acceleration < maxShakeThreshold && isStepReady)
         {
-            // 2. Cooldown timer to prevent rapid shaking
             if (Time.time - _lastStepTime >= minTimeBetweenSteps)
             {
-                // 3. GPS Vehicle check (Are they in a car?)
                 if (_currentSpeedMPS <= maxAllowedSpeed)
                 {
                     RegisterStep();
                     _lastStepTime = Time.time;
-                    isStepReady = false; // Lock tracking loop frame execution
+                    isStepReady = false; 
                 }
             }
         }
         
         if (acceleration < resetThreshold)
         {
-            isStepReady = true; // Settle state reached, unlock loop
+            isStepReady = true; 
+        }
+
+        // Auto-Session Detection logic
+        if (inAutoSession)
+        {
+            // If they haven't walked for 2 minutes, the session ends
+            if (Time.time - lastWalkingTime > 120f)
+            {
+                EndAutoSession();
+            }
         }
     }
 
-    // This runs automatically when the user minimizes the app (presses the home button)
+    private void EndAutoSession()
+    {
+        if (!inAutoSession) return;
+        
+        float durationMins = (lastWalkingTime - autoSessionStartTime) / 60f;
+        if (durationMins > maxContinuousWalkMinutes) maxContinuousWalkMinutes = durationMins;
+        
+        if (autoSessionSteps > maxSessionStepsToday) maxSessionStepsToday = autoSessionSteps;
+        
+        // Only save meaningful sessions (e.g., > 100 steps)
+        if (autoSessionSteps >= 100)
+        {
+            completedSessionsToday.Add(autoSessionSteps);
+            PlayerPrefs.SetString("CompletedSessions", string.Join(",", completedSessionsToday));
+        }
+
+        PlayerPrefs.SetInt("MaxSessionStepsToday", maxSessionStepsToday);
+        PlayerPrefs.SetFloat("MaxContinuousWalkMinutes", maxContinuousWalkMinutes);
+        
+        inAutoSession = false;
+        autoSessionSteps = 0;
+    }
+
     void OnApplicationPause(bool isPaused)
     {
-#if UNITY_ANDROID
         if (isPaused)
         {
-            // They went to the home screen! Send a notification with their steps.
+            EndAutoSession(); // End session safely if they background the app
+#if UNITY_ANDROID
             SendStepNotification();
+#endif
+            SaveAllProgress();
         }
         else
         {
-            // They came back! Clear the notification.
+#if UNITY_ANDROID
             AndroidNotificationCenter.CancelNotification(777); 
-        }
 #endif
+            PerformDateRolloverCheck(); // Check if day changed while suspended
+        }
     }
 
-    // This runs when the app is completely closed (swiped away from recents)
     void OnApplicationQuit()
     {
+        EndAutoSession();
+        SaveAllProgress();
 #if UNITY_ANDROID
         AndroidNotificationCenter.CancelAllNotifications();
 #endif
@@ -179,7 +281,7 @@ public class StepManager : MonoBehaviour
         {
             Id = "step_tracker_background",
             Name = "Background Step Tracker",
-            Importance = Importance.Low, // Low importance so it doesn't constantly beep, just sits in the tray
+            Importance = Importance.Low, 
             Description = "Tracks your steps while the app is minimized."
         };
         AndroidNotificationCenter.RegisterNotificationChannel(channel);
@@ -188,9 +290,8 @@ public class StepManager : MonoBehaviour
         notification.Title = "Step-Up is tracking!";
         notification.Text = $"You have taken {currentDailySteps} steps today. Keep going!";
         notification.FireTime = System.DateTime.Now;
-        notification.SmallIcon = "icon"; // Uses default app icon
+        notification.SmallIcon = "icon"; 
 
-        // Sending with a specific ID (777) so we can update it or cancel it later
         AndroidNotificationCenter.SendNotificationWithExplicitID(notification, "step_tracker_background", 777);
     }
 #endif
@@ -201,34 +302,48 @@ public class StepManager : MonoBehaviour
         currentWeeklySteps++;
         totalLifetimeSteps++;
 
+        if (arManager != null && arManager.IsARMode)
+        {
+            arStepsToday++;
+            totalWeeklyARSteps++;
+        }
+
         if (isSessionActive)
         {
             sessionSteps++;
         }
 
-        // Save progress locally onto the hardware storage layer
-        PlayerPrefs.SetInt("DailySteps", currentDailySteps);
-        PlayerPrefs.SetInt("WeeklySteps", currentWeeklySteps);
-        PlayerPrefs.SetInt("TotalLifetimeSteps", totalLifetimeSteps);
-        PlayerPrefs.Save();
-        
-        // Update the user screen interface elements
-        UpdateStepUI();
+        // Auto Session tracking
+        if (!inAutoSession)
+        {
+            inAutoSession = true;
+            autoSessionStartTime = Time.time;
+            autoSessionSteps = 0;
+        }
+        autoSessionSteps++;
+        lastWalkingTime = Time.time;
 
-        // Sync live data up to your Firebase Database Tree matching LeaderboardManager's query
+        if (currentDailySteps % 50 == 0) SaveAllProgress(); // Periodically save
+        
+        UpdateStepUI();
         SyncStepsToFirebase();
 
 #if UNITY_ANDROID
-        // If they are walking while the app is minimized, update the notification silently!
-        // (We don't know for sure if it's minimized here, but sending it again updates the existing one)
-        // We only do this every 10 steps so we don't spam the Android OS battery
         if (currentDailySteps % 10 == 0)
         {
             SendStepNotification();
         }
 #endif
+    }
 
-        Debug.Log($"Step Tracked! Daily: {currentDailySteps} | Lifetime: {totalLifetimeSteps}");
+    private void SaveAllProgress()
+    {
+        PlayerPrefs.SetInt("DailySteps", currentDailySteps);
+        PlayerPrefs.SetInt("WeeklySteps", currentWeeklySteps);
+        PlayerPrefs.SetInt("TotalLifetimeSteps", totalLifetimeSteps);
+        PlayerPrefs.SetInt("ARStepsToday", arStepsToday);
+        PlayerPrefs.SetInt("WeeklyARSteps", totalWeeklyARSteps);
+        PlayerPrefs.Save();
     }
 
     private void UpdateStepUI()
@@ -243,7 +358,6 @@ public class StepManager : MonoBehaviour
     {
         if (dbReference != null && !string.IsNullOrEmpty(userId))
         {
-            // Updates 'TotalLifetimeSteps' under 'users/uid/' node
             dbReference.Child("users").Child(userId).Child("TotalLifetimeSteps").SetValueAsync(totalLifetimeSteps);
         }
     }

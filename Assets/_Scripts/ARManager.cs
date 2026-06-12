@@ -43,6 +43,7 @@ public class ARManager : MonoBehaviour
 
     private WebCamTexture backCamera;
     private bool isARMode = false;
+    public bool IsARMode { get { return isARMode; } }
     private bool isFacingUser = true;
     private bool isPermissionRequested = false;
 
