@@ -10,7 +10,6 @@ public class GameplayUIManager : MonoBehaviour
     public GameObject tipPopupPanel;
     public GameObject missionPanel;      
     public GameObject settingsPanel;     
-    public GameObject progressPanel;     
     public GameObject leaderboardPanel;  
     public GameObject profilePanel;     
     public GameObject summaryPanel;  
@@ -101,7 +100,6 @@ public class GameplayUIManager : MonoBehaviour
     {
         if (missionPanel) missionPanel.SetActive(false);
         if (settingsPanel) settingsPanel.SetActive(false);
-        if (progressPanel) progressPanel.SetActive(false);
         if (leaderboardPanel) leaderboardPanel.SetActive(false);
         if (profilePanel) profilePanel.SetActive(false);
         if (summaryPanel) summaryPanel.SetActive(false);
@@ -111,7 +109,6 @@ public class GameplayUIManager : MonoBehaviour
     // Call these from your specific HUD buttons
     public void OpenMissionPanel() { HideAllPanels(); if (missionPanel) missionPanel.SetActive(true); }
     public void OpenSettingsPanel() { HideAllPanels(); if (settingsPanel) settingsPanel.SetActive(true); }
-    public void OpenProgressPanel() { HideAllPanels(); if (progressPanel) progressPanel.SetActive(true); }
     public void OpenLeaderboardPanel() { HideAllPanels(); if (leaderboardPanel) leaderboardPanel.SetActive(true); }
     public void OpenProfilePanel() { HideAllPanels(); if (profilePanel) profilePanel.SetActive(true); }
     public void OpenSummaryPanel() { HideAllPanels(); if (summaryPanel) summaryPanel.SetActive(true); }
