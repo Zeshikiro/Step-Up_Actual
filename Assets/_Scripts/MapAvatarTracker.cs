@@ -105,50 +105,8 @@ public class MapAvatarTracker : MonoBehaviour
             }
         }
 
-        // --- CREATE PREMIUM 2D STRAVA AVATAR ---
-        // 1. Outer White Ring
-        GameObject ring = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        ring.name = "Avatar_Ring";
-        ring.transform.SetParent(transform);
-        ring.transform.localPosition = new Vector3(0, 0.1f, 0);
-        ring.transform.localScale = new Vector3(3f, 0.01f, 3f); // Flat!
-        Destroy(ring.GetComponent<CapsuleCollider>()); // Remove physics
-        Material ringMat = new Material(Shader.Find("Unlit/Color"));
-        ringMat.color = Color.white;
-        ring.GetComponent<MeshRenderer>().material = ringMat;
-
-        // 2. Inner Blue Dot
-        GameObject dot = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        dot.name = "Avatar_Dot";
-        dot.transform.SetParent(transform);
-        dot.transform.localPosition = new Vector3(0, 0.15f, 0); // Slightly higher than ring
-        dot.transform.localScale = new Vector3(2.2f, 0.01f, 2.2f);
-        Destroy(dot.GetComponent<CapsuleCollider>());
-        Material dotMat = new Material(Shader.Find("Unlit/Color"));
-        dotMat.color = new Color(0.0f, 0.5f, 1.0f); // Bright blue
-        dot.GetComponent<MeshRenderer>().material = dotMat;
-
-        // 3. View Cone (Semi-transparent triangle)
-        GameObject cone = new GameObject("ViewCone");
-        cone.transform.SetParent(transform);
-        cone.transform.localPosition = new Vector3(0, 0.05f, 0); // Lowest layer
-        
-        MeshRenderer coneRenderer = cone.AddComponent<MeshRenderer>();
-        MeshFilter coneFilter = cone.AddComponent<MeshFilter>();
-        
-        Material coneMat = new Material(Shader.Find("Sprites/Default"));
-        coneMat.color = new Color(0.0f, 0.5f, 1.0f, 0.35f); // 35% opacity blue
-        coneRenderer.material = coneMat;
-
-        // Draw a flat triangle pointing forward (Z-axis)
-        Mesh m = new Mesh();
-        m.vertices = new Vector3[] {
-            Vector3.zero,
-            new Vector3(-4.5f, 0, 9f), // left forward
-            new Vector3(4.5f, 0, 9f)   // right forward
-        };
-        m.triangles = new int[] { 0, 1, 2 }; // Clockwise face
-        coneFilter.mesh = m;
+        // We no longer generate a 2D Blue Dot Avatar!
+        // The Custom 3D Avatar child object will be used instead.
     }
 
     private IEnumerator FetchIPLocationFallback()
@@ -227,31 +185,43 @@ public class MapAvatarTracker : MonoBehaviour
         // 3. Smoothly move the Avatar to the new location
         if (!_isFirstLocationSet)
         {
-            transform.position = targetPosition;
             _isFirstLocationSet = true;
-            TrailRenderer tr = GetComponent<TrailRenderer>();
-            if (tr != null) tr.Clear(); // Erase the teleport line!
+            StartCoroutine(SnapAndClear(targetPosition));
         }
         else
         {
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
         }
 
-        // 4. Sync View Cone to Real-World Compass Heading!
-        Transform viewCone = transform.Find("ViewCone");
-        if (viewCone != null)
+        // 4. Sync Avatar Rotation to Real-World Compass Heading!
+        float targetAngle = Input.compass.trueHeading;
+        float currentAngle = transform.eulerAngles.y;
+        float smoothAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * 5f);
+        
+        // Rotate the actual 3D Avatar child object to face the compass direction!
+        Transform custom3DAvatar = transform.Find("Custom 3D Avatar");
+        if (custom3DAvatar != null)
         {
-            // trueHeading is 0 when facing North, 90 East, 180 South. 
-            float targetAngle = Input.compass.trueHeading;
-            float currentAngle = viewCone.eulerAngles.y;
-            float smoothAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * 5f);
-            
-            viewCone.eulerAngles = new Vector3(0, smoothAngle, 0);
-            
-            // Also rotate the blue dot so the avatar itself faces the right way
-            Transform dot = transform.Find("Avatar_Dot");
-            if (dot != null) dot.eulerAngles = new Vector3(0, smoothAngle, 0);
+            custom3DAvatar.eulerAngles = new Vector3(0, smoothAngle, 0);
         }
+    }
+
+    private IEnumerator SnapAndClear(Vector3 targetPosition)
+    {
+        TrailRenderer tr = GetComponent<TrailRenderer>();
+        if (tr != null) tr.emitting = false;
+        
+        transform.position = targetPosition;
+        
+        yield return null; // Wait one physical frame
+        yield return new WaitForEndOfFrame(); // Wait for rendering cycle
+        
+        if (tr != null)
+        {
+            tr.Clear();
+            tr.emitting = true;
+        }
+    }
     }
 }
 
