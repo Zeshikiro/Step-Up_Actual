@@ -41,6 +41,12 @@ public class ShopItemButton : MonoBehaviour
 
     public void RefreshButtonState()
     {
+        // Sync with the global database on load so it remembers purchases across scenes!
+        if (InventoryManager.Instance != null && InventoryManager.Instance.IsItemUnlocked(shopItem.itemName))
+        {
+            shopItem.isPurchased = true;
+        }
+
         if (priceText != null)
         {
             priceText.text = shopItem.isPurchased ? "Owned" : shopItem.price.ToString() + " Coins";
