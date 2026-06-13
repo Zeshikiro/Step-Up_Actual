@@ -5022,6 +5022,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 692945544}
   m_CullTransparentMesh: 1
+--- !u!1 &703161218
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 703161220}
+  - component: {fileID: 703161219}
+  m_Layer: 0
+  m_Name: Yelpmanager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &703161219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703161218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e5afe0a10ebced4bace6933c867c3a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YelpPlacesManager
+  yelpApiKey: K0OhxkJ5Ig_1RkykCaAnU6Ico1FOsKmW951hL3w1B3OjGrBKoRSqTT8fIdAhMmDq5N4BSot3BeUbdQYwcT1yaEdMGTw3MXM0WB65GkqXxZAt7e9UiVGjwP_cG8gsanYx
+  searchLimit: 5
+  searchRadius: 1000
+  mapManager: {fileID: 114196495893561787}
+  mapPinBillboardPrefab: {fileID: 3631413770235933652, guid: 05a48678c8ff76c4baa4fbb30e54737f, type: 3}
+--- !u!4 &703161220
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703161218}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 164.66362, y: 286.92834, z: 25.50116}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &706076494
 GameObject:
   m_ObjectHideFlags: 0
@@ -42330,3 +42379,4 @@ SceneRoots:
   - {fileID: 542225138}
   - {fileID: 2134100778}
   - {fileID: 5751498650381774596}
+  - {fileID: 703161220}

@@ -388,3 +388,21 @@ Project: Step - Up (Cloud Saves, Web App Overhaul, & Fixes)
 - (On Hold) Revamp the step-to-coin economy system.
 
 End of DevLog |
+==================================================
+Date: June 13, 2026
+
+1. Map & Avatar Technical Fixes:
+- Fixed a persistent invisibility bug with the 3D Avatar by ensuring correct mesh naming ("MCasual2") in the InventoryManager script.
+- Dramatically optimized Mapbox generation by dropping the Zoom level from 19 to 16, which significantly reduces the amount of geometry required.
+- Identified and removed "Extruded Buildings" from Mapbox features, eliminating extreme lag spikes on mobile devices.
+- Patched a Mapbox GPS recursive death-loop in MapAvatarTracker.cs by implementing a 5-second cooldown on map recentering updates.
+
+2. Major API Integration (Yelp Fusion):
+- Pivoted away from Google Places API due to credit card authorization requirements and successfully integrated the Yelp Fusion API for POI data.
+- Created YelpPlacesManager.cs to fetch nearby Parks, Fitness Centers, and Cafes dynamically based on the player's real GPS coordinates.
+- Wrote YelpBillboardFacer.cs and YelpPrefabBuilder.cs (Editor Script) to procedurally generate 3D floating canvases that download and display high-quality business photos from the web.
+- Handled API optimization by strictly limiting queries to 5 locations at a time to remain well within Yelp's 5,000 requests/month free tier.
+
+Next Steps:
+- Field test the Yelp Pins out in the real world.
+- Ensure the floating canvases do not overlap when multiple cafes are close together.
