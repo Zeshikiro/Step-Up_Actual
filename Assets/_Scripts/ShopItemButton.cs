@@ -55,9 +55,21 @@ public class ShopItemButton : MonoBehaviour
         // Transaction Logic: Only runs if the student doesn't own this item card yet
         if (!shopItem.isPurchased)
         {
-            if (avatarCustomizer.currentCoins >= shopItem.price)
+            bool purchaseSuccessful = false;
+            
+            // Deduct coins from global Inventory Manager
+            if (InventoryManager.Instance != null && InventoryManager.Instance.SpendCoins(shopItem.price))
+            {
+                purchaseSuccessful = true;
+            }
+            else if (avatarCustomizer.currentCoins >= shopItem.price) // Fallback for local testing
             {
                 avatarCustomizer.currentCoins -= shopItem.price;
+                purchaseSuccessful = true;
+            }
+
+            if (purchaseSuccessful)
+            {
                 shopItem.isPurchased = true;
         
                 // 1. Tell your runtime scene customize manager it's owned

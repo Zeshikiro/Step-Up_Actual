@@ -179,6 +179,21 @@ public class MapAvatarTracker : MonoBehaviour
         // 2. Convert real-world GPS into Unity 3D World space
         Vector3 targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
         
+        // --- CRITICAL FIX: PREVENT FLOATING POINT CRASH & MASSIVE TILE SPAWN LAG ---
+        // If the GPS jumped across the world, targetPosition will be 1,000,000+ units away.
+        // This causes Mapbox to try to load 10,000 tiles and crashes the game!
+        if (targetPosition.magnitude > 500f)
+        {
+            Debug.Log("[MapAvatarTracker] GPS jumped too far! Re-centering map to prevent lag!");
+            mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom);
+            
+            // Recalculate target position relative to the NEW perfectly centered map!
+            targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
+            
+            // Force an instant snap so it doesn't drag a massive trail
+            StartCoroutine(SnapAndClear(targetPosition));
+        }
+
         // Keep the avatar at ground level (Y = 0) so it doesn't fly or sink
         targetPosition.y = 0f;
 
