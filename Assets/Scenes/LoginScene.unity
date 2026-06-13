@@ -344,6 +344,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: coins
+      value: 99999999
+      objectReference: {fileID: 0}
     - target: {fileID: 8402000206842630692, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
       propertyPath: m_Name
       value: InventoryManager

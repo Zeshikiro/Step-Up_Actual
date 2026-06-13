@@ -20091,7 +20091,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
       propertyPath: coins
-      value: 2147483647
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
       propertyPath: feetContentGrid
