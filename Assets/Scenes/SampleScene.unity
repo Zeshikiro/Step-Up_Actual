@@ -1986,7 +1986,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 1.5582275}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &254705963
 MonoBehaviour:
@@ -7663,6 +7663,46 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -3650
       objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: maleAvatar
+      value: 
+      objectReference: {fileID: 6152979562855952643}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: femaleAvatar
+      value: 
+      objectReference: {fileID: 8031795149494208461}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultMaleBody
+      value: 
+      objectReference: {fileID: 6870410816840282352}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultMaleFeet
+      value: 
+      objectReference: {fileID: 6367356377817957527}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultMaleHead
+      value: 
+      objectReference: {fileID: 523643912090963258}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultMaleLegs
+      value: 
+      objectReference: {fileID: 3592238470600353669}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultFemaleBody
+      value: 
+      objectReference: {fileID: 8254923383541625379}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultFemaleFeet
+      value: 
+      objectReference: {fileID: 1615313732379792610}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultFemaleHead
+      value: 
+      objectReference: {fileID: 3445392040822823529}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultFemaleLegs
+      value: 
+      objectReference: {fileID: 3768260371238521750}
     - target: {fileID: 7601471083042564269, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -17146,7 +17186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _options:
     locationOptions:
-      latitudeLongitude: 15.138935, 120.587532
+      latitudeLongitude: 
       zoom: 19
     extentOptions:
       extentType: 2
@@ -17161,8 +17201,8 @@ MonoBehaviour:
           east: 4
           south: 4
         rangeAroundTransformOptions:
-          targetTransform: {fileID: 1913053321}
-          visibleBuffer: 0
+          targetTransform: {fileID: 330585546}
+          visibleBuffer: 2
           disposeBuffer: 0
     placementOptions:
       placementType: 1

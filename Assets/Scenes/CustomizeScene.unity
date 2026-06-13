@@ -516,474 +516,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1 &1049420907
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1049420909}
-  - component: {fileID: 1049420908}
-  m_Layer: 0
-  m_Name: InventoryManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1049420908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1049420907}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 271dd4114b4779a4ea98b24b0202010e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
-  masterInventoryList:
-  - itemId: MAdventurer_Body
-    associatedOutfitName: Adventurer
-    category: Body
-    itemMeshPrefab: {fileID: -6265962876407639048, guid: fbce2317cfb94bc4b8a25c58868a6be5, type: 3}
-    itemIcon: {fileID: 1050685809, guid: 880f0e607f98ce2499f1dda475aef529, type: 3}
-  - itemId: MAdventurer_Feet
-    associatedOutfitName: Adventurer
-    category: feet
-    itemMeshPrefab: {fileID: -9156213897992395684, guid: fbce2317cfb94bc4b8a25c58868a6be5, type: 3}
-    itemIcon: {fileID: -220729531, guid: 880f0e607f98ce2499f1dda475aef529, type: 3}
-  - itemId: MAdventurer_Legs
-    associatedOutfitName: Worker
-    category: legs
-    itemMeshPrefab: {fileID: 6524324310855178483, guid: fbce2317cfb94bc4b8a25c58868a6be5, type: 3}
-    itemIcon: {fileID: 144468303, guid: 880f0e607f98ce2499f1dda475aef529, type: 3}
-  - itemId: MAdventurer_Head
-    associatedOutfitName: Adventurer
-    category: head
-    itemMeshPrefab: {fileID: 5258190849253663350, guid: fbce2317cfb94bc4b8a25c58868a6be5, type: 3}
-    itemIcon: {fileID: 1102115615, guid: 880f0e607f98ce2499f1dda475aef529, type: 3}
-  - itemId: MBackpack
-    associatedOutfitName: M_Adventurer
-    category: accessory
-    itemMeshPrefab: {fileID: 2918007061440450739, guid: fbce2317cfb94bc4b8a25c58868a6be5, type: 3}
-    itemIcon: {fileID: 21300000, guid: b496fd8dccf0cef4fb91ff98c6600167, type: 3}
-  - itemId: MBeach_Body
-    associatedOutfitName: Beach
-    category: torso
-    itemMeshPrefab: {fileID: -3605465830341378012, guid: 921717bcc68282f488b5fb8c3b4767be, type: 3}
-    itemIcon: {fileID: -828486748, guid: 508c0307ac8e6a348b1a217bdb536ef1, type: 3}
-  - itemId: MBeach_Feet
-    associatedOutfitName: Beach
-    category: feet
-    itemMeshPrefab: {fileID: -1909940347487822481, guid: 921717bcc68282f488b5fb8c3b4767be, type: 3}
-    itemIcon: {fileID: -74692044, guid: 508c0307ac8e6a348b1a217bdb536ef1, type: 3}
-  - itemId: MBeach_Head
-    associatedOutfitName: Beach
-    category: head
-    itemMeshPrefab: {fileID: -2996878448379084587, guid: 921717bcc68282f488b5fb8c3b4767be, type: 3}
-    itemIcon: {fileID: -1060445133, guid: 508c0307ac8e6a348b1a217bdb536ef1, type: 3}
-  - itemId: MBeach_Legs
-    associatedOutfitName: Beach
-    category: legs
-    itemMeshPrefab: {fileID: 8578453713733734366, guid: 921717bcc68282f488b5fb8c3b4767be, type: 3}
-    itemIcon: {fileID: -1846682838, guid: 508c0307ac8e6a348b1a217bdb536ef1, type: 3}
-  - itemId: MCasual2_Body
-    associatedOutfitName: Casual_2
-    category: torso
-    itemMeshPrefab: {fileID: -7497452054063537685, guid: be6c1fcd4b4ba22498d66484d770b5b0, type: 3}
-    itemIcon: {fileID: 2113975494, guid: 011cc9aee4936494d94040cf32984d72, type: 3}
-  - itemId: MCasual2_Head
-    associatedOutfitName: Casual_2
-    category: head
-    itemMeshPrefab: {fileID: 7478026093914412238, guid: be6c1fcd4b4ba22498d66484d770b5b0, type: 3}
-    itemIcon: {fileID: 158735900, guid: 011cc9aee4936494d94040cf32984d72, type: 3}
-  - itemId: MCasual2_Legs
-    associatedOutfitName: Casual
-    category: legs
-    itemMeshPrefab: {fileID: -8815039289795588858, guid: be6c1fcd4b4ba22498d66484d770b5b0, type: 3}
-    itemIcon: {fileID: -1068765071, guid: 011cc9aee4936494d94040cf32984d72, type: 3}
-  - itemId: MCasual2_Feet
-    associatedOutfitName: Casual
-    category: feet
-    itemMeshPrefab: {fileID: 8682358056130444002, guid: be6c1fcd4b4ba22498d66484d770b5b0, type: 3}
-    itemIcon: {fileID: -1660231884, guid: 011cc9aee4936494d94040cf32984d72, type: 3}
-  - itemId: MFarmer_Body
-    associatedOutfitName: Farmer
-    category: torso
-    itemMeshPrefab: {fileID: -9112597814749357591, guid: c8c25b06b96f0ac40ac244caa6da8bc3, type: 3}
-    itemIcon: {fileID: -1053820087, guid: 1ffaf302579291544b204784e704592e, type: 3}
-  - itemId: MFarmer_Feet
-    associatedOutfitName: Farmer
-    category: feet
-    itemMeshPrefab: {fileID: -5773849006447565071, guid: c8c25b06b96f0ac40ac244caa6da8bc3, type: 3}
-    itemIcon: {fileID: -656799906, guid: 1ffaf302579291544b204784e704592e, type: 3}
-  - itemId: MFarmer_Head
-    associatedOutfitName: Farmer
-    category: head
-    itemMeshPrefab: {fileID: -2015153887184360165, guid: c8c25b06b96f0ac40ac244caa6da8bc3, type: 3}
-    itemIcon: {fileID: -114286386, guid: 1ffaf302579291544b204784e704592e, type: 3}
-  - itemId: MFarmer_Pants
-    associatedOutfitName: Farmer
-    category: legs
-    itemMeshPrefab: {fileID: -8914122527128530343, guid: c8c25b06b96f0ac40ac244caa6da8bc3, type: 3}
-    itemIcon: {fileID: -663655399, guid: 1ffaf302579291544b204784e704592e, type: 3}
-  - itemId: Mking_Body
-    associatedOutfitName: King
-    category: torso
-    itemMeshPrefab: {fileID: 3431647977250366444, guid: 3a6d20779ca31ec4283cef11f3864805, type: 3}
-    itemIcon: {fileID: 962676351, guid: 305cc8484b110d749afaddb9c66434ff, type: 3}
-  - itemId: Mking_Feet
-    associatedOutfitName: King
-    category: feet
-    itemMeshPrefab: {fileID: 6554992582287353940, guid: 3a6d20779ca31ec4283cef11f3864805, type: 3}
-    itemIcon: {fileID: 1820342268, guid: 305cc8484b110d749afaddb9c66434ff, type: 3}
-  - itemId: Mking_Head
-    associatedOutfitName: King
-    category: head
-    itemMeshPrefab: {fileID: 1865733129442028304, guid: 3a6d20779ca31ec4283cef11f3864805, type: 3}
-    itemIcon: {fileID: -1786248303, guid: 305cc8484b110d749afaddb9c66434ff, type: 3}
-  - itemId: Mking_legs
-    associatedOutfitName: King
-    category: legs
-    itemMeshPrefab: {fileID: 5985749035149929363, guid: 3a6d20779ca31ec4283cef11f3864805, type: 3}
-    itemIcon: {fileID: 1463773403, guid: 305cc8484b110d749afaddb9c66434ff, type: 3}
-  - itemId: MPunk_Body
-    associatedOutfitName: Punk
-    category: torso
-    itemMeshPrefab: {fileID: -2271002661015140080, guid: 4c5b4c38cf9d81b4abf704e58029581d, type: 3}
-    itemIcon: {fileID: -2075978235, guid: e9c7b6bbfdaa6724ab69e8faef57d313, type: 3}
-  - itemId: MPunk_Feet
-    associatedOutfitName: Punk
-    category: feet
-    itemMeshPrefab: {fileID: 763963298098208558, guid: 4c5b4c38cf9d81b4abf704e58029581d, type: 3}
-    itemIcon: {fileID: 895074618, guid: e9c7b6bbfdaa6724ab69e8faef57d313, type: 3}
-  - itemId: MPunk_Head
-    associatedOutfitName: Punk
-    category: head
-    itemMeshPrefab: {fileID: 598959290848418299, guid: 4c5b4c38cf9d81b4abf704e58029581d, type: 3}
-    itemIcon: {fileID: 53187498, guid: e9c7b6bbfdaa6724ab69e8faef57d313, type: 3}
-  - itemId: MPunk_Legs
-    associatedOutfitName: Punk
-    category: legs
-    itemMeshPrefab: {fileID: -7920108526992851071, guid: 4c5b4c38cf9d81b4abf704e58029581d, type: 3}
-    itemIcon: {fileID: -1206919553, guid: e9c7b6bbfdaa6724ab69e8faef57d313, type: 3}
-  - itemId: MSpaceSuit_Body
-    associatedOutfitName: SpaceSuit
-    category: torso
-    itemMeshPrefab: {fileID: 4068779354081428449, guid: 9475901bc1c1bb146aa907aaefaca9e0, type: 3}
-    itemIcon: {fileID: -1190597382, guid: 1f31c34a588cc7f4ea2ad858024fff95, type: 3}
-  - itemId: MSpaceSuit_Feet
-    associatedOutfitName: Spacesuit
-    category: feet
-    itemMeshPrefab: {fileID: -950217959463492492, guid: 9475901bc1c1bb146aa907aaefaca9e0, type: 3}
-    itemIcon: {fileID: -1235040339, guid: 1f31c34a588cc7f4ea2ad858024fff95, type: 3}
-  - itemId: MSpaceSuit_Head
-    associatedOutfitName: Spacesuit
-    category: head
-    itemMeshPrefab: {fileID: -7647025840046622778, guid: 9475901bc1c1bb146aa907aaefaca9e0, type: 3}
-    itemIcon: {fileID: 484588387, guid: 1f31c34a588cc7f4ea2ad858024fff95, type: 3}
-  - itemId: MSpaceSuit_Legs
-    associatedOutfitName: Spacesuit
-    category: legs
-    itemMeshPrefab: {fileID: 5056711460360065084, guid: 9475901bc1c1bb146aa907aaefaca9e0, type: 3}
-    itemIcon: {fileID: -602146171, guid: 1f31c34a588cc7f4ea2ad858024fff95, type: 3}
-  - itemId: MSuit_Body
-    associatedOutfitName: Suit
-    category: torso
-    itemMeshPrefab: {fileID: 5234347333992638480, guid: bd4282aaa0a0d5146adb27f634e6a871, type: 3}
-    itemIcon: {fileID: -981886905, guid: d7268a2e5a0ac3f49abfe7e3df8674a8, type: 3}
-  - itemId: MSuit_Feet
-    associatedOutfitName: Suit
-    category: feet
-    itemMeshPrefab: {fileID: -2862038853870762569, guid: bd4282aaa0a0d5146adb27f634e6a871, type: 3}
-    itemIcon: {fileID: 1267168860, guid: d7268a2e5a0ac3f49abfe7e3df8674a8, type: 3}
-  - itemId: MSuit_Head
-    associatedOutfitName: Suit
-    category: head
-    itemMeshPrefab: {fileID: -817116256555897901, guid: bd4282aaa0a0d5146adb27f634e6a871, type: 3}
-    itemIcon: {fileID: 1616774250, guid: d7268a2e5a0ac3f49abfe7e3df8674a8, type: 3}
-  - itemId: MSuit_Legs
-    associatedOutfitName: Suit
-    category: legs
-    itemMeshPrefab: {fileID: 3154879703358068184, guid: bd4282aaa0a0d5146adb27f634e6a871, type: 3}
-    itemIcon: {fileID: -858130387, guid: d7268a2e5a0ac3f49abfe7e3df8674a8, type: 3}
-  - itemId: MSwat_Body
-    associatedOutfitName: Swat
-    category: legs
-    itemMeshPrefab: {fileID: -1124024813037736786, guid: 862a4ea4d3e50604e9f5564fa27301d7, type: 3}
-    itemIcon: {fileID: 1632287463, guid: 198af6755eb9f2a4f95442c1832af334, type: 3}
-  - itemId: MSwat_Feet
-    associatedOutfitName: Swat
-    category: feet
-    itemMeshPrefab: {fileID: 4266779988094831905, guid: 862a4ea4d3e50604e9f5564fa27301d7, type: 3}
-    itemIcon: {fileID: -211182791, guid: 198af6755eb9f2a4f95442c1832af334, type: 3}
-  - itemId: MSwat_Head
-    associatedOutfitName: Swat
-    category: head
-    itemMeshPrefab: {fileID: 4629359788000243325, guid: 862a4ea4d3e50604e9f5564fa27301d7, type: 3}
-    itemIcon: {fileID: -1976403747, guid: 198af6755eb9f2a4f95442c1832af334, type: 3}
-  - itemId: MSwat_Legs
-    associatedOutfitName: Swat
-    category: legs
-    itemMeshPrefab: {fileID: 4361808542428650040, guid: 862a4ea4d3e50604e9f5564fa27301d7, type: 3}
-    itemIcon: {fileID: -1260511878, guid: 198af6755eb9f2a4f95442c1832af334, type: 3}
-  - itemId: MWorker_Body
-    associatedOutfitName: Worker
-    category: torso
-    itemMeshPrefab: {fileID: -2166539709726929083, guid: d95f5e7814e81aa428b188fa7828e1d1, type: 3}
-    itemIcon: {fileID: 57959226, guid: d0ecc7f56fd65ad48bab33b35e0c3745, type: 3}
-  - itemId: MWorker_Feet
-    associatedOutfitName: Worker
-    category: feet
-    itemMeshPrefab: {fileID: 4612909069184581416, guid: d95f5e7814e81aa428b188fa7828e1d1, type: 3}
-    itemIcon: {fileID: -844290598, guid: d0ecc7f56fd65ad48bab33b35e0c3745, type: 3}
-  - itemId: MWorker_Head
-    associatedOutfitName: Worker
-    category: head
-    itemMeshPrefab: {fileID: -5847441536767283409, guid: d95f5e7814e81aa428b188fa7828e1d1, type: 3}
-    itemIcon: {fileID: -604012270, guid: d0ecc7f56fd65ad48bab33b35e0c3745, type: 3}
-  - itemId: MWorker_Legs
-    associatedOutfitName: Worker
-    category: legs
-    itemMeshPrefab: {fileID: 6495459461477196630, guid: d95f5e7814e81aa428b188fa7828e1d1, type: 3}
-    itemIcon: {fileID: -1604940335, guid: d0ecc7f56fd65ad48bab33b35e0c3745, type: 3}
-  - itemId: FAdventurer_Body
-    associatedOutfitName: Adventurer
-    category: torso
-    itemMeshPrefab: {fileID: -6265962876407639048, guid: 7b33ba6a7096638428fe1337a12dff5e, type: 3}
-    itemIcon: {fileID: 202167304, guid: 6756bae6dfcc5c14ba1e746733700aa8, type: 3}
-  - itemId: FAdventurer_Feet
-    associatedOutfitName: Adventurer
-    category: feet
-    itemMeshPrefab: {fileID: -9156213897992395684, guid: 7b33ba6a7096638428fe1337a12dff5e, type: 3}
-    itemIcon: {fileID: -311142895, guid: 6756bae6dfcc5c14ba1e746733700aa8, type: 3}
-  - itemId: FAdventurer_Head
-    associatedOutfitName: Adventurer
-    category: head
-    itemMeshPrefab: {fileID: 5258190849253663350, guid: 7b33ba6a7096638428fe1337a12dff5e, type: 3}
-    itemIcon: {fileID: 1964927334, guid: 6756bae6dfcc5c14ba1e746733700aa8, type: 3}
-  - itemId: FAdventurer_Legs
-    associatedOutfitName: Adventurer
-    category: legs
-    itemMeshPrefab: {fileID: 6524324310855178483, guid: 7b33ba6a7096638428fe1337a12dff5e, type: 3}
-    itemIcon: {fileID: 1222582807, guid: 6756bae6dfcc5c14ba1e746733700aa8, type: 3}
-  - itemId: FCasual_Body
-    associatedOutfitName: Casual
-    category: torso
-    itemMeshPrefab: {fileID: 3294629854117340803, guid: 98a6e3d4757711b4eb22dbc0dfccf98f, type: 3}
-    itemIcon: {fileID: -692192204, guid: 521d17e65051caa42af49cf252cc6a50, type: 3}
-  - itemId: FCasual_Feet
-    associatedOutfitName: Casual
-    category: feet
-    itemMeshPrefab: {fileID: -2335345236351057756, guid: 98a6e3d4757711b4eb22dbc0dfccf98f, type: 3}
-    itemIcon: {fileID: 493831316, guid: 521d17e65051caa42af49cf252cc6a50, type: 3}
-  - itemId: FCasual_Head
-    associatedOutfitName: Casual
-    category: head
-    itemMeshPrefab: {fileID: -7564717068909193204, guid: 98a6e3d4757711b4eb22dbc0dfccf98f, type: 3}
-    itemIcon: {fileID: -419461170, guid: 521d17e65051caa42af49cf252cc6a50, type: 3}
-  - itemId: FCasual_Legs
-    associatedOutfitName: Casual
-    category: legs
-    itemMeshPrefab: {fileID: 4763394521456260012, guid: 98a6e3d4757711b4eb22dbc0dfccf98f, type: 3}
-    itemIcon: {fileID: -1315257890, guid: 521d17e65051caa42af49cf252cc6a50, type: 3}
-  - itemId: FFormal_Head
-    associatedOutfitName: Formal
-    category: head
-    itemMeshPrefab: {fileID: -7635849803870185733, guid: 061a580e4c897d44a893d843cda63092, type: 3}
-    itemIcon: {fileID: -434985276, guid: 8568fb5f33ff10941a1d7ed8518a9044, type: 3}
-  - itemId: FFormal_Body
-    associatedOutfitName: Formal
-    category: torso
-    itemMeshPrefab: {fileID: -8748388916566308756, guid: 061a580e4c897d44a893d843cda63092, type: 3}
-    itemIcon: {fileID: -350935110, guid: 8568fb5f33ff10941a1d7ed8518a9044, type: 3}
-  - itemId: FFormal_Feets
-    associatedOutfitName: Formal
-    category: feet
-    itemMeshPrefab: {fileID: 7480372163188120660, guid: 061a580e4c897d44a893d843cda63092, type: 3}
-    itemIcon: {fileID: 1098904563, guid: 8568fb5f33ff10941a1d7ed8518a9044, type: 3}
-  - itemId: FFormal_Legs
-    associatedOutfitName: Formal
-    category: legs
-    itemMeshPrefab: {fileID: 4113362155973293123, guid: 061a580e4c897d44a893d843cda63092, type: 3}
-    itemIcon: {fileID: -1486378108, guid: 8568fb5f33ff10941a1d7ed8518a9044, type: 3}
-  - itemId: FMedieval_Sword
-    associatedOutfitName: Medieval
-    category: accessory
-    itemMeshPrefab: {fileID: 5844622625683270731, guid: c77504950c5e17849b108def31aa6bcf, type: 3}
-    itemIcon: {fileID: 21300000, guid: 5fbdc98ac6a75b140b693a771eef3c5d, type: 3}
-  - itemId: FMedieval_Body
-    associatedOutfitName: Medieval
-    category: torso
-    itemMeshPrefab: {fileID: 5056477780480971011, guid: c77504950c5e17849b108def31aa6bcf, type: 3}
-    itemIcon: {fileID: 1743320030, guid: 2471d835868dfbd4c94da6af0c1fb23e, type: 3}
-  - itemId: FMedieval_Feet
-    associatedOutfitName: Medieval
-    category: feet
-    itemMeshPrefab: {fileID: -8378566727686453398, guid: c77504950c5e17849b108def31aa6bcf, type: 3}
-    itemIcon: {fileID: -1757549284, guid: 2471d835868dfbd4c94da6af0c1fb23e, type: 3}
-  - itemId: FMedieval_Head
-    associatedOutfitName: Medieval
-    category: head
-    itemMeshPrefab: {fileID: 8071715835359016818, guid: c77504950c5e17849b108def31aa6bcf, type: 3}
-    itemIcon: {fileID: -1038698633, guid: 2471d835868dfbd4c94da6af0c1fb23e, type: 3}
-  - itemId: FMedieval_Legs
-    associatedOutfitName: Medieval
-    category: legs
-    itemMeshPrefab: {fileID: 5981930451060288518, guid: c77504950c5e17849b108def31aa6bcf, type: 3}
-    itemIcon: {fileID: -220921105, guid: 2471d835868dfbd4c94da6af0c1fb23e, type: 3}
-  - itemId: FPunk_Body
-    associatedOutfitName: Punk
-    category: torso
-    itemMeshPrefab: {fileID: -2271002661015140080, guid: 43543131d905a804aa6e02a68666563a, type: 3}
-    itemIcon: {fileID: -1541153856, guid: c8c2d4f5f1990ea4fa728fd7a0248845, type: 3}
-  - itemId: FPunk_Feet
-    associatedOutfitName: Punk
-    category: feet
-    itemMeshPrefab: {fileID: 763963298098208558, guid: 43543131d905a804aa6e02a68666563a, type: 3}
-    itemIcon: {fileID: 217283021, guid: c8c2d4f5f1990ea4fa728fd7a0248845, type: 3}
-  - itemId: FPunk_Head
-    associatedOutfitName: Punk
-    category: head
-    itemMeshPrefab: {fileID: 598959290848418299, guid: 43543131d905a804aa6e02a68666563a, type: 3}
-    itemIcon: {fileID: -945171516, guid: c8c2d4f5f1990ea4fa728fd7a0248845, type: 3}
-  - itemId: FPunk_Legs
-    associatedOutfitName: Punk
-    category: legs
-    itemMeshPrefab: {fileID: -7920108526992851071, guid: 43543131d905a804aa6e02a68666563a, type: 3}
-    itemIcon: {fileID: -1353866526, guid: c8c2d4f5f1990ea4fa728fd7a0248845, type: 3}
-  - itemId: FSciFi_Body
-    associatedOutfitName: SciFi
-    category: torso
-    itemMeshPrefab: {fileID: 7663409219079591639, guid: 18f35f1be3257a54f9f92291c0652ea4, type: 3}
-    itemIcon: {fileID: -97301668, guid: 6e8573f74725b094cbeb8add3dc73a44, type: 3}
-  - itemId: FSciFi_Feet
-    associatedOutfitName: SciFi
-    category: feet
-    itemMeshPrefab: {fileID: -3113866430140236983, guid: 18f35f1be3257a54f9f92291c0652ea4, type: 3}
-    itemIcon: {fileID: 1154046969, guid: 6e8573f74725b094cbeb8add3dc73a44, type: 3}
-  - itemId: FSciFi_Head
-    associatedOutfitName: SciFi
-    category: head
-    itemMeshPrefab: {fileID: -3239768102628833213, guid: 18f35f1be3257a54f9f92291c0652ea4, type: 3}
-    itemIcon: {fileID: 1582736184, guid: 6e8573f74725b094cbeb8add3dc73a44, type: 3}
-  - itemId: FSciFi_Legs
-    associatedOutfitName: SciFi
-    category: legs
-    itemMeshPrefab: {fileID: -1159165646324508550, guid: 18f35f1be3257a54f9f92291c0652ea4, type: 3}
-    itemIcon: {fileID: -34427999, guid: 6e8573f74725b094cbeb8add3dc73a44, type: 3}
-  - itemId: FSoldier_Body
-    associatedOutfitName: Soldier
-    category: torso
-    itemMeshPrefab: {fileID: -3302916482638189295, guid: 8334f470eecb3b148bf5be29f49d3cb0, type: 3}
-    itemIcon: {fileID: -1496891527, guid: b56070b4757420f4aa933a98c4c15f26, type: 3}
-  - itemId: FSoldier_Feet
-    associatedOutfitName: Soldier
-    category: feet
-    itemMeshPrefab: {fileID: 4444003358419511018, guid: 8334f470eecb3b148bf5be29f49d3cb0, type: 3}
-    itemIcon: {fileID: -2015917137, guid: b56070b4757420f4aa933a98c4c15f26, type: 3}
-  - itemId: FSoldier_Head
-    associatedOutfitName: Soldier
-    category: head
-    itemMeshPrefab: {fileID: 1995580921184781196, guid: 8334f470eecb3b148bf5be29f49d3cb0, type: 3}
-    itemIcon: {fileID: -1995672884, guid: b56070b4757420f4aa933a98c4c15f26, type: 3}
-  - itemId: FSoldier_Legs
-    associatedOutfitName: Soldier
-    category: legs
-    itemMeshPrefab: {fileID: -7731368533032240072, guid: 8334f470eecb3b148bf5be29f49d3cb0, type: 3}
-    itemIcon: {fileID: -802085421, guid: b56070b4757420f4aa933a98c4c15f26, type: 3}
-  - itemId: FSuit_body
-    associatedOutfitName: Suit
-    category: torso
-    itemMeshPrefab: {fileID: 5234347333992638480, guid: 3a105e2ae3067a94b80897c8cfc29fcf, type: 3}
-    itemIcon: {fileID: -1275633436, guid: b54b0cc2c50af8047914cd53473c3396, type: 3}
-  - itemId: FSuit_Feet
-    associatedOutfitName: Suit
-    category: feet
-    itemMeshPrefab: {fileID: -2862038853870762569, guid: 3a105e2ae3067a94b80897c8cfc29fcf, type: 3}
-    itemIcon: {fileID: 1587598146, guid: b54b0cc2c50af8047914cd53473c3396, type: 3}
-  - itemId: FSuit_Head
-    associatedOutfitName: Suit
-    category: head
-    itemMeshPrefab: {fileID: -817116256555897901, guid: 3a105e2ae3067a94b80897c8cfc29fcf, type: 3}
-    itemIcon: {fileID: -1130595726, guid: b54b0cc2c50af8047914cd53473c3396, type: 3}
-  - itemId: FSuit_Legs
-    associatedOutfitName: Suit
-    category: legs
-    itemMeshPrefab: {fileID: 3154879703358068184, guid: 3a105e2ae3067a94b80897c8cfc29fcf, type: 3}
-    itemIcon: {fileID: -1153821805, guid: b54b0cc2c50af8047914cd53473c3396, type: 3}
-  - itemId: FWitch_Body
-    associatedOutfitName: Witch
-    category: torso
-    itemMeshPrefab: {fileID: -894358789877876122, guid: 6af271dcd21ff1242abda6e3fe3809c4, type: 3}
-    itemIcon: {fileID: -75423695, guid: 9f93e5a44abf4ad4b96bdc86a0c5cac1, type: 3}
-  - itemId: FWitch_Feet
-    associatedOutfitName: Witch
-    category: feet
-    itemMeshPrefab: {fileID: 3467330872294710838, guid: 6af271dcd21ff1242abda6e3fe3809c4, type: 3}
-    itemIcon: {fileID: 1229366660, guid: 9f93e5a44abf4ad4b96bdc86a0c5cac1, type: 3}
-  - itemId: FWitch_Head
-    associatedOutfitName: Witch
-    category: head
-    itemMeshPrefab: {fileID: 3374028566639038111, guid: 6af271dcd21ff1242abda6e3fe3809c4, type: 3}
-    itemIcon: {fileID: -825557953, guid: 9f93e5a44abf4ad4b96bdc86a0c5cac1, type: 3}
-  - itemId: FWitch_Legs
-    associatedOutfitName: Witch
-    category: legs
-    itemMeshPrefab: {fileID: 8536709283880391895, guid: 6af271dcd21ff1242abda6e3fe3809c4, type: 3}
-    itemIcon: {fileID: 953472454, guid: 9f93e5a44abf4ad4b96bdc86a0c5cac1, type: 3}
-  - itemId: FWorker_Body
-    associatedOutfitName: Worker
-    category: torso
-    itemMeshPrefab: {fileID: -2166539709726929083, guid: e61315f95d92823489ced837353e4bab, type: 3}
-    itemIcon: {fileID: -197168161, guid: 99377a93e4b35084e9259be9eb9f4484, type: 3}
-  - itemId: FWorker_Feet
-    associatedOutfitName: Worker
-    category: feet
-    itemMeshPrefab: {fileID: 4612909069184581416, guid: e61315f95d92823489ced837353e4bab, type: 3}
-    itemIcon: {fileID: 850794954, guid: 99377a93e4b35084e9259be9eb9f4484, type: 3}
-  - itemId: FWorker_Head
-    associatedOutfitName: Worker
-    category: head
-    itemMeshPrefab: {fileID: -5847441536767283409, guid: e61315f95d92823489ced837353e4bab, type: 3}
-    itemIcon: {fileID: -1867550483, guid: 99377a93e4b35084e9259be9eb9f4484, type: 3}
-  - itemId: FWorker_Legs
-    associatedOutfitName: Worker
-    category: legs
-    itemMeshPrefab: {fileID: 6495459461477196630, guid: e61315f95d92823489ced837353e4bab, type: 3}
-    itemIcon: {fileID: 1844530734, guid: 99377a93e4b35084e9259be9eb9f4484, type: 3}
-  inventoryButtonPrefab: {fileID: 1476547993004256952, guid: 67bc5a8ad00450a48af0614082b0b54a, type: 3}
-  headContentGrid: {fileID: 366782070973419394}
-  torsoContentGrid: {fileID: 6082455949919681952}
-  legsContentGrid: {fileID: 5644687439401397062}
-  feetContentGrid: {fileID: 5416280111910077655}
-  accessoryContentGrid: {fileID: 6656473762114520272}
-  coins: 1500
-  isMaleAvatar: 1
-  equippedHeadId: Casual_Head
-  equippedBodyId: Casual_Body
-  equippedLegsId: Casual_Legs
-  equippedFeetId: Casual_Feet
-  equippedAccessoryId: None
---- !u!4 &1049420909
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1049420907}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 125.90784, y: 314.77267, z: -19.70975}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1363833686
 GameObject:
   m_ObjectHideFlags: 0
@@ -19889,6 +19421,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6897121388453865254, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6897121388453865254, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1363833688}
+    - target: {fileID: 6897121388453865254, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoToMainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 6897121388453865254, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: AvatarCustomizer, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 7601471083042564269, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -20493,6 +20041,83 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1001 &8726843437610899356
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 125.90784
+      objectReference: {fileID: 0}
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 314.77267
+      objectReference: {fileID: 0}
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -19.70975
+      objectReference: {fileID: 0}
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391472870220414534, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: feetContentGrid
+      value: 
+      objectReference: {fileID: 5416280111910077655}
+    - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: headContentGrid
+      value: 
+      objectReference: {fileID: 366782070973419394}
+    - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: legsContentGrid
+      value: 
+      objectReference: {fileID: 5644687439401397062}
+    - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: torsoContentGrid
+      value: 
+      objectReference: {fileID: 6082455949919681952}
+    - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: accessoryContentGrid
+      value: 
+      objectReference: {fileID: 6656473762114520272}
+    - target: {fileID: 8402000206842630692, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: m_Name
+      value: InventoryManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
 --- !u!137 &8733686009304836506
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
@@ -21618,4 +21243,4 @@ SceneRoots:
   - {fileID: 1363833687}
   - {fileID: 406802850}
   - {fileID: 438058944}
-  - {fileID: 1049420909}
+  - {fileID: 8726843437610899356}

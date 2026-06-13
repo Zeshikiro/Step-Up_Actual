@@ -105,8 +105,14 @@ public class AvatarCustomizer : MonoBehaviour
 
     public void UpdateCoinDisplay()
     {
-        if (coinTextDisplayTMP != null) coinTextDisplayTMP.text = currentCoins.ToString();
-        if (coinTextDisplay != null) coinTextDisplay.text = currentCoins.ToString();
+        int displayCoins = currentCoins;
+        if (InventoryManager.Instance != null)
+        {
+            displayCoins = InventoryManager.Instance.coins;
+        }
+
+        if (coinTextDisplayTMP != null) coinTextDisplayTMP.text = displayCoins.ToString();
+        if (coinTextDisplay != null) coinTextDisplay.text = displayCoins.ToString();
     }
 
     public void RegisterPurchasedItem(string itemName)
@@ -246,19 +252,30 @@ public class AvatarCustomizer : MonoBehaviour
             return true; 
         }
 
-        if (currentCoins >= cost)
+        bool purchaseSuccessful = false;
+
+        // Try to spend from the global Master Inventory first
+        if (InventoryManager.Instance != null)
+        {
+            purchaseSuccessful = InventoryManager.Instance.SpendCoins(cost);
+        }
+        else if (currentCoins >= cost)
         {
             currentCoins -= cost;
+            purchaseSuccessful = true;
+        }
+
+        if (purchaseSuccessful)
+        {
             purchasedItemIDs.Add(itemID); 
             UpdateCoinDisplay();
             
-            // Sync with master inventory so it persists!
             if (InventoryManager.Instance != null)
             {
                 InventoryManager.Instance.UnlockItem(itemID);
             }
 
-            Debug.Log($"Successfully purchased: {itemID}. Remaining Coins: {currentCoins}");
+            Debug.Log($"Successfully purchased: {itemID}.");
             return true;
         }
 
