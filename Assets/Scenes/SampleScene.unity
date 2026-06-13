@@ -17382,8 +17382,8 @@ MonoBehaviour:
           south: 4
         rangeAroundTransformOptions:
           targetTransform: {fileID: 330585546}
-          visibleBuffer: 2
-          disposeBuffer: 0
+          visibleBuffer: 1
+          disposeBuffer: 1
     placementOptions:
       placementType: 1
       snapMapToZero: 1
