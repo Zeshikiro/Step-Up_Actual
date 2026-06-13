@@ -38,10 +38,10 @@ public class InventoryManager : MonoBehaviour
 
     [Header("Saved Look (Item IDs)")]
     public bool isMaleAvatar = true; // Tracks explicit gender choice globally
-    public string equippedHeadId = "Casual_Head";
-    public string equippedBodyId = "Casual_Body";
-    public string equippedLegsId = "Casual_Legs";
-    public string equippedFeetId = "Casual_Feet";
+    public string equippedHeadId = "MCasual2_Head";
+    public string equippedBodyId = "MCasual2_Body";
+    public string equippedLegsId = "MCasual2_Legs";
+    public string equippedFeetId = "MCasual2_Feet";
     public string equippedAccessoryId = "None";
 
     // Track unlocked item IDs
