@@ -129,6 +129,12 @@ public class MapAvatarTracker : MonoBehaviour
                     // Force the map to draw immediately at the fallback location!
                     mapManager.Initialize(_fallbackLatLon, mapManager.AbsoluteZoom);
                     Debug.Log($"[MapAvatarTracker] Loaded IP Fallback Location: {data.lat}, {data.lon}");
+
+                    // Fetch Yelp places instantly so the map isn't empty while waiting for GPS!
+                    if (YelpPlacesManager.Instance != null)
+                    {
+                        YelpPlacesManager.Instance.FetchNearbyPlaces(_fallbackLatLon);
+                    }
                 }
             }
         }
@@ -167,6 +173,12 @@ public class MapAvatarTracker : MonoBehaviour
             {
                 mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom);
                 _useFallbackLocation = false;
+
+                // Also refresh Yelp places for the accurate GPS location
+                if (YelpPlacesManager.Instance != null)
+                {
+                    YelpPlacesManager.Instance.FetchNearbyPlaces(currentLocation);
+                }
             }
         }
 
