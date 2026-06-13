@@ -30,6 +30,9 @@ public class MapAvatarTracker : MonoBehaviour
     private bool _isZoomingIn = true;
     private float _targetCameraY;
 
+    // Safety Cooldown
+    private float _lastMapUpdateTime = 0f;
+
     void Start()
     {
         // Auto-find the map if you forget to drag it in
@@ -183,8 +186,9 @@ public class MapAvatarTracker : MonoBehaviour
         // --- CRITICAL FIX: PREVENT FLOATING POINT CRASH & MASSIVE TILE SPAWN LAG ---
         // If the GPS jumped across the world, targetPosition will be 1,000,000+ units away.
         // This causes Mapbox to try to load 10,000 tiles and crashes the game!
-        if (targetPosition.magnitude > 500f)
+        if (targetPosition.magnitude > 500f && Time.time > _lastMapUpdateTime + 5f)
         {
+            _lastMapUpdateTime = Time.time;
             Debug.Log("[MapAvatarTracker] GPS jumped too far! Re-centering map to prevent lag!");
             mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom);
             
