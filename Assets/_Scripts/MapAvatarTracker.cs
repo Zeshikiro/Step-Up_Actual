@@ -210,10 +210,10 @@ public class MapAvatarTracker : MonoBehaviour
         {
             // Only recenter if we haven't already recentered to this exact GPS spot!
             // Mapbox takes a few seconds to download, so we can't spam UpdateMap!
-            double distanceToLastRecenter = Mapbox.Utils.Conversions.GeoToWorldPosition(currentLocation.y, currentLocation.x, new Vector2d(0, 0)).magnitude 
-                                          - Mapbox.Utils.Conversions.GeoToWorldPosition(_lastRecenteredGPS.y, _lastRecenteredGPS.x, new Vector2d(0, 0)).magnitude;
+            // 0.001 degrees of lat/lon is roughly 100 meters in the real world.
+            double distanceInDegrees = Vector2d.Distance(currentLocation, _lastRecenteredGPS);
             
-            if (_lastRecenteredGPS == Vector2d.zero || System.Math.Abs(distanceToLastRecenter) > 100f)
+            if (_lastRecenteredGPS == Vector2d.zero || distanceInDegrees > 0.001)
             {
                 _lastRecenteredGPS = currentLocation;
                 Debug.Log("[MapAvatarTracker] GPS jumped too far! Re-centering map to prevent lag!");
