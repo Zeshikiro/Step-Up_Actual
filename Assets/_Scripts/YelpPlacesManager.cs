@@ -71,8 +71,8 @@ public class YelpPlacesManager : MonoBehaviour
 
     private IEnumerator RequestYelpData(Vector2d location)
     {
-        // We filter categories to things a walking/fitness app user would care about: Parks, Active Life, Food
-        string url = $"https://api.yelp.com/v3/businesses/search?latitude={location.x}&longitude={location.y}&radius={searchRadius}&limit={searchLimit}&categories=parks,active,cafes";
+        // We removed the strict category filters so it will ALWAYS find places, even in residential areas!
+        string url = $"https://api.yelp.com/v3/businesses/search?latitude={location.x}&longitude={location.y}&radius={searchRadius}&limit={searchLimit}";
 
         using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
         {

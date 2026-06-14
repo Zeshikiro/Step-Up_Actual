@@ -144,6 +144,8 @@ public class MapAvatarTracker : MonoBehaviour
 
     private bool _isFirstLocationSet = false;
 
+    private Vector2d _lastValidGPS = Vector2d.zero;
+
     void Update()
     {
         if (mapManager == null) return;
@@ -163,12 +165,14 @@ public class MapAvatarTracker : MonoBehaviour
             }
         }
 
-        Vector2d currentLocation = _fallbackLatLon;
+        Vector2d currentLocation = _lastValidGPS;
+        if (currentLocation == Vector2d.zero) currentLocation = _fallbackLatLon;
 
         // If the hardware GPS finally locks onto a satellite, it overrides the Wi-Fi fallback
         if (_locationProvider != null && _locationProvider.CurrentLocation.LatitudeLongitude != Vector2d.zero)
         {
             currentLocation = _locationProvider.CurrentLocation.LatitudeLongitude;
+            _lastValidGPS = currentLocation;
             
             // Re-center the map if we just transitioned from the fallback to real GPS
             if (_useFallbackLocation)
