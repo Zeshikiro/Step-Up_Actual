@@ -17925,7 +17925,7 @@ MonoBehaviour:
       latitudeLongitude: 0, 0
       zoom: 16
     extentOptions:
-      extentType: 2
+      extentType: 0
       defaultExtents:
         cameraBoundsOptions:
           camera: {fileID: 330585545}
