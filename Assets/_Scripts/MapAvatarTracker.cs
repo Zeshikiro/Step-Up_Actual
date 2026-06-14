@@ -31,7 +31,7 @@ public class MapAvatarTracker : MonoBehaviour
     private float _targetCameraY;
 
     // Safety Cooldown
-    private float _lastMapUpdateTime = 0f;
+    private Vector2d _lastRecenteredGPS = Vector2d.zero;
 
     void Start()
     {
@@ -206,11 +206,19 @@ public class MapAvatarTracker : MonoBehaviour
         // --- CRITICAL FIX: PREVENT FLOATING POINT CRASH & MASSIVE TILE SPAWN LAG ---
         // If the GPS jumped across the world, targetPosition will be 1,000,000+ units away.
         // This causes Mapbox to try to load 10,000 tiles and crashes the game!
-        if (targetPosition.magnitude > 500f && Time.time > _lastMapUpdateTime + 5f)
+        if (targetPosition.magnitude > 500f)
         {
-            _lastMapUpdateTime = Time.time;
-            Debug.Log("[MapAvatarTracker] GPS jumped too far! Re-centering map to prevent lag!");
-            mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom);
+            // Only recenter if we haven't already recentered to this exact GPS spot!
+            // Mapbox takes a few seconds to download, so we can't spam UpdateMap!
+            double distanceToLastRecenter = Mapbox.Utils.Conversions.GeoToWorldPosition(currentLocation.y, currentLocation.x, new Vector2d(0, 0)).magnitude 
+                                          - Mapbox.Utils.Conversions.GeoToWorldPosition(_lastRecenteredGPS.y, _lastRecenteredGPS.x, new Vector2d(0, 0)).magnitude;
+            
+            if (_lastRecenteredGPS == Vector2d.zero || System.Math.Abs(distanceToLastRecenter) > 100f)
+            {
+                _lastRecenteredGPS = currentLocation;
+                Debug.Log("[MapAvatarTracker] GPS jumped too far! Re-centering map to prevent lag!");
+                mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom);
+            }
             
             // Recalculate target position relative to the NEW perfectly centered map!
             targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
