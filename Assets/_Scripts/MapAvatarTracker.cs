@@ -219,13 +219,13 @@ public class MapAvatarTracker : MonoBehaviour
                 _lastRecenteredGPS = currentLocation;
                 Debug.Log("[MapAvatarTracker] GPS jumped too far! Re-centering map to prevent lag!");
                 mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom);
+                
+                // Recalculate target position relative to the NEW perfectly centered map!
+                targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
+                
+                // Force an instant snap so it doesn't drag a massive trail
+                StartCoroutine(SnapAndClear(targetPosition));
             }
-            
-            // Recalculate target position relative to the NEW perfectly centered map!
-            targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
-            
-            // Force an instant snap so it doesn't drag a massive trail
-            StartCoroutine(SnapAndClear(targetPosition));
         }
 
         // Keep the avatar at ground level (Y = 0) so it doesn't fly or sink
