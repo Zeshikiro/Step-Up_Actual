@@ -127,7 +127,15 @@ public class MapAvatarTracker : MonoBehaviour
                     _fallbackLatLon = new Vector2d(data.lat, data.lon);
                     
                     // Force the map to draw immediately at the fallback location!
-                    mapManager.Initialize(_fallbackLatLon, mapManager.AbsoluteZoom);
+                    try 
+                    {
+                        mapManager.Initialize(_fallbackLatLon, mapManager.AbsoluteZoom);
+                    }
+                    catch 
+                    {
+                        // If it was already initialized by the Unity Inspector, just update it instead!
+                        mapManager.UpdateMap(_fallbackLatLon, mapManager.AbsoluteZoom);
+                    }
                     Debug.Log($"[MapAvatarTracker] Loaded IP Fallback Location: {data.lat}, {data.lon}");
 
                     // Fetch Yelp places instantly so the map isn't empty while waiting for GPS!
@@ -186,11 +194,10 @@ public class MapAvatarTracker : MonoBehaviour
         if (currentLocation == Vector2d.zero) return;
 
         // --- DESTROY PESKY DEFAULT MAPBOX RED PINS ---
-        // I am temporarily leaving these alive so you can see your location while testing the 3D Avatar!
-        // GameObject mapboxPin1 = GameObject.Find("LocationProvider(Clone)");
-        // if (mapboxPin1 != null) Destroy(mapboxPin1);
-        // GameObject mapboxPin2 = GameObject.Find("LocationPrefab(Clone)");
-        // if (mapboxPin2 != null) Destroy(mapboxPin2);
+        GameObject mapboxPin1 = GameObject.Find("LocationProvider(Clone)");
+        if (mapboxPin1 != null) Destroy(mapboxPin1);
+        GameObject mapboxPin2 = GameObject.Find("LocationPrefab(Clone)");
+        if (mapboxPin2 != null) Destroy(mapboxPin2);
 
         // 2. Convert real-world GPS into Unity 3D World space
         Vector3 targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
