@@ -7,6 +7,7 @@ using Mapbox.Utils;
 #if PLATFORM_ANDROID
 using UnityEngine.Android;
 #endif
+using UnityEngine.EventSystems;
 
 [System.Serializable]
 public class IPLocationData
@@ -292,6 +293,13 @@ public class MapCameraPanner : MonoBehaviour
 
     void Update()
     {
+        // Prevent panning when touching UI (like the Shop menu!)
+        if (EventSystem.current != null)
+        {
+            if (Input.touchCount > 0 && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
+            if (Input.touchCount == 0 && EventSystem.current.IsPointerOverGameObject()) return;
+        }
+
         // --- MOBILE TOUCH CONTROLS ---
         if (Input.touchCount == 1)
         {
