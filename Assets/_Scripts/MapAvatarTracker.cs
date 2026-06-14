@@ -288,6 +288,12 @@ public class MapCameraPanner : MonoBehaviour
     private float _lastTouchTime;
     private bool _isPanning = false;
 
+    public void RecenterCamera()
+    {
+        _panOffset = Vector3.zero;
+        _rotationAngle = 0f;
+    }
+
     void Update()
     {
         // Prevent panning when touching UI (like the Shop menu!)
