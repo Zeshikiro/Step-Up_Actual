@@ -194,10 +194,11 @@ public class MapAvatarTracker : MonoBehaviour
         if (currentLocation == Vector2d.zero) return;
 
         // --- DESTROY PESKY DEFAULT MAPBOX RED PINS ---
-        GameObject mapboxPin1 = GameObject.Find("LocationProvider(Clone)");
-        if (mapboxPin1 != null) Destroy(mapboxPin1);
-        GameObject mapboxPin2 = GameObject.Find("LocationPrefab(Clone)");
-        if (mapboxPin2 != null) Destroy(mapboxPin2);
+        // (Commented out because the user wants to keep the red pin and blue cone!)
+        // GameObject mapboxPin1 = GameObject.Find("LocationProvider(Clone)");
+        // if (mapboxPin1 != null) Destroy(mapboxPin1);
+        // GameObject mapboxPin2 = GameObject.Find("LocationPrefab(Clone)");
+        // if (mapboxPin2 != null) Destroy(mapboxPin2);
 
         // 2. Convert real-world GPS into Unity 3D World space
         Vector3 targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
