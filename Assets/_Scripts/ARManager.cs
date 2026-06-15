@@ -65,6 +65,11 @@ public class ARManager : MonoBehaviour
             cameraBackground.gameObject.SetActive(false);
         }
         
+        if (fallbackBackground != null)
+        {
+            fallbackBackground.SetActive(false);
+        }
+        
         if (rotateAvatarButton != null)
         {
             rotateAvatarButton.SetActive(false); // Hide the rotate button at start (2D Mode)
