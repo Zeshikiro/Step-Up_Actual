@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlayCircle, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export default function HealthTips() {
   const [activeTipId, setActiveTipId] = useState(null);
@@ -9,29 +9,28 @@ export default function HealthTips() {
       id: 'posture',
       title: 'Posture',
       desc: 'Maintain a straight back and look forward to prevent injuries while walking or running.',
-      imgPlaceholder: 'Insert Posture Image Here',
-      vidPlaceholder: 'Insert Posture Video Here'
+      images: [
+        '/Images and Videos/Posture/correct posture.jpg',
+        '/Images and Videos/Posture/gaitcycle2-1.jpg',
+        '/Images and Videos/Posture/posture.jpg'
+      ]
     },
     {
       id: 'cooldown',
       title: 'Cooldown',
-      desc: 'Slow down your heart rate and stretch your legs, calves, and shoulders to prevent soreness.',
-      imgPlaceholder: 'Insert Cooldown Image Here',
-      vidPlaceholder: 'Insert Cooldown Video Here'
+      desc: 'Slow down your heart rate and stretch your legs, calves, and shoulders to prevent soreness.'
     },
     {
       id: 'warmup',
       title: 'Warm Up',
       desc: 'Activate your muscles before intense activity. Try hip rotations and heel-to-butt kicks.',
-      imgPlaceholder: 'Insert Warm Up Image Here',
-      vidPlaceholder: 'Insert Warm Up Video Here'
+      videoUrl: 'https://www.youtube.com/embed/WBhmNTykYiE'
     },
     {
       id: 'fitness',
       title: 'Fitness Tips',
       desc: 'Stay hydrated, keep a consistent pace, and gradually increase your daily step goal.',
-      imgPlaceholder: 'Insert Fitness Image Here',
-      vidPlaceholder: 'Insert Fitness Video Here'
+      videoUrl: 'https://www.youtube.com/embed/H1jD__EoBNY'
     }
   ];
 
@@ -88,21 +87,40 @@ export default function HealthTips() {
             <p style={{ margin: 0, color: '#ddd' }}>{activeTip.desc}</p>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1px', background: 'rgba(255,255,255,0.1)' }}>
+          <div style={{ padding: '20px', background: 'rgba(20, 20, 30, 0.8)', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
             
-            {/* Image Placeholder */}
-            <div style={{ background: 'rgba(20, 20, 30, 0.8)', padding: '30px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}>
-              <ImageIcon size={48} color="#4ade80" style={{ marginBottom: '15px' }} />
-              <span style={{ color: '#aaa', fontSize: '0.9rem', textAlign: 'center' }}>{activeTip.imgPlaceholder}</span>
-              <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '10px' }}>(Replace with &lt;img src="..." /&gt;)</p>
-            </div>
+            {activeTip.images && activeTip.images.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', justifyContent: 'center' }}>
+                {activeTip.images.map((imgSrc, idx) => (
+                  <img 
+                    key={idx} 
+                    src={imgSrc} 
+                    alt={${activeTip.title} \} 
+                    style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px', objectFit: 'contain', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }} 
+                  />
+                ))}
+              </div>
+            )}
 
-            {/* Video Placeholder */}
-            <div style={{ background: 'rgba(20, 20, 30, 0.8)', padding: '30px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}>
-              <PlayCircle size={48} color="#FF6B6B" style={{ marginBottom: '15px' }} />
-              <span style={{ color: '#aaa', fontSize: '0.9rem', textAlign: 'center' }}>{activeTip.vidPlaceholder}</span>
-              <p style={{ fontSize: '0.75rem', color: '#666', marginTop: '10px' }}>(Replace with &lt;video src="..." controls /&gt;)</p>
-            </div>
+            {activeTip.videoUrl && (
+              <div style={{ width: '100%', maxWidth: '315px', margin: '0 auto', aspectRatio: '9/16' }}>
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  src={activeTip.videoUrl} 
+                  title="YouTube video player" 
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  referrerPolicy="strict-origin-when-cross-origin" 
+                  allowFullScreen
+                  style={{ borderRadius: '8px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }}
+                ></iframe>
+              </div>
+            )}
+
+            {!activeTip.images && !activeTip.videoUrl && (
+              <p style={{ color: '#aaa', fontStyle: 'italic', padding: '40px 0' }}>More content coming soon...</p>
+            )}
 
           </div>
         </div>
