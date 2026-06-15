@@ -10,9 +10,9 @@ export default function HealthTips() {
       title: 'Posture',
       desc: 'Maintain a straight back and look forward to prevent injuries while walking or running.',
       images: [
-        '/Images and Videos/Posture/correct posture.jpg',
-        '/Images and Videos/Posture/gaitcycle2-1.jpg',
-        '/Images and Videos/Posture/posture.jpg'
+        '/Images_and_Videos/Posture/correct_posture.jpg',
+        '/Images_and_Videos/Posture/gaitcycle2-1.jpg',
+        '/Images_and_Videos/Posture/posture.jpg'
       ]
     },
     {
