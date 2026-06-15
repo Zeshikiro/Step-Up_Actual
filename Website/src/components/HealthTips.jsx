@@ -95,7 +95,7 @@ export default function HealthTips() {
                   <img 
                     key={idx} 
                     src={imgSrc} 
-                    alt={${activeTip.title} \} 
+                    alt={`Posture Image ${idx + 1}`} 
                     style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px', objectFit: 'contain', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }} 
                   />
                 ))}
