@@ -40,6 +40,8 @@ public class ARManager : MonoBehaviour
     public RawImage cameraBackground; 
     [Tooltip("Attach an AspectRatioFitter to the RawImage and drag it here")]
     public AspectRatioFitter backgroundFitter; 
+    [Tooltip("A static Image or UI Panel to show if the Camera fails or permissions are denied")]
+    public GameObject fallbackBackground; 
 
     private WebCamTexture backCamera;
     private bool isARMode = false;
@@ -135,25 +137,53 @@ public class ARManager : MonoBehaviour
         
         UpdateAvatarRotation();
 
-        // 5. Setup the Live Camera Feed
-        if (backCamera == null)
+        // 5. Setup the Live Camera Feed or Fallback Background
+        bool cameraReady = false;
+
+#if PLATFORM_ANDROID
+        if (Permission.HasUserAuthorizedPermission(Permission.Camera))
         {
-            WebCamDevice[] devices = WebCamTexture.devices;
-            for (int i = 0; i < devices.Length; i++)
+            cameraReady = true;
+        }
+#else
+        cameraReady = true; // Non-Android platforms don't use this specific permission API
+#endif
+
+        if (cameraReady)
+        {
+            if (fallbackBackground != null) fallbackBackground.SetActive(false);
+
+            if (backCamera == null)
             {
-                if (!devices[i].isFrontFacing)
+                WebCamDevice[] devices = WebCamTexture.devices;
+                for (int i = 0; i < devices.Length; i++)
                 {
-                    backCamera = new WebCamTexture(devices[i].name, Screen.width, Screen.height);
-                    break;
+                    if (!devices[i].isFrontFacing)
+                    {
+                        backCamera = new WebCamTexture(devices[i].name, Screen.width, Screen.height);
+                        break;
+                    }
                 }
             }
-        }
 
-        if (backCamera != null)
+            if (backCamera != null)
+            {
+                cameraBackground.gameObject.SetActive(true);
+                cameraBackground.texture = backCamera;
+                backCamera.Play();
+            }
+            else
+            {
+                // No back camera found on this device!
+                if (fallbackBackground != null) fallbackBackground.SetActive(true);
+                if (cameraBackground != null) cameraBackground.gameObject.SetActive(false);
+            }
+        }
+        else
         {
-            cameraBackground.gameObject.SetActive(true);
-            cameraBackground.texture = backCamera;
-            backCamera.Play();
+            // Permission was denied or is still pending!
+            if (fallbackBackground != null) fallbackBackground.SetActive(true);
+            if (cameraBackground != null) cameraBackground.gameObject.SetActive(false);
         }
 
         // 6. Show the Rotate Avatar Button
@@ -171,6 +201,7 @@ public class ARManager : MonoBehaviour
             backCamera.Stop();
         }
         if (cameraBackground != null) cameraBackground.gameObject.SetActive(false);
+        if (fallbackBackground != null) fallbackBackground.SetActive(false);
 
         // 2. Show the 3D Mapbox Map, Map Pin, Compass, & Recenter Button
         if (mapRoot != null) mapRoot.SetActive(true);
