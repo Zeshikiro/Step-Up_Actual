@@ -85,6 +85,7 @@ public class ShopItemButton : MonoBehaviour
                 if (InventoryManager.Instance != null)
                 {
                     InventoryManager.Instance.UnlockFullOutfitBundle(shopItem.itemName);
+                    InventoryManager.Instance.GenerateInventoryUI(); // INSTANTLY REFRESH WARDROBE!
                 }
         
                 avatarCustomizer.UpdateCoinDisplay(); 

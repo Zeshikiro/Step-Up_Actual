@@ -182,26 +182,24 @@ public class InventoryManager : MonoBehaviour
 
     public void SaveUnlockedItems()
     {
-        // [TESTING] - Shop save disabled per user request
-        // string[] array = new string[unlockedItems.Count];
-        // unlockedItems.CopyTo(array);
-        // string joined = string.Join(",", array);
-        // PlayerPrefs.SetString("UnlockedItems", joined);
-        // PlayerPrefs.Save();
+        string[] array = new string[unlockedItems.Count];
+        unlockedItems.CopyTo(array);
+        string joined = string.Join(",", array);
+        PlayerPrefs.SetString("UnlockedItems", joined);
+        PlayerPrefs.Save();
     }
 
     public void LoadUnlockedItems()
     {
-        // [TESTING] - Shop load disabled per user request
-        // if (PlayerPrefs.HasKey("UnlockedItems"))
-        // {
-        //     string joined = PlayerPrefs.GetString("UnlockedItems");
-        //     string[] items = joined.Split(',');
-        //     foreach (string item in items)
-        //     {
-        //         if (!string.IsNullOrEmpty(item)) unlockedItems.Add(item.Trim());
-        //     }
-        // }
+        if (PlayerPrefs.HasKey("UnlockedItems"))
+        {
+            string joined = PlayerPrefs.GetString("UnlockedItems");
+            string[] items = joined.Split(',');
+            foreach (string item in items)
+            {
+                if (!string.IsNullOrEmpty(item)) unlockedItems.Add(item.Trim());
+            }
+        }
     }
 
     public void UnlockFullOutfitBundle(string outfitName)
