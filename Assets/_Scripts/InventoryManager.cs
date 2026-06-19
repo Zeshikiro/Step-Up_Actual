@@ -7,7 +7,33 @@ using Firebase.Extensions;
 
 public class InventoryManager : MonoBehaviour
 {
-    public static InventoryManager Instance { get; private set; }
+    private static InventoryManager _instance;
+    public static InventoryManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<InventoryManager>();
+                if (_instance == null)
+                {
+                    GameObject prefab = Resources.Load<GameObject>("InventoryManager");
+                    if (prefab != null)
+                    {
+                        GameObject obj = Instantiate(prefab);
+                        _instance = obj.GetComponent<InventoryManager>();
+                        Debug.LogWarning("[InventoryManager] Auto-spawned missing Singleton from Resources!");
+                    }
+                    else
+                    {
+                        Debug.LogError("[InventoryManager] Failed to auto-spawn! Prefab not found in Resources/ folder!");
+                    }
+                }
+            }
+            return _instance;
+        }
+        private set { _instance = value; }
+    }
 
     [System.Serializable]
     public class InventoryItemData
