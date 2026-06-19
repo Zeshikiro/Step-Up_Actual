@@ -46,6 +46,13 @@ public class AvatarCustomizer : MonoBehaviour
     [Header("Gender Armature Target")]
     public Transform activeArmatureRoot; 
 
+    [Header("Wardrobe UI Grids (Drag 'Content' objects here)")]
+    public Transform wardrobeHeadGrid;
+    public Transform wardrobeTorsoGrid;
+    public Transform wardrobeLegsGrid;
+    public Transform wardrobeFeetGrid;
+    public Transform wardrobeAccessoryGrid;
+
     [Header("Data & Economy Persistence")]
     public List<string> purchasedItemIDs = new List<string>() { "default_casual" };
 
@@ -54,6 +61,16 @@ public class AvatarCustomizer : MonoBehaviour
 
     private void Start()
     {
+        // Dynamically pass our local UI grids to the persistent InventoryManager!
+        if (InventoryManager.Instance != null)
+        {
+            if (wardrobeHeadGrid != null) InventoryManager.Instance.headContentGrid = wardrobeHeadGrid;
+            if (wardrobeTorsoGrid != null) InventoryManager.Instance.torsoContentGrid = wardrobeTorsoGrid;
+            if (wardrobeLegsGrid != null) InventoryManager.Instance.legsContentGrid = wardrobeLegsGrid;
+            if (wardrobeFeetGrid != null) InventoryManager.Instance.feetContentGrid = wardrobeFeetGrid;
+            if (wardrobeAccessoryGrid != null) InventoryManager.Instance.accessoryContentGrid = wardrobeAccessoryGrid;
+        }
+
         InitializeAvatarState();
         UpdateCoinDisplay();
         ToggleShopPanel(false);
