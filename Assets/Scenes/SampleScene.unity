@@ -17096,7 +17096,7 @@ MonoBehaviour:
   avatarARPosition: {x: 0, y: -1.5, z: 5}
   cameraBackground: {fileID: 254705963}
   backgroundFitter: {fileID: 254705965}
-  fallbackBackground: {fileID: 0}
+  fallbackBackground: {fileID: 1813520987}
 --- !u!4 &2134100778
 Transform:
   m_ObjectHideFlags: 0

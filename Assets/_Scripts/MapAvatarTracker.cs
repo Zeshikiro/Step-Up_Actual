@@ -177,7 +177,8 @@ public class MapAvatarTracker : MonoBehaviour
             // Re-center the map if we just transitioned from the fallback to real GPS
             if (_useFallbackLocation)
             {
-                mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom);
+                try { mapManager.Initialize(currentLocation, mapManager.AbsoluteZoom); }
+                catch { mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom); }
                 _useFallbackLocation = false;
 
                 // Also refresh Yelp places for the accurate GPS location
@@ -215,7 +216,8 @@ public class MapAvatarTracker : MonoBehaviour
             {
                 _lastRecenteredGPS = currentLocation;
                 Debug.Log("[MapAvatarTracker] GPS jumped too far! Re-centering map to prevent lag!");
-                mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom);
+                try { mapManager.Initialize(currentLocation, mapManager.AbsoluteZoom); }
+                catch { mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom); }
                 
                 // Recalculate target position relative to the NEW perfectly centered map!
                 targetPosition = mapManager.GeoToWorldPosition(currentLocation, true);
