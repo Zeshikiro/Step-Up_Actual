@@ -36,12 +36,12 @@ public class AvatarLoader : MonoBehaviour
         // This guarantees no overlapping clothing or hidden meshes are secretly rendering and eating battery!
         DeactivateAllMeshes(activeAvatarRoot.transform);
 
-        // 5. Turn ON only the exact 5 equipped pieces
-        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.equippedHeadId);
-        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.equippedBodyId);
-        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.equippedLegsId);
-        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.equippedFeetId);
-        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.equippedAccessoryId);
+        // 5. Turn ON only the exact 5 equipped pieces using their actual Mesh Names, NOT their Item IDs!
+        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.GetMeshNameFromItemId(InventoryManager.Instance.equippedHeadId));
+        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.GetMeshNameFromItemId(InventoryManager.Instance.equippedBodyId));
+        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.GetMeshNameFromItemId(InventoryManager.Instance.equippedLegsId));
+        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.GetMeshNameFromItemId(InventoryManager.Instance.equippedFeetId));
+        EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.GetMeshNameFromItemId(InventoryManager.Instance.equippedAccessoryId));
     }
 
     private void DeactivateAllMeshes(Transform root)
