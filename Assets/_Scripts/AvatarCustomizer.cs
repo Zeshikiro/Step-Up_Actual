@@ -19,6 +19,11 @@ public class AvatarCustomizer : MonoBehaviour
 
     [Header("UI Sub-Panels")]
     public GameObject[] subPanels;
+    
+    [Header("UI Tab Buttons (For Highlighting)")]
+    public Image[] tabButtons;
+    public Color activeTabColor = new Color(1f, 0.8f, 0.2f, 1f); // Orange-ish highlight
+    public Color inactiveTabColor = Color.white;
 
     [Header("Wallet UI Components")]
     public Text coinTextDisplay; 
@@ -257,6 +262,18 @@ public class AvatarCustomizer : MonoBehaviour
             if (subPanels[i] != null)
             {
                 subPanels[i].SetActive(i == panelIndex);
+            }
+        }
+
+        // Apply visual color highlight to the active tab button
+        if (tabButtons != null && tabButtons.Length > 0)
+        {
+            for (int i = 0; i < tabButtons.Length; i++)
+            {
+                if (tabButtons[i] != null)
+                {
+                    tabButtons[i].color = (i == panelIndex) ? activeTabColor : inactiveTabColor;
+                }
             }
         }
     }
