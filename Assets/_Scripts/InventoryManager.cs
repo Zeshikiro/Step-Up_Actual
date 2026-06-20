@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
@@ -69,6 +71,9 @@ public class InventoryManager : MonoBehaviour
     public string equippedLegsId = "MCasual2_Legs";
     public string equippedFeetId = "MCasual2_Feet";
     public string equippedAccessoryId = "None";
+
+    // Global event that fires whenever the player equips a new item
+    public static event Action OnAvatarEquipmentsChanged;
 
     // Track unlocked item IDs
     private HashSet<string> unlockedItems = new HashSet<string>();
@@ -322,13 +327,14 @@ public class InventoryManager : MonoBehaviour
 
         Debug.Log($"[Wardrobe Engine] Successfully equipped {itemId} into the {category} slot.");
 
-        // 🔁 Instantly update button action text labels without expensive redrawing halts
+        // 💡 Instantly update button action text labels without expensive redrawing halts
         RefreshButtonLabels();
         
-        // ☁️ Save changes to the cloud automatically!
+        // 💾 Save changes to the cloud automatically!
         SaveAvatarToCloud();
 
-        // TODO: Trigger your 3D Avatar/Character Mesh Swapper script updates here!
+        // 🚀 Trigger ALL AvatarLoaders globally to instantly refresh meshes!
+        OnAvatarEquipmentsChanged?.Invoke();
     }
 
     // 🎨 NEW PLAY: Smart text state refresher loop

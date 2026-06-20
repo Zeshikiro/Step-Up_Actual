@@ -1994,6 +1994,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 168771195}
   m_CullTransparentMesh: 1
+--- !u!114 &186122800 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4961893207057344210, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 1015557549}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &194418826
 GameObject:
   m_ObjectHideFlags: 0
@@ -3245,6 +3256,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &392825221 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4398831085563942212, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 1015557549}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &406821055
 GameObject:
   m_ObjectHideFlags: 0
@@ -6318,6 +6340,17 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &708323805 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3021865343453395882, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 1015557549}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &714812427
 GameObject:
   m_ObjectHideFlags: 0
@@ -10792,6 +10825,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3592238470600353669}
     - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: activeTabColor.b
+      value: 0.19999999
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: activeTabColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: activeTabColor.r
+      value: 0.44373864
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
       propertyPath: wardrobeFeetGrid
       value: 
       objectReference: {fileID: 80962898}
@@ -10824,6 +10869,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1569814648}
     - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: inactiveTabColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: inactiveTabColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: inactiveTabColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: inactiveTabColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: tabButtons.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
       propertyPath: wardrobeAccessoryGrid
       value: 
       objectReference: {fileID: 1874594784}
@@ -10847,6 +10912,26 @@ PrefabInstance:
       propertyPath: 'subPanels.Array.data[4]'
       value: 
       objectReference: {fileID: 738236724}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 708323805}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[1]'
+      value: 
+      objectReference: {fileID: 186122800}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[2]'
+      value: 
+      objectReference: {fileID: 392825221}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1487413512}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1498080815}
     - target: {fileID: 6309129857776430326, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
       propertyPath: m_fontSize
       value: 40
@@ -15964,6 +16049,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RectMask2D
   m_Padding: {x: -8, y: -5, z: -8, w: -5}
   m_Softness: {x: 0, y: 0}
+--- !u!114 &1487413512 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1178360747376549159, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 1015557549}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &1498080815 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1600135791646230999, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 1015557549}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &1502238322
 GameObject:
   m_ObjectHideFlags: 0

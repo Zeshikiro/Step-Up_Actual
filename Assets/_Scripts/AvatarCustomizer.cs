@@ -74,6 +74,9 @@ public class AvatarCustomizer : MonoBehaviour
             if (wardrobeLegsGrid != null) InventoryManager.Instance.legsContentGrid = wardrobeLegsGrid;
             if (wardrobeFeetGrid != null) InventoryManager.Instance.feetContentGrid = wardrobeFeetGrid;
             if (wardrobeAccessoryGrid != null) InventoryManager.Instance.accessoryContentGrid = wardrobeAccessoryGrid;
+
+            // Generate the buttons for this scene's wardrobe UI
+            InventoryManager.Instance.GenerateInventoryUI();
         }
 
         InitializeAvatarState();

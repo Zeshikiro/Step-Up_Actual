@@ -8,6 +8,16 @@ public class AvatarLoader : MonoBehaviour
     [Tooltip("Drag the Female avatar parent object here")]
     public GameObject femaleAvatar;
 
+    void OnEnable()
+    {
+        InventoryManager.OnAvatarEquipmentsChanged += LoadSavedAvatar;
+    }
+
+    void OnDisable()
+    {
+        InventoryManager.OnAvatarEquipmentsChanged -= LoadSavedAvatar;
+    }
+
     void Start()
     {
         LoadSavedAvatar();
