@@ -406,3 +406,15 @@ Date: June 13, 2026
 Next Steps:
 - Field test the Yelp Pins out in the real world.
 - Ensure the floating canvases do not overlap when multiple cafes are close together.
+Date: June 21, 2026
+
+1. UI/UX Polishing:
+- Developed a dynamic Tab Highlight system in AvatarCustomizer.cs. Active wardrobe category tabs now dynamically change color to provide immediate visual feedback.
+- Split the primary Gameplay HUD into dual Canvas layers (Foreground Overlay and Background Camera Space) to fix severe clipping issues with 3D Mapbox buildings.
+
+2. Architecture & Data Flow:
+- Fixed a multi-scene reference bug in InventoryManager.cs by configuring dynamic UI grid assignments. The wardrobe UI now instantly populates owned assets regardless of whether the player boots from SampleScene or CustomizeScene.
+- Restructured AvatarLoader.cs to perform 3D mesh lookups using precise Prefab Name matching (GetMeshNameFromItemId) instead of raw database IDs, permanently solving the "invisible 3D avatar" bug.
+
+3. Android Hardware Integration:
+- Rewrote the AR Camera logic (ARManager.cs) into an asynchronous Coroutine. The system now gracefully waits for Android permission popups instead of failing instantly, ensuring the AR webcam feed or Fallback Background correctly deploys behind the 3D Avatar.
