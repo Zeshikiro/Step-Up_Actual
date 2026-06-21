@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 #if PLATFORM_ANDROID
 using UnityEngine.Android;
 #endif
@@ -93,7 +94,7 @@ public class ARManager : MonoBehaviour
 
         if (isARMode)
         {
-            StartAR();
+            StartCoroutine(StartARCoroutine());
         }
         else
         {
@@ -101,14 +102,25 @@ public class ARManager : MonoBehaviour
         }
     }
 
-    private void StartAR()
+    private IEnumerator StartARCoroutine()
     {
         // 1. Request Camera Permission on Android
 #if PLATFORM_ANDROID
-        if (!Permission.HasUserAuthorizedPermission(Permission.Camera) && !isPermissionRequested)
+        if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
         {
-            Permission.RequestUserPermission(Permission.Camera);
-            isPermissionRequested = true;
+            if (!isPermissionRequested)
+            {
+                Permission.RequestUserPermission(Permission.Camera);
+                isPermissionRequested = true;
+            }
+            
+            // Wait until the user clicks Allow or Deny (max 10 seconds timeout to prevent softlock)
+            float timeout = 10f;
+            while (!Permission.HasUserAuthorizedPermission(Permission.Camera) && timeout > 0f)
+            {
+                timeout -= Time.deltaTime;
+                yield return null;
+            }
         }
 #endif
 

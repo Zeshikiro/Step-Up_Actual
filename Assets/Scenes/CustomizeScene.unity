@@ -574,6 +574,9 @@ MonoBehaviour:
   - {fileID: 6177033900260531486}
   - {fileID: 8367536526537082706}
   - {fileID: 6860269023507607812}
+  tabButtons: []
+  activeTabColor: {r: 1, g: 0.8, b: 0.2, a: 1}
+  inactiveTabColor: {r: 1, g: 1, b: 1, a: 1}
   coinTextDisplay: {fileID: 0}
   coinTextDisplayTMP: {fileID: 1047407227607337555}
   currentCoins: 99999999
@@ -591,6 +594,11 @@ MonoBehaviour:
   defaultFemaleLegs: {fileID: 7857502073960754964}
   defaultFemaleFeet: {fileID: 5704450075812900960}
   activeArmatureRoot: {fileID: 1292021716879910991}
+  wardrobeHeadGrid: {fileID: 0}
+  wardrobeTorsoGrid: {fileID: 0}
+  wardrobeLegsGrid: {fileID: 0}
+  wardrobeFeetGrid: {fileID: 0}
+  wardrobeAccessoryGrid: {fileID: 0}
   purchasedItemIDs:
   - default_casual
   - default_casual
@@ -19397,6 +19405,126 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 6897418985327005037}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: maleAvatar
+      value: 
+      objectReference: {fileID: 874610951734531457}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: femaleAvatar
+      value: 
+      objectReference: {fileID: 3906401486867211087}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultMaleBody
+      value: 
+      objectReference: {fileID: 439209172992382066}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultMaleFeet
+      value: 
+      objectReference: {fileID: 80392669676806165}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultMaleHead
+      value: 
+      objectReference: {fileID: 6774719010542168504}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultMaleLegs
+      value: 
+      objectReference: {fileID: 7537558536204157703}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: activeTabColor.b
+      value: 0.21756992
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: activeTabColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: activeTabColor.r
+      value: 0.19999999
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: wardrobeFeetGrid
+      value: 
+      objectReference: {fileID: 5416280111910077655}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: wardrobeHeadGrid
+      value: 
+      objectReference: {fileID: 366782070973419394}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: wardrobeLegsGrid
+      value: 
+      objectReference: {fileID: 5644687439401397062}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultFemaleBody
+      value: 
+      objectReference: {fileID: 3156910374177576609}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultFemaleFeet
+      value: 
+      objectReference: {fileID: 5704450075812900960}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultFemaleHead
+      value: 
+      objectReference: {fileID: 8543475382441623275}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: defaultFemaleLegs
+      value: 
+      objectReference: {fileID: 7857502073960754964}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: wardrobeTorsoGrid
+      value: 
+      objectReference: {fileID: 6082455949919681952}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: inactiveTabColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: tabButtons.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: wardrobeAccessoryGrid
+      value: 
+      objectReference: {fileID: 6656473762114520272}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'subPanels.Array.data[0]'
+      value: 
+      objectReference: {fileID: 4431430906984350772}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'subPanels.Array.data[1]'
+      value: 
+      objectReference: {fileID: 4587472266476094975}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'subPanels.Array.data[2]'
+      value: 
+      objectReference: {fileID: 6177033900260531486}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'subPanels.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8367536526537082706}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'subPanels.Array.data[4]'
+      value: 
+      objectReference: {fileID: 6860269023507607812}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8426666287816780103}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8426666287816780102}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8426666287816780101}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8426666287816780100}
+    - target: {fileID: 6281024301791889481, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+      propertyPath: 'tabButtons.Array.data[4]'
+      value: 
+      objectReference: {fileID: 8426666287816780099}
     - target: {fileID: 6357480096394317837, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -19654,6 +19782,61 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+--- !u!114 &8426666287816780099 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1600135791646230999, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 8426666287816780098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &8426666287816780100 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1178360747376549159, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 8426666287816780098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &8426666287816780101 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4398831085563942212, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 8426666287816780098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &8426666287816780102 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4961893207057344210, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 8426666287816780098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &8426666287816780103 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3021865343453395882, guid: 34beec7b583dab848bb65adadd32a92c, type: 3}
+  m_PrefabInstance: {fileID: 8426666287816780098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!4 &8430159706157008706
 Transform:
   m_ObjectHideFlags: 0
