@@ -2,7 +2,21 @@ import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 
 export default function HealthTips() {
-  const [activeTipId, setActiveTipId] = useState(null);
+  const [activeTipId, setActiveTipId] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tip');
+  });
+
+  const handleTipChange = (id) => {
+    setActiveTipId(id);
+    const url = new URL(window.location);
+    if (id) {
+      url.searchParams.set('tip', id);
+    } else {
+      url.searchParams.delete('tip');
+    }
+    window.history.pushState({}, '', url);
+  };
 
   const tips = [
     {
@@ -41,7 +55,7 @@ export default function HealthTips() {
       <header style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative' }}>
         {activeTipId && (
           <button 
-            onClick={() => setActiveTipId(null)}
+            onClick={() => handleTipChange(null)}
             style={{ 
               position: 'absolute', left: 0, top: '10px', background: 'none', border: 'none', 
               color: '#6be2ff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px',
@@ -59,7 +73,7 @@ export default function HealthTips() {
           {tips.map((tip) => (
             <button 
               key={tip.id}
-              onClick={() => setActiveTipId(tip.id)}
+              onClick={() => handleTipChange(tip.id)}
               style={{
                 background: 'white',
                 color: 'black',

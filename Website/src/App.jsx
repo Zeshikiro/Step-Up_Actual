@@ -11,7 +11,20 @@ import { useAuth } from './components/AuthContext'
 import { Home, Trophy, MessageCircle, User, Info, Heart, Download } from 'lucide-react'
 
 function App() {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'home';
+  });
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    const url = new URL(window.location);
+    url.searchParams.set('tab', tab);
+    if (tab !== 'health') {
+      url.searchParams.delete('tip'); // clear tip if not on health page
+    }
+    window.history.pushState({}, '', url);
+  };
 
   return (
     <AuthProvider>
@@ -23,7 +36,7 @@ function App() {
             <header>
               <h1 className="title-gradient">Step - Up</h1>
               <p className="subtitle">Gamify your fitness journey. Track every step, customize your 3D avatar, and conquer the leaderboard.</p>
-              <button className="cta-button" onClick={() => setActiveTab('auth')}>Join Now</button>
+              <button className="cta-button" onClick={() => handleTabChange('auth')}>Join Now</button>
             </header>
 
             <section className="features-grid">
@@ -72,37 +85,37 @@ function App() {
           zIndex: 1000
         }}>
           <button 
-            onClick={() => setActiveTab('home')} 
+            onClick={() => handleTabChange('home')} 
             style={{background: 'none', border: 'none', color: activeTab === 'home' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <Home size={24} />
             <span style={{fontSize: '0.75rem'}}>Home</span>
           </button>
           <button 
-            onClick={() => setActiveTab('leaderboard')} 
+            onClick={() => handleTabChange('leaderboard')} 
             style={{background: 'none', border: 'none', color: activeTab === 'leaderboard' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <Trophy size={24} />
             <span style={{fontSize: '0.75rem'}}>Ranks</span>
           </button>
           <button 
-            onClick={() => setActiveTab('social')} 
+            onClick={() => handleTabChange('social')} 
             style={{background: 'none', border: 'none', color: activeTab === 'social' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <MessageCircle size={24} />
             <span style={{fontSize: '0.75rem'}}>Feed</span>
           </button>
           <button 
-            onClick={() => setActiveTab('health')} 
+            onClick={() => handleTabChange('health')} 
             style={{background: 'none', border: 'none', color: activeTab === 'health' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <Heart size={24} />
             <span style={{fontSize: '0.75rem'}}>Tips</span>
           </button>
           <button 
-            onClick={() => setActiveTab('about')} 
+            onClick={() => handleTabChange('about')} 
             style={{background: 'none', border: 'none', color: activeTab === 'about' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <Info size={24} />
             <span style={{fontSize: '0.75rem'}}>About</span>
           </button>
           <button 
-            onClick={() => setActiveTab('auth')} 
+            onClick={() => handleTabChange('auth')} 
             style={{background: 'none', border: 'none', color: activeTab === 'auth' ? '#6be2ff' : '#ccc', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
             <User size={24} />
             <span style={{fontSize: '0.75rem'}}>Profile</span>
