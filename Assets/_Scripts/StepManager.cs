@@ -8,8 +8,10 @@ using Mapbox.Utils;
 using Mapbox.Unity.Utilities;
 using System;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 #if UNITY_ANDROID
 using Unity.Notifications.Android;
+using UnityEngine.Android;
 #endif
 
 public class StepManager : MonoBehaviour
@@ -34,17 +36,10 @@ public class StepManager : MonoBehaviour
     private float autoSessionStartTime = 0f;
     private bool inAutoSession = false;
 
-    [Header("Pedometer Sensitivity")]
-    public float stepThreshold = 1.5f; 
-    public float resetThreshold = 1.0f; 
-
-    [Header("Anti-Cheat System")]
-    public float maxAllowedSpeed = 5.0f;
-    public float maxShakeThreshold = 3.0f;
-    public float minTimeBetweenSteps = 0.3f;
-    
-    private float _lastStepTime = 0f;
-    private bool isStepReady = true;
+    [Header("Hardware Pedometer")]
+    private int baselineHardwareSteps = -1;
+    private int lastHardwareStepCount = -1;
+    private bool hasPermission = false;
 
     // GPS Speed Tracking
     private ILocationProvider _locationProvider;
@@ -71,7 +66,19 @@ public class StepManager : MonoBehaviour
     {
 #if UNITY_ANDROID
         AndroidNotificationCenter.CancelAllNotifications();
+        if (!Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
+        {
+            Permission.RequestUserPermission("android.permission.ACTIVITY_RECOGNITION");
+        }
 #endif
+        if (StepCounter.current != null)
+        {
+            InputSystem.EnableDevice(StepCounter.current);
+        }
+
+        baselineHardwareSteps = PlayerPrefs.GetInt("BaselineHardwareSteps", -1);
+        lastHardwareStepCount = PlayerPrefs.GetInt("LastHardwareStepCount", -1);
+
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -171,8 +178,6 @@ public class StepManager : MonoBehaviour
             RegisterStep();
         }
 
-        float acceleration = Input.acceleration.magnitude;
-
         // GPS Speed Tracker
         if (_locationProvider != null && _locationProvider.CurrentLocation.LatitudeLongitude != Vector2d.zero)
         {
@@ -200,22 +205,58 @@ public class StepManager : MonoBehaviour
             }
         }
 
-        if (acceleration > stepThreshold && acceleration < maxShakeThreshold && isStepReady)
+#if UNITY_ANDROID
+        if (!hasPermission && Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
         {
-            if (Time.time - _lastStepTime >= minTimeBetweenSteps)
+            hasPermission = true;
+            if (StepCounter.current != null) InputSystem.EnableDevice(StepCounter.current);
+        }
+#else
+        hasPermission = true; 
+#endif
+
+        if (StepCounter.current != null && StepCounter.current.enabled && hasPermission)
+        {
+            int currentHardwareSteps = StepCounter.current.stepCounter.ReadValue();
+            
+            if (currentHardwareSteps > 0)
             {
-                if (_currentSpeedMPS <= maxAllowedSpeed)
+                if (baselineHardwareSteps == -1 || (lastHardwareStepCount != -1 && currentHardwareSteps < lastHardwareStepCount))
                 {
-                    RegisterStep();
-                    _lastStepTime = Time.time;
-                    isStepReady = false; 
+                    // Initialization or phone was rebooted (sensor reset to 0)
+                    baselineHardwareSteps = currentHardwareSteps;
+                    PlayerPrefs.SetInt("BaselineHardwareSteps", baselineHardwareSteps);
+                    lastHardwareStepCount = currentHardwareSteps;
+                    PlayerPrefs.SetInt("LastHardwareStepCount", lastHardwareStepCount);
+                    PlayerPrefs.Save();
+                }
+                else if (lastHardwareStepCount == -1)
+                {
+                    // App just opened, but phone was NOT rebooted. Grant offline steps!
+                    int savedLastCount = PlayerPrefs.GetInt("LastHardwareStepCount", currentHardwareSteps);
+                    if (currentHardwareSteps >= savedLastCount)
+                    {
+                        int offlineSteps = currentHardwareSteps - savedLastCount;
+                        if (offlineSteps > 0 && offlineSteps < 50000) 
+                        {
+                            for (int i = 0; i < offlineSteps; i++) RegisterStep();
+                        }
+                    }
+                    lastHardwareStepCount = currentHardwareSteps;
+                    PlayerPrefs.SetInt("LastHardwareStepCount", lastHardwareStepCount);
+                }
+                else
+                {
+                    // Normal active session
+                    int stepsTaken = currentHardwareSteps - lastHardwareStepCount;
+                    if (stepsTaken > 0)
+                    {
+                        for (int i = 0; i < stepsTaken; i++) RegisterStep();
+                        lastHardwareStepCount = currentHardwareSteps;
+                        PlayerPrefs.SetInt("LastHardwareStepCount", lastHardwareStepCount);
+                    }
                 }
             }
-        }
-        
-        if (acceleration < resetThreshold)
-        {
-            isStepReady = true; 
         }
 
         // Auto-Session Detection logic

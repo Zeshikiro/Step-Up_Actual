@@ -8,7 +8,6 @@ public class ActivitySummaryManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI streakTxt;
     [SerializeField] private TextMeshProUGUI calorieTxt;
     [SerializeField] private TextMeshProUGUI speedTxt;
-    [SerializeField] private Image graphFillRing;
 
     [Header("--- Middle Section Cards ---")]
     [SerializeField] private TextMeshProUGUI stepCountTxt;
@@ -61,20 +60,36 @@ public class ActivitySummaryManager : MonoBehaviour
         float calculatedDistanceKm = (currentSteps * stepStrideLengthMeters) / 1000f;
         float estimatedSpeed = currentSteps > 0 ? 4.5f : 0.0f;
 
-        if (streakTxt != null) streakTxt.text = $": {actualStreak} DAYS";
-        if (calorieTxt != null) calorieTxt.text = $"{calculatedCalories:F0} kcal";
-        if (speedTxt != null) speedTxt.text = $"{estimatedSpeed:F1} KM/H";
+        // --- Dynamic Counter Assignments ---
+        
+        // Streak
+        if (streakTxt != null) {
+            if (streakTxt.TryGetComponent(out UINumberCounter streakCounter)) streakCounter.CountTo(actualStreak);
+            else streakTxt.text = actualStreak.ToString();
+        }
 
-        if (stepCountTxt != null) 
-            stepCountTxt.text = $"\"{currentSteps}/{dailyStepGoal}\"";
+        // Calories
+        if (calorieTxt != null) {
+            if (calorieTxt.TryGetComponent(out UINumberCounter calCounter)) calCounter.CountTo(Mathf.RoundToInt(calculatedCalories));
+            else calorieTxt.text = calculatedCalories.ToString("F0");
+        }
 
-        if (distanceTxt != null) 
-            distanceTxt.text = $"\"{calculatedDistanceKm:F2} KM\"";
+        // Speed (Float)
+        if (speedTxt != null) {
+            if (speedTxt.TryGetComponent(out UINumberCounter speedCounter)) speedCounter.CountToFloat(estimatedSpeed, 1.0f, "F1");
+            else speedTxt.text = estimatedSpeed.ToString("F1");
+        }
 
-        if (graphFillRing != null)
-        {
-            float fillRatio = (float)currentSteps / dailyStepGoal;
-            graphFillRing.fillAmount = Mathf.Clamp01(fillRatio);
+        // Steps
+        if (stepCountTxt != null) {
+            if (stepCountTxt.TryGetComponent(out UINumberCounter stepCounter)) stepCounter.CountTo(currentSteps);
+            else stepCountTxt.text = currentSteps.ToString("N0");
+        }
+
+        // Distance (Float)
+        if (distanceTxt != null) {
+            if (distanceTxt.TryGetComponent(out UINumberCounter distCounter)) distCounter.CountToFloat(calculatedDistanceKm, 1.0f, "F2");
+            else distanceTxt.text = calculatedDistanceKm.ToString("F2");
         }
     }
 

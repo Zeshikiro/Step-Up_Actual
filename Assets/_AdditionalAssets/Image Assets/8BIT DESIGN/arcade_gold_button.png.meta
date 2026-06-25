@@ -1,0 +1,230 @@
+fileFormatVersion: 2
+guid: d4b105198414afe42b05777a79e42f1c
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: arcade_gold_button_0
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 139
+        width: 392
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb3a96da75f9d6a429210d1ca0c84c07
+      internalID: 1195595972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      arcade_gold_button_0: 1195595972
+      arcade_gold_button_1: -1525436891
+      arcade_gold_button_10: 1582882196
+      arcade_gold_button_11: -120486655
+      arcade_gold_button_12: 1001407094
+      arcade_gold_button_13: 1378952058
+      arcade_gold_button_14: 1086807947
+      arcade_gold_button_15: -1191067117
+      arcade_gold_button_16: -669637844
+      arcade_gold_button_17: -1947763745
+      arcade_gold_button_18: -1623629019
+      arcade_gold_button_19: -36911277
+      arcade_gold_button_2: 1295044775
+      arcade_gold_button_20: 1606105400
+      arcade_gold_button_21: 1050453249
+      arcade_gold_button_22: -325626251
+      arcade_gold_button_23: -590157622
+      arcade_gold_button_24: -1555661414
+      arcade_gold_button_25: 954869035
+      arcade_gold_button_26: 1108522623
+      arcade_gold_button_27: -1881716206
+      arcade_gold_button_28: -1053352889
+      arcade_gold_button_29: 667168296
+      arcade_gold_button_3: 544570224
+      arcade_gold_button_30: -1354248050
+      arcade_gold_button_31: -1824829530
+      arcade_gold_button_32: -695460430
+      arcade_gold_button_33: 685749939
+      arcade_gold_button_34: 1594939921
+      arcade_gold_button_35: -1830898038
+      arcade_gold_button_36: 1029282255
+      arcade_gold_button_37: 2020258660
+      arcade_gold_button_38: -433057479
+      arcade_gold_button_39: -583628864
+      arcade_gold_button_4: -1311069663
+      arcade_gold_button_40: -1058656631
+      arcade_gold_button_41: -1155187906
+      arcade_gold_button_42: 458157817
+      arcade_gold_button_43: 463029396
+      arcade_gold_button_44: -410543825
+      arcade_gold_button_45: 398031499
+      arcade_gold_button_46: 579047242
+      arcade_gold_button_47: -1265876027
+      arcade_gold_button_48: -528688610
+      arcade_gold_button_49: 1922564174
+      arcade_gold_button_5: -1584607399
+      arcade_gold_button_50: -919588942
+      arcade_gold_button_51: 193116407
+      arcade_gold_button_52: 2144243641
+      arcade_gold_button_53: -2115981108
+      arcade_gold_button_54: -1196911617
+      arcade_gold_button_55: -656453289
+      arcade_gold_button_56: -1090817278
+      arcade_gold_button_57: -42633173
+      arcade_gold_button_58: -1954261764
+      arcade_gold_button_59: 407368355
+      arcade_gold_button_6: 1734231842
+      arcade_gold_button_60: -1875517515
+      arcade_gold_button_61: -1025478367
+      arcade_gold_button_62: -2007904917
+      arcade_gold_button_7: -1315450789
+      arcade_gold_button_8: -566178651
+      arcade_gold_button_9: 456128521
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

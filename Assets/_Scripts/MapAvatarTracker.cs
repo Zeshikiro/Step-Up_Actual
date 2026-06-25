@@ -87,8 +87,8 @@ public class MapAvatarTracker : MonoBehaviour
         }
         
         tr.time = Mathf.Infinity; // Trail lasts forever while app is open
-        tr.startWidth = 4.0f; // Thick like Strava!
-        tr.endWidth = 4.0f;
+        tr.startWidth = 1.5f; // Thinner and sleeker
+        tr.endWidth = 1.5f;
         tr.numCapVertices = 5; // Perfectly rounded ends
         tr.numCornerVertices = 5; // Perfectly rounded corners when you turn
         
@@ -97,7 +97,7 @@ public class MapAvatarTracker : MonoBehaviour
         trailMat.color = new Color(1.0f, 0.35f, 0.0f, 0.9f); // #fc5a03 (Strava Orange)
         tr.material = trailMat;
         
-        tr.minVertexDistance = 1.0f; 
+        tr.minVertexDistance = 3.0f; // Filters out small GPS jitters for a clean line
         tr.transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
 
         // (Removed the child destruction loop so your 2D map pin doesn't get deleted!)

@@ -13,6 +13,10 @@ public class LeaderboardRowDisplay : MonoBehaviour
     {
         if (rankText != null) rankText.text = "#" + rank;
         if (usernameText != null) usernameText.text = username;
-        if (stepCountText != null) stepCountText.text = totalSteps.ToString("N0") + " Steps";
+        if (stepCountText != null)
+        {
+            if (stepCountText.TryGetComponent(out UINumberCounter counter)) counter.CountTo(totalSteps, 1f);
+            else stepCountText.text = totalSteps.ToString("N0");
+        }
     }
 }

@@ -1,0 +1,255 @@
+fileFormatVersion: 2
+guid: 80b240154d6dec94ca0e9d210b03b253
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Full Cloud
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 228
+        width: 264
+        height: 165
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2661edd1a63377d438a26a4680503c45
+      internalID: 1460709183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Cloud_0: -2109936722
+      Cloud_1: -1344843162
+      Cloud_10: 1231243266
+      Cloud_11: 1991813702
+      Cloud_12: 629905955
+      Cloud_13: 282161965
+      Cloud_14: -341548357
+      Cloud_15: -145619498
+      Cloud_16: 1810705441
+      Cloud_17: -1241755422
+      Cloud_18: 554351609
+      Cloud_19: -1217491351
+      Cloud_20: -1746243502
+      Cloud_21: -399463586
+      Cloud_22: -652675767
+      Cloud_23: -1804337546
+      Cloud_24: 1274224832
+      Cloud_25: -349126217
+      Cloud_26: 526180150
+      Cloud_27: 1838018480
+      Cloud_28: 443491892
+      Cloud_29: 280262016
+      Cloud_3: -1541336705
+      Cloud_30: 1693224259
+      Cloud_31: -435949769
+      Cloud_32: -1795322669
+      Cloud_33: -2107344120
+      Cloud_34: -872044175
+      Cloud_35: 30638486
+      Cloud_36: -1938432322
+      Cloud_37: -256509929
+      Cloud_38: -1677766743
+      Cloud_39: -14690662
+      Cloud_40: 77836410
+      Cloud_41: 358446233
+      Cloud_42: -431390796
+      Cloud_43: 1136146136
+      Cloud_45: 503494907
+      Cloud_46: -638669900
+      Cloud_47: 1504205306
+      Cloud_48: -705821368
+      Cloud_49: 633971940
+      Cloud_5: 257530487
+      Cloud_50: 1475235873
+      Cloud_51: -218725700
+      Cloud_52: -442690029
+      Cloud_53: -1180099377
+      Cloud_54: 675728213
+      Cloud_55: -1409218025
+      Cloud_56: -1507846679
+      Cloud_57: 596373780
+      Cloud_58: 1510651273
+      Cloud_59: -1535910966
+      Cloud_6: -1183226712
+      Cloud_60: -821172838
+      Cloud_61: -335727122
+      Cloud_62: 1652567673
+      Cloud_63: 2022484417
+      Cloud_64: 512614422
+      Cloud_65: 1685771838
+      Cloud_66: -687385932
+      Cloud_67: -159603996
+      Cloud_68: 1949832677
+      Cloud_69: -346621191
+      Cloud_7: -1435340488
+      Cloud_70: 955400774
+      Cloud_71: 19063574
+      Cloud_72: -1324511671
+      Cloud_73: -1881463627
+      Cloud_74: 1629602476
+      Cloud_75: -178250827
+      Cloud_76: 1937032716
+      Cloud_77: 965274208
+      Cloud_78: -350160364
+      Cloud_79: 1497365608
+      Cloud_8: 49757999
+      Cloud_80: 76753940
+      Cloud_81: -533332002
+      Cloud_82: 258317225
+      Cloud_83: 1938894366
+      Cloud_84: -343773187
+      Cloud_85: 1066777017
+      Cloud_86: 1409882338
+      Cloud_87: 641005616
+      Cloud_88: 1361624349
+      Cloud_89: -1638093504
+      Cloud_9: 927841959
+      Full Cloud: 1460709183
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

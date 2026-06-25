@@ -163,6 +163,7 @@ public class YelpPlacesManager : MonoBehaviour
                     {
                         Texture2D downloadedTex = DownloadHandlerTexture.GetContent(imgReq);
                         photoImage.texture = downloadedTex;
+                        Canvas.ForceUpdateCanvases();
                     }
                 }
             }

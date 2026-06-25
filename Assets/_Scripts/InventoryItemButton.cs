@@ -8,6 +8,7 @@ public class InventoryItemButton : MonoBehaviour
     public string itemId;                  // Matches the unique database item ID string
     public string category;                // "Head", "Torso", "Legs", or "Feet"
     public GameObject itemPrefab;          // The 3D mesh model reference
+    public int unlockCost;                 // Cost to purchase this item
 
     [Header("UI Visual Components")]
     public TextMeshProUGUI txtOutfitName;  // Displays pretty display name
@@ -25,11 +26,12 @@ public class InventoryItemButton : MonoBehaviour
     }
 
     // Fed by your inventory manager generation loop to initialize values
-    public void SetupButtonDetails(string id, string cat, GameObject prefab, Sprite uniqueIcon)
+    public void SetupButtonDetails(string id, string cat, GameObject prefab, Sprite uniqueIcon, int cost)
     {
         itemId = id;
         category = cat;
         itemPrefab = prefab;
+        unlockCost = cost;
 
         if (txtOutfitName != null)
         {
@@ -41,6 +43,13 @@ public class InventoryItemButton : MonoBehaviour
         {
             imgCharacterIcon.sprite = uniqueIcon;
             imgCharacterIcon.color = Color.white; // Ensures full image visibility
+        }
+
+        // Dynamically assign Rarity Color to the background image!
+        Image bgImage = GetComponent<Image>();
+        if (bgImage != null && InventoryManager.Instance != null)
+        {
+            bgImage.color = InventoryManager.Instance.GetRarityColor(unlockCost);
         }
 
         RefreshVisibility();
@@ -61,11 +70,28 @@ public class InventoryItemButton : MonoBehaviour
         else if ((cleanCategory == "feet" || cleanCategory == "shoes") && InventoryManager.Instance.equippedFeetId == itemId) isEquipped = true;
         else if (cleanCategory == "accessory" && InventoryManager.Instance.equippedAccessoryId == itemId) isEquipped = true;
 
+        // Check if item is unlocked!
+        bool isUnlocked = InventoryManager.Instance.IsItemUnlocked(itemId);
+
         // Toggle status text feedback states smoothly
         if (txtEquipStatus != null)
         {
-            txtEquipStatus.text = isEquipped ? "EQUIPPED" : "EQUIP";
-            txtEquipStatus.color = isEquipped ? Color.green : Color.white;
+            if (isEquipped)
+            {
+                txtEquipStatus.text = "EQUIPPED";
+                txtEquipStatus.color = Color.green;
+            }
+            else if (isUnlocked)
+            {
+                txtEquipStatus.text = "EQUIP";
+                txtEquipStatus.color = Color.white;
+            }
+            else
+            {
+                // Show purchase price if locked
+                txtEquipStatus.text = $"BUY {unlockCost}c";
+                txtEquipStatus.color = Color.yellow;
+            }
         }
     }
 
@@ -79,6 +105,30 @@ public class InventoryItemButton : MonoBehaviour
         {
             Debug.LogWarning($"[Wardrobe Engine] No 3D prefab model assigned to item asset: {itemId}");
             return;
+        }
+
+        // ECONOMY CHECK: Is the item locked?
+        if (!InventoryManager.Instance.IsItemUnlocked(itemId))
+        {
+            // Attempt to buy it
+            if (InventoryManager.Instance.SpendCoins(unlockCost))
+            {
+                InventoryManager.Instance.UnlockItem(itemId);
+                Debug.Log($"[Wardrobe Engine] Successfully purchased {itemId} for {unlockCost} coins!");
+            }
+            else
+            {
+                Debug.LogWarning($"[Wardrobe Engine] Not enough coins to buy {itemId}!");
+                
+                // Visual feedback for being broke
+                if (txtEquipStatus != null)
+                {
+                    txtEquipStatus.text = "NOT ENOUGH COINS";
+                    txtEquipStatus.color = Color.red;
+                    Invoke("RefreshVisibility", 1.5f); // Reset text after 1.5s
+                }
+                return; // Stop here, do not equip
+            }
         }
 
         string cleanCategory = string.IsNullOrEmpty(category) ? "" : category.ToLower().Trim();

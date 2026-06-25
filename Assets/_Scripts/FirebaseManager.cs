@@ -26,8 +26,6 @@ void Start()
             
             Debug.Log("Firebase Initialized!");
 
-            LoadLeaderboard();
-
             // ---------------------------------------------------------
             // 2. THE CAMERA: Paste the Listener code right here!
             // ---------------------------------------------------------
@@ -46,50 +44,7 @@ void Start()
         }
     });
 }
-    public void LoadLeaderboard()
-{
-    // Ask Firebase to order by steps and grab the highest 10
-    dbReference.Child("users").OrderByChild("TotalLifetimeSteps").LimitToLast(10).GetValueAsync().ContinueWithOnMainThread(task => {
-        if (task.IsFaulted) {
-            Debug.LogError("Failed to get leaderboard: " + task.Exception);
-            return;
-        }
 
-        DataSnapshot snapshot = task.Result;
-
-        // Destroy any old UI rows before loading new ones
-        foreach (Transform child in leaderboardContent) {
-            Destroy(child.gameObject);
-        }
-
-        // Loop through the top players we got back
-        foreach (DataSnapshot childSnapshot in snapshot.Children) {
-            
-            // THE FIX: Skip any broken users (like test_user_001) that don't have an email!
-            if (!childSnapshot.HasChild("email")) 
-            {
-                Debug.LogWarning("Skipping a user because they have no email setup.");
-                continue; 
-            }
-
-            // Extract the data safely
-            string userEmail = childSnapshot.Child("email").Value.ToString();
-            string userSteps = childSnapshot.Child("TotalLifetimeSteps").Value.ToString();
-
-            // Spawn a new UI Row
-            GameObject newRow = Instantiate(playerRowPrefab, leaderboardContent);
-            
-            // Find the text boxes inside the new row and fill them
-            TextMeshProUGUI[] texts = newRow.GetComponentsInChildren<TextMeshProUGUI>();
-            texts[0].text = userEmail; 
-            texts[1].text = userSteps; 
-
-            // BONUS FIX: Firebase sorts lowest-to-highest. 
-            // This forces the highest step counts to spawn at the TOP of your UI list!
-            newRow.transform.SetAsFirstSibling();
-        }
-    });
-}
 
     public void UpdateStepsInCloud(int newSteps)
     {
@@ -119,8 +74,11 @@ void Start()
         }
         });
 
-            // 4. Also save their email so we can display it on the Leaderboard later!
+            // 4. Also save their email and username so we can display it on the Leaderboard later!
             dbReference.Child("users").Child(userId).Child("email").SetValueAsync(userEmail);
+            
+            string localName = PlayerPrefs.GetString("UserName", "Player 1");
+            dbReference.Child("users").Child(userId).Child("username").SetValueAsync(localName);
         }
         else
         {
@@ -136,12 +94,6 @@ void Start()
             // This flips the switch: If it's on, turn it off. If it's off, turn it on.
             bool isCurrentlyOpen = leaderboardPanel.activeSelf;
             leaderboardPanel.SetActive(!isCurrentlyOpen);
-
-            // If we just opened it, tell Firebase to download the freshest data!
-            if (!isCurrentlyOpen) 
-            {
-                LoadLeaderboard();
-            }
         }
     }
 

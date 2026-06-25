@@ -139,31 +139,42 @@ public class MissionManager : MonoBehaviour
         if (missionCardPrefab == null || scrollContentParent == null) return;
 
         GameObject cardObj = Instantiate(missionCardPrefab, scrollContentParent);
+        cardObj.SetActive(true); // <--- THIS FIXES THE INVISIBLE PREFAB BUG!
+        cardObj.transform.localScale = Vector3.one;
+        cardObj.transform.localPosition = new Vector3(cardObj.transform.localPosition.x, cardObj.transform.localPosition.y, 0f);
+        
         MissionCardUI ui = new MissionCardUI();
         
-        // Find children by naming convention (You will need to set up the prefab this way)
-        Transform titleT = cardObj.transform.Find("TitleText");
-        Transform descT = cardObj.transform.Find("DescText");
-        Transform sliderT = cardObj.transform.Find("ProgressBar");
-        Transform btnT = cardObj.transform.Find("ClaimButton");
-
-        if (titleT != null) ui.titleText = titleT.GetComponentInChildren<TextMeshProUGUI>();
-        if (descT != null) ui.descText = descT.GetComponentInChildren<TextMeshProUGUI>();
-        if (sliderT != null) ui.progressBar = sliderT.GetComponentInChildren<Slider>();
-        if (btnT != null)
+        // Find children dynamically no matter how deep they are nested in the prefab!
+        TextMeshProUGUI[] allTexts = cardObj.GetComponentsInChildren<TextMeshProUGUI>(true);
+        foreach (var t in allTexts)
         {
-            ui.claimButton = btnT.GetComponentInChildren<Button>();
-            ui.claimBtnText = btnT.GetComponentInChildren<TextMeshProUGUI>();
+            if (t.gameObject.name == "TitleText") ui.titleText = t;
+            else if (t.gameObject.name == "DescText") ui.descText = t;
+            else if (t.transform.parent != null && t.transform.parent.name == "ClaimButton") ui.claimBtnText = t;
+            else if (t.gameObject.name == "Text (TMP)") ui.claimBtnText = t; // Fallback
         }
 
-        ui.titleText.text = title;
-        ui.descText.text = desc;
+        Slider[] allSliders = cardObj.GetComponentsInChildren<Slider>(true);
+        if (allSliders.Length > 0) ui.progressBar = allSliders[0];
+
+        Button[] allButtons = cardObj.GetComponentsInChildren<Button>(true);
+        foreach (var b in allButtons)
+        {
+            if (b.gameObject.name == "ClaimButton") ui.claimButton = b;
+        }
+
+        if (ui.titleText != null) ui.titleText.text = title;
+        if (ui.descText != null) ui.descText.text = desc;
         
         // Cache for live updates
         spawnedCards.Add(cardObj);
         cardUIs.Add(ui);
 
-        UpdateSingleCardUI(ui, currentProgress, target, missionIndex);
+        string rank = "STARTER";
+        if (profileManager != null && profileManager.activityLevelText != null) rank = profileManager.activityLevelText.text.ToUpper();
+
+        UpdateSingleCardUI(ui, currentProgress, target, missionIndex, rank);
     }
 
     private void UpdateAllProgress()
@@ -203,11 +214,11 @@ public class MissionManager : MonoBehaviour
 
         for (int i = 0; i < cardUIs.Count; i++)
         {
-            UpdateSingleCardUI(cardUIs[i], currentProgs[i], targets[i], i);
+            UpdateSingleCardUI(cardUIs[i], currentProgs[i], targets[i], i, rank);
         }
     }
 
-    private void UpdateSingleCardUI(MissionCardUI ui, int currentProgress, int target, int missionIndex)
+    private void UpdateSingleCardUI(MissionCardUI ui, int currentProgress, int target, int missionIndex, string rank)
     {
         if (ui.progressBar != null) ui.progressBar.value = Mathf.Clamp01((float)currentProgress / target);
         
@@ -222,12 +233,21 @@ public class MissionManager : MonoBehaviour
         {
             if (currentProgress >= target)
             {
+                // Dynamic Economy: Calculate rewards based on difficulty rank!
+                int baseDailyReward = 100;
+                if (rank == "EXPLORER") baseDailyReward = 150;
+                else if (rank == "TRAILBLAZER") baseDailyReward = 200;
+                else if (rank == "MARATHONER" || rank == "ELITE RUNNER") baseDailyReward = 250;
+                
+                // Weekly missions give 5x the daily reward
+                int xpReward = missionIndex >= 7 ? baseDailyReward * 5 : baseDailyReward;
+
                 if (ui.claimBtnText != null) ui.claimBtnText.text = "CLAIM";
                 if (ui.claimButton != null) 
                 {
                     ui.claimButton.interactable = true;
                     ui.claimButton.onClick.RemoveAllListeners();
-                    ui.claimButton.onClick.AddListener(() => ClaimMission(missionIndex, missionIndex >= 7 ? 5000 : 1000));
+                    ui.claimButton.onClick.AddListener(() => ClaimMission(missionIndex, xpReward));
                 }
             }
             else
@@ -251,8 +271,15 @@ public class MissionManager : MonoBehaviour
         int currentXP = PlayerPrefs.GetInt("MissionXPEarned", 0);
         PlayerPrefs.SetInt("MissionXPEarned", currentXP + xpReward);
         PlayerPrefs.Save();
+        
+        // ECONOMY: Give the player coins equal to the XP reward!
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.AddCoins(xpReward);
+        }
+
         UpdateAllProgress(); // Refresh instantly
-        Debug.Log($"Mission {index} Claimed! +{xpReward} XP");
+        Debug.Log($"Mission {index} Claimed! +{xpReward} XP & Coins");
     }
 
     // --- MASSIVE WHO LOOKUP TABLE ---

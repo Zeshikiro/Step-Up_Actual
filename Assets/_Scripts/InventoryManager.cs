@@ -45,6 +45,7 @@ public class InventoryManager : MonoBehaviour
         public string category;             // Must be exactly: "Head", "Torso", "Legs", "Feet", or "Accessory"
         public GameObject itemMeshPrefab;   // The specific 3D model piece to equip
         public Sprite itemIcon;             // UI icon for this individual piece (Your NOBG Sprites!)
+        public int unlockCost = 500;        // Cost in coins to buy this item
     }
 
     [Header("Master Inventory Database")]
@@ -62,7 +63,7 @@ public class InventoryManager : MonoBehaviour
     public Transform accessoryContentGrid;
 
     [Header("Player Wallet")]
-    public int coins = 1500; // Starting coins balance
+    public int coins = 0; // Starting coins balance
 
     [Header("Saved Look (Item IDs)")]
     public bool isMaleAvatar = true; // Tracks explicit gender choice globally
@@ -92,17 +93,11 @@ public class InventoryManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         LoadUnlockedItems();
+        LoadCoins();
 
         // Pre-unlock the default casual items so they are always in the inventory
-        UnlockItem("Casual_Head");
-        UnlockItem("Casual_Body");
-        UnlockItem("Casual_Torso"); 
-        UnlockItem("Casual_Legs");
-        UnlockItem("Casual_Feet");
-
-        // Also unlock the prefixed versions based on the new naming convention
-        UnlockFullOutfitBundle("M_Casual");
-        UnlockFullOutfitBundle("F_Casual");
+        UnlockFullOutfitBundle("MCasual2");
+        UnlockFullOutfitBundle("FCasual");
     }
 
     private void Start()
@@ -242,9 +237,29 @@ public class InventoryManager : MonoBehaviour
         if (coins >= amount)
         {
             coins -= amount;
+            SaveCoins();
             return true;
         }
         return false;
+    }
+
+    public void AddCoins(int amount)
+    {
+        coins += amount;
+        SaveCoins();
+    }
+
+    public void SaveCoins()
+    {
+        PlayerPrefs.SetInt("PlayerCoins", coins);
+        PlayerPrefs.Save();
+        // Force refresh UI so the coin counter instantly updates if we are in CustomizeScene
+        RefreshButtonLabels(); 
+    }
+
+    public void LoadCoins()
+    {
+        coins = PlayerPrefs.GetInt("PlayerCoins", 0); // Defaults to 0 for new players
     }
 
     // 🔄 CALL THIS ONCE WHEN THE STUDENT OPENS THEIR WARDROBE/CUSTOMIZATION PAGE
@@ -261,7 +276,7 @@ public class InventoryManager : MonoBehaviour
         // 2. Loop through our master item slice database
         foreach (InventoryItemData item in masterInventoryList)
         {
-            // 3. Check if either the specific slice ID OR the entire outfit bundle package name is unlocked
+            // Only spawn the item if the player has actually unlocked/purchased it!
             if (IsItemUnlocked(item.itemId) || IsItemUnlocked(item.associatedOutfitName))
             {
                 Transform targetGrid = GetTargetGrid(item.category);
@@ -274,8 +289,10 @@ public class InventoryManager : MonoBehaviour
                     InventoryItemButton buttonScript = newButton.GetComponent<InventoryItemButton>();
                     if (buttonScript != null)
                     {
-                        // 🌟 Directs the exact database ID, categories, prefabs, and 2D textures safely
-                        buttonScript.SetupButtonDetails(item.itemId, item.category, item.itemMeshPrefab, item.itemIcon);
+                        int actualCost = GetDynamicCostForOutfit(item.associatedOutfitName);
+
+                        // 👗 Directs the exact database ID, categories, prefabs, and 2D textures safely
+                        buttonScript.SetupButtonDetails(item.itemId, item.category, item.itemMeshPrefab, item.itemIcon, actualCost);
                         
                         // 🏷️ Overwrite the display label text using the clean, pretty outfit name
                         if (buttonScript.txtOutfitName != null)
@@ -344,23 +361,39 @@ public class InventoryManager : MonoBehaviour
         {
             if (button == null || button.txtEquipStatus == null) continue;
 
-            // Isolate matching target allocations to see if this specific item asset is active
-            bool isCurrentEquipped = false;
-            string cat = button.category != null ? button.category.ToLower().Trim() : "";
-            
-            switch (cat)
-            {
-                case "head": isCurrentEquipped = (button.itemId == equippedHeadId); break;
-                case "torso": 
-                case "body": isCurrentEquipped = (button.itemId == equippedBodyId); break;
-                case "legs": isCurrentEquipped = (button.itemId == equippedLegsId); break;
-                case "feet": isCurrentEquipped = (button.itemId == equippedFeetId); break;
-                case "accessory": isCurrentEquipped = (button.itemId == equippedAccessoryId); break;
-            }
-
-            // Apply minimalist UX text states cleanly
-            button.txtEquipStatus.text = isCurrentEquipped ? "EQUIPPED" : "EQUIP";
+            // Delegate UI updates to the button itself so it handles BUY vs EQUIP logic!
+            button.RefreshVisibility();
         }
+    }
+
+    private int GetDynamicCostForOutfit(string outfitName)
+    {
+        if (string.IsNullOrEmpty(outfitName)) return 500;
+        
+        string cleanName = outfitName.ToUpper();
+        
+        // Tier 1: Basic Outfits (200 coins)
+        if (cleanName.Contains("CASUAL") || cleanName.Contains("WORKER")) return 200;
+        
+        // Tier 2: Mid Outfits (500 coins)
+        if (cleanName.Contains("FARMER") || cleanName.Contains("BEACH") || cleanName.Contains("PUNK") || cleanName.Contains("ADVENTURER")) return 500;
+        
+        // Tier 3: High Outfits (1000 coins)
+        if (cleanName.Contains("SWAT") || cleanName.Contains("SOLDIER") || cleanName.Contains("SUIT") || cleanName.Contains("FORMAL") || cleanName.Contains("MEDIEVAL")) return 1000;
+        
+        // Tier 4: Epic Outfits (2000 coins)
+        if (cleanName.Contains("KING") || cleanName.Contains("SPACESUIT") || cleanName.Contains("SCIFI") || cleanName.Contains("WITCH")) return 2000;
+        
+        return 500; // default
+    }
+
+    public Color GetRarityColor(int price)
+    {
+        // Using soft pastel colors so the dark text and icons remain visible
+        if (price >= 2000) return new Color(1.0f, 0.9f, 0.6f); // Epic: Soft Gold
+        if (price >= 1000) return new Color(0.8f, 0.6f, 1.0f); // Elite: Soft Purple
+        if (price >= 500) return new Color(0.6f, 0.8f, 1.0f);  // Standard: Soft Blue
+        return new Color(0.9f, 0.9f, 0.9f);                    // Basic: Light Gray
     }
 
     private Transform GetTargetGrid(string category)

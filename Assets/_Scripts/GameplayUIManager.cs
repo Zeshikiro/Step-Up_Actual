@@ -46,6 +46,9 @@ public class GameplayUIManager : MonoBehaviour
         // CRITICAL MOBILE OPTIMIZATION: Cap FPS to 30 to save massive battery and stop phone overheating!
         Application.targetFrameRate = 30;
 
+        // Force all panels to turn off immediately so they don't block the map!
+        HideAllPanels();
+
         // Start the continuous looping routine
         StartCoroutine(TipRoutine());
 

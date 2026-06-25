@@ -9,6 +9,7 @@ public class RankTier
     public string rankName;
     public Sprite rankImage;
     public int requiredLevel;
+    public Color rankColor = Color.white;
 }
 
 public class ProfileManager : MonoBehaviour
@@ -51,6 +52,12 @@ public class ProfileManager : MonoBehaviour
 
     public void RefreshProfileUI()
     {
+        // --- CHEAT CODE: RESET BACK TO 0 ---
+        // (Delete these two lines after you hit Play once!)
+        PlayerPrefs.SetInt("TotalLifetimeSteps", 0);
+        PlayerPrefs.Save();
+        // ----------------------------------------------
+
         // 1. Load Step Tracker and Reward Core Values
         string currentName = PlayerPrefs.GetString("UserName", "Player 1"); 
         int totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
@@ -70,7 +77,7 @@ public class ProfileManager : MonoBehaviour
             xpProgressBar.value = progressPercentage;
             
         if (xpProgressText != null)
-            xpProgressText.text = $"{currentXPInLevel} / {xpPerLevel} XP";
+            xpProgressText.text = $"{currentXPInLevel} / {xpPerLevel}";
 
         // 4. Evaluate and Assign Automated Milestones
         if (rankTiers != null && rankTiers.Length > 0)
@@ -84,6 +91,7 @@ public class ProfileManager : MonoBehaviour
                 }
             }
             activityLevelText.text = currentRank.rankName.ToUpper();
+            activityLevelText.color = currentRank.rankColor;
             if (rankBadgeImage != null) rankBadgeImage.sprite = currentRank.rankImage;
         }
     }
