@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebaseConfig';
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { ref, set } from 'firebase/database';
 
 const AuthContext = createContext();
@@ -21,7 +21,6 @@ export function AuthProvider({ children }) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // Write initial database record
     await set(ref(db, 'users/' + user.uid), {
       email: email,
       TotalLifetimeSteps: 0,
@@ -33,6 +32,10 @@ export function AuthProvider({ children }) {
 
   function logout() {
     return signOut(auth);
+  }
+
+  function resetPassword(email) {
+    return sendPasswordResetEmail(auth, email);
   }
 
   useEffect(() => {
@@ -48,7 +51,8 @@ export function AuthProvider({ children }) {
     currentUser,
     login,
     register,
-    logout
+    logout,
+    resetPassword
   };
 
   return (
