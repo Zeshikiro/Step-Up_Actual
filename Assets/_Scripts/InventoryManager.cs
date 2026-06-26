@@ -171,18 +171,12 @@ public class InventoryManager : MonoBehaviour
         return unlockedItems.Contains(itemId);
     }
 
-    // Helper to translate the saved string ID into the actual 3D mesh name so the AvatarLoader can find it
+    // We now return the raw itemId directly so that the M/F prefixes are preserved 
+    // when searching the Avatar's Hierarchy!
     public string GetMeshNameFromItemId(string itemId)
     {
         if (string.IsNullOrEmpty(itemId) || itemId == "None") return "None";
-        foreach (InventoryItemData item in masterInventoryList)
-        {
-            if (item.itemId == itemId && item.itemMeshPrefab != null)
-            {
-                return item.itemMeshPrefab.name;
-            }
-        }
-        return itemId; // Fallback to raw ID if not found
+        return itemId; 
     }
 
     public void UnlockItem(string itemId)

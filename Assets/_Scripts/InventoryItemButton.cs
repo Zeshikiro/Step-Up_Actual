@@ -131,51 +131,8 @@ public class InventoryItemButton : MonoBehaviour
             }
         }
 
-        string cleanCategory = string.IsNullOrEmpty(category) ? "" : category.ToLower().Trim();
-
-        // 1. Direct the 3D model piece to the character's bone hierarchy and save its state data
-        switch (cleanCategory)
-        {
-            case "head":
-                customizer.EquipHeadObject(itemPrefab);
-                InventoryManager.Instance.equippedHeadId = itemId;
-                break;
-
-            case "torso":
-            case "body":
-                customizer.EquipBodyObject(itemPrefab);
-                InventoryManager.Instance.equippedBodyId = itemId;
-                break;
-
-            case "legs":
-            case "pants":
-                customizer.EquipLegsObject(itemPrefab);
-                InventoryManager.Instance.equippedLegsId = itemId;
-                break;
-
-            case "feet":
-            case "shoes":
-                customizer.EquipFeetObject(itemPrefab);
-                InventoryManager.Instance.equippedFeetId = itemId;
-                break;
-
-            case "accessory":
-                customizer.EquipAccessoryObject(itemPrefab);
-                InventoryManager.Instance.equippedAccessoryId = itemId;
-                break;
-
-            default:
-                Debug.LogError($"[Wardrobe Engine] Unrecognized category '{category}' on item {itemId}. Cannot equip.");
-                return;
-        }
-
-        // 2. Loop through all active buttons in the scrollview to update text statuses instantly
-        InventoryItemButton[] allButtons = FindObjectsByType<InventoryItemButton>(FindObjectsSortMode.None);
-        foreach (InventoryItemButton button in allButtons)
-        {
-            button.RefreshVisibility();
-        }
-
-        Debug.Log($"[Wardrobe Engine] Successfully equipped {itemId} into the {category} panel slot.");
+        // 1. Use the new centralized Equip Engine to handle saving, UI refreshing, and Mesh swapping!
+        // This completely replaces the old "Approach A" customizer code, fixing all naming bugs!
+        InventoryManager.Instance.EquipItem(itemId, category);
     }
 }

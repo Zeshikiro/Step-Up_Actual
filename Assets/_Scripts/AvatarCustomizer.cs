@@ -19,6 +19,7 @@ public class AvatarCustomizer : MonoBehaviour
 
     [Header("UI Sub-Panels")]
     public GameObject[] subPanels;
+    public GameObject settingsPanel;
     
     [Header("UI Tab Buttons (For Highlighting)")]
     public Image[] tabButtons;
@@ -205,15 +206,18 @@ public class AvatarCustomizer : MonoBehaviour
 
     public void SetGender(bool isMale)
     {
-        if (maleAvatar != null) maleAvatar.SetActive(isMale);
-        if (femaleAvatar != null) femaleAvatar.SetActive(!isMale);
-        
-        UpdateArmatureTarget(isMale);
-        ResetToDefaults(isMale);
-
         if (InventoryManager.Instance != null)
         {
+            // Sync the gender choice globally and save it instantly!
             InventoryManager.Instance.isMaleAvatar = isMale;
+            InventoryManager.Instance.SaveAvatarToCloud();
+        }
+
+        // Force the AvatarLoader to rebuild the character immediately with the new gender!
+        AvatarLoader loader = FindAnyObjectByType<AvatarLoader>();
+        if (loader != null)
+        {
+            loader.LoadSavedAvatar();
         }
     }
 
@@ -333,5 +337,13 @@ public class AvatarCustomizer : MonoBehaviour
     public void GoToMainMenu()
     {
         SceneManager.LoadScene("LoginScene");
+    }
+
+    public void ToggleSettingsPanel()
+    {
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(!settingsPanel.activeSelf);
+        }
     }
 }

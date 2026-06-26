@@ -69,10 +69,14 @@ public class ARManager : MonoBehaviour
         if (mapPin != null) mapPin.SetActive(true);
     }
 
+    private bool isTransitioning = false;
     private Coroutine arCoroutine;
 
     public void ToggleARMode()
     {
+        if (isTransitioning) return; // Ignore spam clicks!
+        isTransitioning = true;
+        
         isARMode = !isARMode;
 
         if (isARMode)
@@ -196,6 +200,8 @@ public class ARManager : MonoBehaviour
 
         if (rotateAvatarButton != null) rotateAvatarButton.SetActive(true);
         if (toggleButtonImage != null && icon2D != null) toggleButtonImage.sprite = icon2D;
+        
+        isTransitioning = false;
     }
 
     private void ActivateFallbackBackground()
@@ -242,15 +248,12 @@ public class ARManager : MonoBehaviour
 
         if (arSessionObj != null)
         {
-            Destroy(arSessionObj);
-            arSessionObj = null;
+            arSessionObj.SetActive(false);
         }
         if (arCameraManager != null)
         {
-            Destroy(arCameraBackground);
-            Destroy(arCameraManager);
-            arCameraBackground = null;
-            arCameraManager = null;
+            arCameraBackground.enabled = false;
+            arCameraManager.enabled = false;
         }
         
         if (fallbackBackground != null) fallbackBackground.SetActive(false);
@@ -278,6 +281,8 @@ public class ARManager : MonoBehaviour
 
         if (rotateAvatarButton != null) rotateAvatarButton.SetActive(false);
         if (toggleButtonImage != null && icon3D != null) toggleButtonImage.sprite = icon3D;
+        
+        isTransitioning = false;
     }
 
     public void ToggleAvatarFacing()

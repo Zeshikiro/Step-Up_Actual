@@ -397,7 +397,7 @@ public class StepManager : MonoBehaviour
     {
         if (stepTextDisplay != null)
         {
-            stepTextDisplay.text = "Steps: " + totalLifetimeSteps.ToString("N0");
+            stepTextDisplay.text = totalLifetimeSteps.ToString("N0");
         }
     }
 

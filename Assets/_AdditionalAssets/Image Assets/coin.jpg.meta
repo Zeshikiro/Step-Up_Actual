@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -121,7 +121,29 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: coin_0
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 98
+        width: 304
+        height: 303
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 61307b6e31757664aa3e1caee5267d15
+      internalID: -1898343815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -134,8 +156,65 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
-    nameFileIdTable: {}
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      coin_0: -1898343815
+      coin_1: 656010083
+      coin_10: 1196581233
+      coin_11: 1337008063
+      coin_12: -790946860
+      coin_13: -641607955
+      coin_14: 882494615
+      coin_15: -236156181
+      coin_16: 1321782288
+      coin_17: -961136528
+      coin_18: 803115275
+      coin_19: -1565523562
+      coin_2: -1318219526
+      coin_20: 1531410045
+      coin_21: -185492962
+      coin_22: 1199671067
+      coin_23: 1010358478
+      coin_24: 1376554429
+      coin_25: -1978314747
+      coin_26: 926128004
+      coin_27: -1518124670
+      coin_28: -850861838
+      coin_29: 1276264726
+      coin_3: -2060320926
+      coin_30: 643031864
+      coin_31: 559083840
+      coin_32: -1333427069
+      coin_33: -1336046074
+      coin_34: 867315154
+      coin_35: 1258005300
+      coin_36: -1111017013
+      coin_37: 494857130
+      coin_38: 725478015
+      coin_39: -302007462
+      coin_4: 561108035
+      coin_40: -327723714
+      coin_41: -1388516724
+      coin_42: -139106498
+      coin_43: -792403786
+      coin_44: 744947490
+      coin_45: -1211060019
+      coin_46: 352164276
+      coin_47: -310691874
+      coin_48: 1080480434
+      coin_49: -37294582
+      coin_5: 2132018845
+      coin_50: 2124805809
+      coin_51: 817939284
+      coin_52: 1681149830
+      coin_53: -618421689
+      coin_54: 2042267673
+      coin_6: 692853511
+      coin_7: 292572953
+      coin_8: -1945768068
+      coin_9: -1784693926
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

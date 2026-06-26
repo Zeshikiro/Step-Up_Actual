@@ -43,13 +43,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteBorder: {x: 77, y: 98, z: 76, w: 98}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -121,21 +121,113 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: home-icon-silhouette_0
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 99
+        width: 344
+        height: 302
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a75bc29771f10f14a8e39ecc6ad5ca66
+      internalID: -1514518071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 0
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
-    nameFileIdTable: {}
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      home-icon-silhouette_0: -1514518071
+      home-icon-silhouette_1: -2123345148
+      home-icon-silhouette_10: 1883726950
+      home-icon-silhouette_11: -238598619
+      home-icon-silhouette_12: 1563687786
+      home-icon-silhouette_13: -1215135062
+      home-icon-silhouette_14: 2119083095
+      home-icon-silhouette_15: -1335437541
+      home-icon-silhouette_16: -625691912
+      home-icon-silhouette_17: -442679388
+      home-icon-silhouette_18: 1630671986
+      home-icon-silhouette_19: -150527652
+      home-icon-silhouette_2: 1206548972
+      home-icon-silhouette_20: -2131584474
+      home-icon-silhouette_21: 469559353
+      home-icon-silhouette_22: 1486885297
+      home-icon-silhouette_23: 1296308429
+      home-icon-silhouette_24: -204811073
+      home-icon-silhouette_25: -517967538
+      home-icon-silhouette_26: -1292625486
+      home-icon-silhouette_27: 1988769382
+      home-icon-silhouette_28: 377818967
+      home-icon-silhouette_29: -1081342055
+      home-icon-silhouette_3: 357676281
+      home-icon-silhouette_30: -969086439
+      home-icon-silhouette_31: -653616940
+      home-icon-silhouette_32: -1925658642
+      home-icon-silhouette_33: 809046487
+      home-icon-silhouette_34: 164000621
+      home-icon-silhouette_35: 115831416
+      home-icon-silhouette_36: 1736007302
+      home-icon-silhouette_37: 781511817
+      home-icon-silhouette_38: 1381456510
+      home-icon-silhouette_39: 565292069
+      home-icon-silhouette_4: -2074594748
+      home-icon-silhouette_40: -680025540
+      home-icon-silhouette_41: 1601133134
+      home-icon-silhouette_42: -1081656231
+      home-icon-silhouette_43: -1988396256
+      home-icon-silhouette_44: -1758912673
+      home-icon-silhouette_45: 251778651
+      home-icon-silhouette_46: 295574752
+      home-icon-silhouette_47: -2054280922
+      home-icon-silhouette_48: 511533472
+      home-icon-silhouette_49: -1331505962
+      home-icon-silhouette_5: 1634454081
+      home-icon-silhouette_50: 347505445
+      home-icon-silhouette_51: -1549432873
+      home-icon-silhouette_52: 234032930
+      home-icon-silhouette_53: 64650359
+      home-icon-silhouette_54: 1857180216
+      home-icon-silhouette_55: -1697440304
+      home-icon-silhouette_56: 1707167704
+      home-icon-silhouette_57: -1469622022
+      home-icon-silhouette_58: -881082294
+      home-icon-silhouette_59: 832547753
+      home-icon-silhouette_6: 1865453391
+      home-icon-silhouette_60: -1642228458
+      home-icon-silhouette_61: -1176506822
+      home-icon-silhouette_62: 1004001253
+      home-icon-silhouette_63: -1787355914
+      home-icon-silhouette_64: 202413474
+      home-icon-silhouette_65: 1824010665
+      home-icon-silhouette_66: 2125002185
+      home-icon-silhouette_67: -186041384
+      home-icon-silhouette_7: 1101904772
+      home-icon-silhouette_8: -1131735908
+      home-icon-silhouette_9: -1443269535
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

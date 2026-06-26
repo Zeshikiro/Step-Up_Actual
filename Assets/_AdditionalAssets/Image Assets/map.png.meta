@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 249fd405faedbf7489c5e0e578944cc6
+guid: 1e17d5be6773ee24aa177f3ee578a3db
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,67 +123,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: pause-play-and-stop-png-33_0
+      name: map_0
       rect:
         serializedVersion: 2
-        x: 7
-        y: 7
-        width: 252
-        height: 252
+        x: 0
+        y: 107
+        width: 1076
+        height: 914
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0ceaf4cad1a7d6c428363d7796b4955f
-      internalID: -1686375402
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pause-play-and-stop-png-33_1
-      rect:
-        serializedVersion: 2
-        x: 340
-        y: 7
-        width: 254
-        height: 252
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 74e7498d744bc4b429bd1a1484b40f98
-      internalID: 103438958
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: pause-play-and-stop-png-33_3
-      rect:
-        serializedVersion: 2
-        x: 676
-        y: 6
-        width: 253
-        height: 253
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 448bf153126bd9f4e999535fd57f10cb
-      internalID: 557077214
+      spriteID: 436fc337d1941994196e5aca05ea4e91
+      internalID: -809572172
       vertices: []
       indices: 
       edges: []
@@ -192,7 +148,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 0f03abd38ccad9846b860bfc84dd3f37
+    spriteID: 11242cc49fef9964b87a6720d6681670
     internalID: 0
     vertices: []
     indices: 
@@ -200,20 +156,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      pause-play-and-stop-png-33_0: -1686375402
-      pause-play-and-stop-png-33_1: 103438958
-      pause-play-and-stop-png-33_2: -425484397
-      pause-play-and-stop-png-33_3: 557077214
-      pause-play-and-stop-png-33_4: 767993479
-      pause-play-and-stop-png-33_5: -1455807299
-      pause-play-and-stop-png-33_6: -632664066
-      pause-play-and-stop-png-33_7: -1031778893
-      pause-play-and-stop-png-33_8: -898252773
-      pause-play-and-stop-png-33_9: -925945734
+      map_0: -809572172
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
