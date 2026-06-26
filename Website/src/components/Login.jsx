@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { Eye, EyeOff, LogIn, LogOut, UserPlus } from 'lucide-react';
+import { useState } from 'react';
 import { useAuth } from './AuthContext';
-import { LogIn, UserPlus, LogOut, Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
   const { login, register, currentUser, logout, resetPassword } = useAuth();
@@ -45,67 +45,245 @@ export default function Login() {
 
   if (currentUser) {
     return (
-      <div className="glass-card" style={{marginTop: '2rem', textAlign: 'center'}}>
-        <h2>Welcome, {currentUser.email}!</h2>
-        <p style={{marginTop: '1rem', color: '#ccc'}}>You are successfully connected to Step-Up.</p>
-        <button className="cta-button" onClick={logout} style={{marginTop: '2rem', display: 'inline-flex', alignItems: 'center', gap: '8px'}}>
-          <LogOut size={18}/> Log Out
-        </button>
+      <div style={{
+        width: 'min(520px, calc(100vw - 40px))',
+        margin: '2rem auto 0',
+        paddingBottom: '2rem'
+      }}>
+        <div style={{
+          background: '#fff4d6',
+          border: '5px solid #171717',
+          borderRadius: '22px',
+          padding: '2.5rem',
+          textAlign: 'center',
+          boxShadow: '8px 8px 0 rgba(0, 0, 0, 0.35)'
+        }}>
+          <div style={{
+            background: '#f59b35',
+            color: '#ffffff',
+            border: '5px solid #171717',
+            borderRadius: '14px',
+            padding: '1rem',
+            margin: '0 auto 1.5rem',
+            textAlign: 'center',
+            boxShadow: '0 7px 0 #9b531e'
+          }}>
+            <h2 style={{
+              margin: 0,
+              fontFamily: '"Press Start 2P", cursive',
+              fontSize: 'clamp(0.85rem, 2.4vw, 1.2rem)',
+              textShadow: '3px 3px 0 #171717',
+              color: '#ffffff'
+            }}>
+              WELCOME BACK!
+            </h2>
+          </div>
+
+          <p style={{
+            color: '#1b2433',
+            fontWeight: '800',
+            wordBreak: 'break-word'
+          }}>
+            {currentUser.email}
+          </p>
+
+          <p style={{
+            color: '#1b2433',
+            fontWeight: '700',
+            marginTop: '0.5rem'
+          }}>
+            You are successfully connected to Step-Up.
+          </p>
+
+          <button
+            onClick={logout}
+            style={{
+              marginTop: '1.5rem',
+              background: '#ef4444',
+              color: '#ffffff',
+              border: '4px solid #171717',
+              borderRadius: '12px',
+              padding: '12px 18px',
+              cursor: 'pointer',
+              fontWeight: '900',
+              boxShadow: '0 5px 0 #991b1b',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <LogOut size={18} />
+            Log Out
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="glass-card" style={{marginTop: '2rem', maxWidth: '400px', margin: '2rem auto'}}>
-      <h2 style={{textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px'}}>
-        {isRegistering ? <><UserPlus /> Create Account</> : <><LogIn /> Sign In</>}
-      </h2>
-      
-      {error && <p style={{color: '#ff6b6b', textAlign: 'center', marginTop: '1rem'}}>{error}</p>}
-      
-      <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '1.5rem'}}>
-        <input 
-          type="email" 
-          placeholder="Email" 
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required 
-          style={{padding: '12px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white'}}
-        />
-        <div style={{position: 'relative'}}>
-          <input 
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Password" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required 
-            style={{padding: '12px', paddingRight: '40px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', width: '100%', boxSizing: 'border-box'}}
-          />
-          <span
-            onClick={() => setShowPassword(!showPassword)}
-            style={{position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#aaa'}}
-          >
-            {showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}
-          </span>
+    <div style={{
+      width: 'min(430px, calc(100vw - 40px))',
+      margin: '2rem auto 0',
+      paddingBottom: '2rem'
+    }}>
+      <div style={{
+        background: '#fff4d6',
+        border: '5px solid #171717',
+        borderRadius: '22px',
+        padding: '2.5rem',
+        boxShadow: '8px 8px 0 rgba(0, 0, 0, 0.35)'
+      }}>
+
+        <div style={{
+          background: '#f59b35',
+          color: '#ffffff',
+          border: '5px solid #171717',
+          borderRadius: '14px',
+          padding: '1rem',
+          margin: '0 auto 1.5rem',
+          textAlign: 'center',
+          boxShadow: '0 7px 0 #9b531e'
+        }}>
+          <h2 style={{
+            margin: 0,
+            fontFamily: '"Press Start 2P", cursive',
+            fontSize: 'clamp(0.8rem, 2.4vw, 1.1rem)',
+            textShadow: '3px 3px 0 #171717',
+            color: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px'
+          }}>
+            {isRegistering ? <><UserPlus size={22} /> REGISTER</> : <><LogIn size={22} /> SIGN IN</>}
+          </h2>
         </div>
 
-        {!isRegistering && (
-          <p
-            onClick={handleForgotPassword}
-            style={{textAlign: 'right', fontSize: '0.8rem', color: '#6be2ff', cursor: 'pointer', marginTop: '-8px'}}
-          >
-            {resetSent ? "✅ Reset email sent!" : "Forgot Password?"}
+        {error && (
+          <p style={{
+            color: '#b91c1c',
+            textAlign: 'center',
+            marginTop: '1rem',
+            fontWeight: '800',
+            background: '#fee2e2',
+            border: '3px solid #171717',
+            borderRadius: '12px',
+            padding: '10px'
+          }}>
+            {error}
           </p>
         )}
 
-        <button disabled={loading} className="cta-button" type="submit" style={{marginTop: '10px'}}>
-          {isRegistering ? "Register" : "Log In"}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '15px',
+          marginTop: '1.5rem'
+        }}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{
+              padding: '14px',
+              borderRadius: '12px',
+              border: '4px solid #171717',
+              background: '#fff9e9',
+              color: '#1b2433',
+              fontSize: '1rem',
+              fontWeight: '700'
+            }}
+          />
 
-      <p style={{textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', cursor: 'pointer', color: '#6be2ff'}} onClick={() => setIsRegistering(!isRegistering)}>
-        {isRegistering ? "Already have an account? Sign In" : "Need an account? Register here"}
-      </p>
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{
+                padding: '14px',
+                paddingRight: '45px',
+                borderRadius: '12px',
+                border: '4px solid #171717',
+                background: '#fff9e9',
+                color: '#1b2433',
+                width: '100%',
+                boxSizing: 'border-box',
+                fontSize: '1rem',
+                fontWeight: '700'
+              }}
+            />
+
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '14px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+                color: '#171717'
+              }}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </span>
+          </div>
+
+          {!isRegistering && (
+            <p
+              onClick={handleForgotPassword}
+              style={{
+                textAlign: 'right',
+                fontSize: '0.9rem',
+                color: '#0f6aa8',
+                cursor: 'pointer',
+                marginTop: '-6px',
+                marginBottom: 0,
+                fontWeight: '800'
+              }}
+            >
+              {resetSent ? "✅ Reset email sent!" : "Forgot Password?"}
+            </p>
+          )}
+
+          <button
+            disabled={loading}
+            type="submit"
+            style={{
+              marginTop: '10px',
+              background: '#3fd66b',
+              color: '#082313',
+              border: '4px solid #171717',
+              borderRadius: '12px',
+              padding: '14px 18px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              fontWeight: '900',
+              fontSize: '1.1rem',
+              boxShadow: '0 6px 0 #137333'
+            }}
+          >
+            {loading ? "Please wait..." : isRegistering ? "Register" : "Log In"}
+          </button>
+        </form>
+
+        <p
+          onClick={() => setIsRegistering(!isRegistering)}
+          style={{
+            textAlign: 'center',
+            marginTop: '1.5rem',
+            fontSize: '1rem',
+            cursor: 'pointer',
+            color: '#0f6aa8',
+            fontWeight: '800'
+          }}
+        >
+          {isRegistering ? "Already have an account? Sign In" : "Need an account? Register here"}
+        </p>
+      </div>
     </div>
   );
 }

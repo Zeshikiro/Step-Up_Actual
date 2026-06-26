@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { ArrowLeft, ImageOff } from 'lucide-react';
+import { useState } from 'react';
 
 export default function HealthTips() {
   const [activeTipId, setActiveTipId] = useState(() => {
@@ -172,73 +172,160 @@ export default function HealthTips() {
   const activeTip = tips.find(t => t.id === activeTipId);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', paddingBottom: '100px' }}>
-      <header style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative' }}>
-        {activeTipId && (
-          <button 
-            onClick={() => handleTipChange(null)}
-            style={{ 
-              position: 'absolute', left: 0, top: '10px', background: 'none', border: 'none', 
-              color: '#6be2ff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px',
-              fontSize: '1rem', fontWeight: 'bold'
-            }}>
-            <ArrowLeft size={20}/> Back
-          </button>
-        )}
-        <h2 className="title-gradient" style={{ fontSize: '2.5rem', margin: '10px 0' }}>Health Hub</h2>
-        {!activeTipId && <p style={{ color: '#ccc' }}>Select a category below to view tutorials and tips.</p>}
-      </header>
+  <div style={{
+    width: 'min(900px, calc(100vw - 40px))',
+    margin: '2rem auto 0',
+    paddingBottom: '2rem'
+  }}>
+    <div style={{
+      background: '#fff4d6',
+      border: '5px solid #171717',
+      borderRadius: '22px',
+      padding: '2.5rem',
+      boxShadow: '8px 8px 0 rgba(0, 0, 0, 0.35)'
+    }}>
+
+      {activeTipId && (
+        <button
+          onClick={() => handleTipChange(null)}
+          style={{
+            background: '#3fd66b',
+            color: '#082313',
+            border: '4px solid #171717',
+            borderRadius: '12px',
+            padding: '10px 16px',
+            cursor: 'pointer',
+            fontWeight: '900',
+            boxShadow: '0 5px 0 #137333',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '1.5rem'
+          }}
+        >
+          <ArrowLeft size={18} />
+          Back
+        </button>
+      )}
+
+      {/* Orange title board */}
+      <div style={{
+        background: '#f59b35',
+        color: '#ffffff',
+        border: '5px solid #171717',
+        borderRadius: '14px',
+        padding: '1rem',
+        maxWidth: '430px',
+        margin: '0 auto 1.5rem',
+        textAlign: 'center',
+        boxShadow: '0 7px 0 #9b531e'
+      }}>
+        <h2 style={{
+          margin: 0,
+          fontFamily: '"Press Start 2P", cursive',
+          fontSize: 'clamp(0.9rem, 2.5vw, 1.3rem)',
+          textShadow: '3px 3px 0 #171717',
+          color: '#ffffff'
+        }}>
+          {activeTipId ? activeTip.title.toUpperCase() : 'HEALTH HUB'}
+        </h2>
+      </div>
+
+      {!activeTipId && (
+        <p style={{
+          textAlign: 'center',
+          color: '#1b2433',
+          fontWeight: '700',
+          fontSize: '1.1rem',
+          marginBottom: '2rem'
+        }}>
+          Select a category below to view tutorials and tips.
+        </p>
+      )}
 
       {!activeTipId ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '300px', margin: '0 auto', marginTop: '3rem' }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '18px',
+          maxWidth: '480px',
+          margin: '0 auto'
+        }}>
           {tips.map((tip) => (
-            <button 
+            <button
               key={tip.id}
               onClick={() => handleTipChange(tip.id)}
               style={{
-                background: 'rgba(255,255,255,0.05)',
-                color: 'white',
-                border: '1px solid rgba(107, 226, 255, 0.3)',
-                padding: '20px',
-                fontSize: '1.2rem',
-                fontWeight: 'bold',
-                borderRadius: '12px',
+                background: '#fff9e9',
+                color: '#1b2433',
+                border: '4px solid #171717',
+                padding: '18px 22px',
+                fontSize: '1.25rem',
+                fontWeight: '900',
+                borderRadius: '14px',
                 cursor: 'pointer',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-                transition: 'all 0.2s ease',
-                textAlign: 'center',
-                backdropFilter: 'blur(10px)',
+                boxShadow: '5px 5px 0 rgba(0,0,0,0.28)',
+                transition: 'transform 0.12s ease, box-shadow 0.12s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+                textAlign: 'left'
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.background = 'rgba(107, 226, 255, 0.15)';
-                e.currentTarget.style.borderColor = '#6be2ff';
-                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.background = '#ffd84d';
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                e.currentTarget.style.borderColor = 'rgba(107, 226, 255, 0.3)';
-                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.background = '#fff9e9';
               }}
             >
+              <span style={{
+                width: '42px',
+                height: '42px',
+                background: '#f59b35',
+                border: '3px solid #171717',
+                borderRadius: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.4rem'
+              }}>
+                {tip.id === 'posture' ? '🧍' : tip.id === 'warmup' ? '🏃' : tip.id === 'cooldown' ? '🧘' : '❤️'}
+              </span>
               {tip.title}
             </button>
           ))}
         </div>
       ) : (
         <div>
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.8rem', color: '#6be2ff', marginBottom: '8px' }}>{activeTip.title}</h3>
-            <p style={{ color: '#ddd', margin: 0 }}>{activeTip.desc}</p>
-          </div>
+          <p style={{
+            textAlign: 'center',
+            color: '#1b2433',
+            fontWeight: '700',
+            fontSize: '1.05rem',
+            margin: '0 auto 2rem',
+            maxWidth: '650px'
+          }}>
+            {activeTip.desc}
+          </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px'
+          }}>
             {activeTip.cards.map((card, idx) => (
-              <div 
-                key={idx} 
-                className="glass-card"
-                style={{ padding: '0', overflow: 'hidden' }}
+              <div
+                key={idx}
+                style={{
+                  background: '#fff9e9',
+                  border: '5px solid #171717',
+                  borderRadius: '18px',
+                  overflow: 'hidden',
+                  boxShadow: '6px 6px 0 rgba(0,0,0,0.3)'
+                }}
               >
-                {/* Image or Placeholder */}
                 {card.img ? (
                   <img
                     src={card.img}
@@ -247,37 +334,62 @@ export default function HealthTips() {
                       e.target.style.display = 'none';
                       e.target.nextSibling.style.display = 'flex';
                     }}
-                    style={{ 
+                    style={{
                       width: '100%',
-                      height: 'auto',
+                      maxHeight: '420px',
                       objectFit: 'contain',
                       display: 'block',
+                      background: '#d9f6ff',
+                      borderBottom: '4px solid #171717'
                     }}
                   />
                 ) : null}
 
-                {/* Fallback placeholder */}
                 <div style={{
                   display: card.img ? 'none' : 'flex',
                   width: '100%',
                   height: '220px',
-                  background: 'rgba(255,255,255,0.05)',
-                  borderBottom: '1px dashed rgba(107, 226, 255, 0.3)',
+                  background: '#d9f6ff',
+                  borderBottom: '4px solid #171717',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  color: 'rgba(107, 226, 255, 0.5)'
+                  color: '#1b2433',
+                  fontWeight: '800'
                 }}>
-                  <ImageOff size={32}/>
-                  <span style={{ fontSize: '0.8rem' }}>No image yet</span>
+                  <ImageOff size={36} />
+                  <span>No image yet</span>
                 </div>
 
-                {/* Text content */}
-                <div style={{ padding: '20px' }}>
-                  <h4 style={{ margin: '0 0 10px 0', fontSize: '1.1rem', color: '#6be2ff' }}>{card.title}</h4>
-                  <p style={{ margin: 0, color: '#ddd', lineHeight: '1.6' }}>{card.body}</p>
-                  <p style={{ margin: '10px 0 0 0', fontSize: '0.75rem', color: '#aaa', fontStyle: 'italic', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '8px' }}>
+                <div style={{ padding: '1.5rem' }}>
+                  <h4 style={{
+                    margin: '0 0 12px 0',
+                    fontSize: '1.35rem',
+                    color: '#9b531e',
+                    fontWeight: '900'
+                  }}>
+                    {card.title}
+                  </h4>
+
+                  <p style={{
+                    margin: 0,
+                    color: '#1b2433',
+                    lineHeight: '1.65',
+                    fontSize: '1.05rem'
+                  }}>
+                    {card.body}
+                  </p>
+
+                  <p style={{
+                    margin: '14px 0 0 0',
+                    fontSize: '0.85rem',
+                    color: '#4b5563',
+                    fontStyle: 'italic',
+                    borderTop: '3px dashed #d6b977',
+                    paddingTop: '10px',
+                    fontWeight: '700'
+                  }}>
                     📚 Source: {card.source}
                   </p>
                 </div>
@@ -287,5 +399,6 @@ export default function HealthTips() {
         </div>
       )}
     </div>
-  );
+  </div>
+);
 }

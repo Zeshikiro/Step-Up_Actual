@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from './AuthContext';
+import { onValue, ref } from 'firebase/database';
+import { Activity, Award, Footprints, LogOut } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { db } from '../firebaseConfig';
-import { ref, onValue } from 'firebase/database';
-import { Activity, Award, LogOut, Footprints } from 'lucide-react';
+import { useAuth } from './AuthContext';
 
 export default function Profile() {
   const { currentUser, logout } = useAuth();
@@ -12,7 +12,6 @@ export default function Profile() {
   useEffect(() => {
     if (!currentUser) return;
 
-    // 1. Fetch live user stats
     const userRef = ref(db, 'users/' + currentUser.uid);
     onValue(userRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -20,7 +19,6 @@ export default function Profile() {
       }
     });
 
-    // 2. Calculate Rank based on TotalLifetimeSteps
     const allUsersRef = ref(db, 'users');
     onValue(allUsersRef, (snapshot) => {
       const data = snapshot.val();
@@ -30,7 +28,7 @@ export default function Profile() {
           ...data[key]
         })).filter(u => u.TotalLifetimeSteps !== undefined)
           .sort((a, b) => b.TotalLifetimeSteps - a.TotalLifetimeSteps);
-        
+
         const rankIndex = sortedList.findIndex(u => u.id === currentUser.uid);
         if (rankIndex !== -1) {
           setUserRank("#" + (rankIndex + 1));
@@ -43,43 +41,177 @@ export default function Profile() {
   if (!currentUser) return null;
 
   return (
-    <div className="features-grid" style={{marginTop: '2rem'}}>
-      <div className="glass-card" style={{gridColumn: '1 / -1', textAlign: 'center'}}>
-        <div style={{background: 'linear-gradient(135deg, #6be2ff, #2979ff)', width: '80px', height: '80px', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(107, 226, 255, 0.4)'}}>
-          <UserIcon size={40} color="white"/>
+    <div style={{
+      width: 'min(850px, calc(100vw - 40px))',
+      margin: '2rem auto 0',
+      paddingBottom: '2rem'
+    }}>
+      <div style={{
+        background: '#fff4d6',
+        border: '5px solid #171717',
+        borderRadius: '22px',
+        padding: '2.5rem',
+        textAlign: 'center',
+        boxShadow: '8px 8px 0 rgba(0, 0, 0, 0.35)'
+      }}>
+
+        {/* Title board */}
+        <div style={{
+          background: '#f59b35',
+          color: '#ffffff',
+          border: '5px solid #171717',
+          borderRadius: '14px',
+          padding: '1rem',
+          maxWidth: '430px',
+          margin: '0 auto 1.8rem',
+          textAlign: 'center',
+          boxShadow: '0 7px 0 #9b531e'
+        }}>
+          <h2 style={{
+            margin: 0,
+            fontFamily: '"Press Start 2P", cursive',
+            fontSize: 'clamp(0.85rem, 2.4vw, 1.2rem)',
+            textShadow: '3px 3px 0 #171717',
+            color: '#ffffff'
+          }}>
+            PLAYER PROFILE
+          </h2>
         </div>
-        <h2 style={{marginTop: '1rem'}}>{currentUser.email}</h2>
-        <p style={{color: '#ccc', marginBottom: '2rem'}}>Step-Up Explorer</p>
 
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px', marginBottom: '2rem'}}>
-          <div style={{background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.1)'}}>
-            <Award color="#FFD700" size={32} style={{margin: '0 auto 10px'}}/>
-            <h3 style={{fontSize: '1.8rem', margin: '0'}}>{userRank}</h3>
-            <span style={{fontSize: '0.9rem', color: '#ccc'}}>Global Rank</span>
-          </div>
-
-          <div style={{background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.1)'}}>
-            <Activity color="#6be2ff" size={32} style={{margin: '0 auto 10px'}}/>
-            <h3 style={{fontSize: '1.8rem', margin: '0'}}>{(userData.TotalLifetimeSteps || 0).toLocaleString()}</h3>
-            <span style={{fontSize: '0.9rem', color: '#ccc'}}>Lifetime Steps</span>
-          </div>
-
-          <div style={{background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.1)'}}>
-            <Footprints color="#4ade80" size={32} style={{margin: '0 auto 10px'}}/>
-            <h3 style={{fontSize: '1.8rem', margin: '0'}}>{(userData.currentDailySteps || 0).toLocaleString()}</h3>
-            <span style={{fontSize: '0.9rem', color: '#ccc'}}>Steps Today</span>
-          </div>
+        {/* Avatar */}
+        <div style={{
+          background: '#ffd84d',
+          width: '110px',
+          height: '110px',
+          borderRadius: '18px',
+          border: '5px solid #171717',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '6px 6px 0 rgba(0,0,0,0.3)'
+        }}>
+          <UserIcon size={55} color="#171717" />
         </div>
 
-        <button className="cta-button" onClick={logout} style={{display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 50, 50, 0.2)', border: '1px solid rgba(255, 50, 50, 0.5)', color: '#ff6b6b'}}>
-          <LogOut size={18}/> Sign Out
+        <h2 style={{
+          marginTop: '1rem',
+          marginBottom: '0.4rem',
+          color: '#9b531e',
+          fontSize: '1.35rem',
+          wordBreak: 'break-word'
+        }}>
+          {currentUser.email}
+        </h2>
+
+        <p style={{
+          color: '#1b2433',
+          marginBottom: '2rem',
+          fontWeight: '800',
+          fontSize: '1.05rem'
+        }}>
+          Step-Up Explorer
+        </p>
+
+        {/* Stats cards */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gap: '18px',
+          marginBottom: '2rem'
+        }}>
+          <StatCard
+            icon={<Award color="#ffd84d" size={36} />}
+            value={userRank}
+            label="Global Rank"
+            bg="#fff9e9"
+          />
+
+          <StatCard
+            icon={<Activity color="#2f8ed8" size={36} />}
+            value={(userData.TotalLifetimeSteps || 0).toLocaleString()}
+            label="Lifetime Steps"
+            bg="#fff9e9"
+          />
+
+          <StatCard
+            icon={<Footprints color="#3fd66b" size={36} />}
+            value={(userData.currentDailySteps || 0).toLocaleString()}
+            label="Steps Today"
+            bg="#fff9e9"
+          />
+        </div>
+
+        {/* Sign out button */}
+        <button
+          onClick={logout}
+          style={{
+            background: '#ef4444',
+            color: '#ffffff',
+            border: '4px solid #171717',
+            borderRadius: '12px',
+            padding: '13px 20px',
+            cursor: 'pointer',
+            fontWeight: '900',
+            fontSize: '1rem',
+            boxShadow: '0 6px 0 #991b1b',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <LogOut size={18} />
+          Sign Out
         </button>
       </div>
     </div>
   );
 }
 
-const UserIcon = ({size, color}) => (
+function StatCard({ icon, value, label, bg }) {
+  return (
+    <div style={{
+      background: bg,
+      padding: '1.4rem',
+      borderRadius: '18px',
+      border: '4px solid #171717',
+      boxShadow: '5px 5px 0 rgba(0,0,0,0.25)'
+    }}>
+      <div style={{
+        width: '58px',
+        height: '58px',
+        background: '#f59b35',
+        border: '4px solid #171717',
+        borderRadius: '14px',
+        margin: '0 auto 12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        {icon}
+      </div>
+
+      <h3 style={{
+        fontSize: '1.8rem',
+        margin: '0',
+        color: '#9b531e',
+        fontWeight: '900'
+      }}>
+        {value}
+      </h3>
+
+      <span style={{
+        fontSize: '1rem',
+        color: '#1b2433',
+        fontWeight: '800'
+      }}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
+const UserIcon = ({ size, color }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
     <circle cx="12" cy="7" r="4"></circle>

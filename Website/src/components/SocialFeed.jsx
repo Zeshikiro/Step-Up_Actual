@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { onValue, push, ref, set } from 'firebase/database';
+import { MessageCircle, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { db } from '../firebaseConfig';
-import { ref, onValue, push, set } from 'firebase/database';
 import { useAuth } from './AuthContext';
 
 export default function SocialFeed() {
@@ -13,12 +14,11 @@ export default function SocialFeed() {
     onValue(postsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        // Convert object to array and sort by time (newest first)
         const postList = Object.keys(data).map(key => ({
           id: key,
           ...data[key]
         })).sort((a, b) => b.timestamp - a.timestamp);
-        
+
         setPosts(postList);
       }
     });
@@ -38,33 +38,214 @@ export default function SocialFeed() {
   };
 
   return (
-    <div className="features-grid" style={{marginTop: '2rem'}}>
-      <div className="glass-card" style={{gridColumn: '1 / -1'}}>
-        <h2>💬 Community Feed</h2>
-        
+    <div style={{
+        width: 'min(850px, calc(100vw - 40px))',
+        margin: '2rem auto 0',
+        paddingBottom: '2.5rem'
+}}>
+      <div style={{
+        background: '#fff4d6',
+        border: '5px solid #171717',
+        borderRadius: '22px',
+        padding: '2rem',
+        boxShadow: '8px 8px 0 rgba(0, 0, 0, 0.35)'
+      }}>
+
+        {/* Orange title board */}
+        <div style={{
+          background: '#f59b35',
+          color: '#ffffff',
+          border: '5px solid #171717',
+          borderRadius: '14px',
+          padding: '1rem',
+          maxWidth: '460px',
+          margin: '0 auto 2rem',
+          textAlign: 'center',
+          boxShadow: '0 7px 0 #9b531e'
+        }}>
+          <h2 style={{
+            margin: 0,
+            fontFamily: '"Press Start 2P", cursive',
+            fontSize: 'clamp(0.9rem, 2.5vw, 1.3rem)',
+            textShadow: '3px 3px 0 #171717',
+            color: '#ffffff'
+          }}>
+            <MessageCircle size={24} color="#ffffff" style={{ verticalAlign: 'middle', marginRight: '10px' }} />
+            COMMUNITY FEED
+          </h2>
+        </div>
+
+        {/* Post box */}
         {currentUser ? (
-          <div style={{display: 'flex', gap: '10px', marginTop: '1rem', marginBottom: '2rem'}}>
-            <input 
-              type="text" 
+          <div style={{
+            display: 'flex',
+            gap: '12px',
+            marginBottom: '2rem',
+            background: '#fff9e9',
+            border: '4px solid #171717',
+            borderRadius: '16px',
+            padding: '1rem',
+            boxShadow: '5px 5px 0 rgba(0,0,0,0.25)'
+          }}>
+            <input
+              type="text"
               value={newPost}
               onChange={(e) => setNewPost(e.target.value)}
-              placeholder="Share your fitness milestone..." 
-              style={{flex: 1, padding: '10px', borderRadius: '5px', border: '1px solid #ccc'}}
+              placeholder="Share your fitness milestone..."
+              style={{
+                flex: 1,
+                padding: '14px',
+                fontSize: '1rem',
+                borderRadius: '12px',
+                border: '4px solid #171717',
+                background: '#ffffff',
+                color: '#1b2433'
+              }}
             />
-            <button className="cta-button" onClick={handlePost}>Post</button>
+
+            <button
+              onClick={handlePost}
+              style={{
+                background: '#3fd66b',
+                color: '#082313',
+                border: '4px solid #171717',
+                borderRadius: '12px',
+                padding: '0 18px',
+                cursor: 'pointer',
+                fontWeight: '900',
+                boxShadow: '0 5px 0 #137333',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <Send size={18} />
+              Post
+            </button>
           </div>
         ) : (
-          <p style={{marginBottom: '2rem'}}><em>Log in to post your milestones!</em></p>
+          <div style={{
+            marginBottom: '2rem',
+            background: '#fff9e9',
+            border: '4px solid #171717',
+            borderRadius: '16px',
+            padding: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            boxShadow: '5px 5px 0 rgba(0,0,0,0.25)'
+          }}>
+            <div style={{
+              width: '46px',
+              height: '46px',
+              background: '#f59b35',
+              border: '3px solid #171717',
+              borderRadius: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: '900'
+            }}>
+              !
+            </div>
+            <p style={{
+              margin: 0,
+              color: '#1b2433',
+              fontSize: '1.05rem',
+              fontWeight: '700'
+            }}>
+              Log in to post your milestones!
+            </p>
+          </div>
         )}
 
-        <div style={{display: 'flex', flexDirection: 'column', gap: '15px'}}>
+        {/* Posts */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px'
+        }}>
           {posts.map(post => (
-            <div key={post.id} style={{background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '10px', textAlign: 'left'}}>
-              <strong>{post.author}</strong> <span style={{fontSize: '0.8rem', color: '#ccc'}}>{new Date(post.timestamp).toLocaleString()}</span>
-              <p style={{marginTop: '5px'}}>{post.text}</p>
+            <div
+              key={post.id}
+              style={{
+                background: '#fff9e9',
+                border: '4px solid #171717',
+                borderRadius: '16px',
+                padding: '1rem',
+                textAlign: 'left',
+                boxShadow: '5px 5px 0 rgba(0,0,0,0.25)'
+              }}
+            >
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '10px'
+              }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  background: '#ffd84d',
+                  border: '3px solid #171717',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: '900',
+                  fontSize: '1.2rem',
+                  color: '#171717'
+                }}>
+                  {post.author ? post.author.charAt(0).toUpperCase() : 'U'}
+                </div>
+
+                <div style={{ flex: 1 }}>
+                  <strong style={{
+                    color: '#9b531e',
+                    fontSize: '1.05rem'
+                  }}>
+                    {post.author}
+                  </strong>
+
+                  <div style={{
+                    fontSize: '0.85rem',
+                    color: '#4b5563',
+                    fontWeight: '700'
+                  }}>
+                    {new Date(post.timestamp).toLocaleString()}
+                  </div>
+                </div>
+              </div>
+
+              <p style={{
+                margin: 0,
+                color: '#1b2433',
+                lineHeight: '1.55',
+                fontSize: '1.05rem'
+              }}>
+                {post.text}
+              </p>
             </div>
           ))}
-          {posts.length === 0 && <p>No posts yet. Be the first!</p>}
+
+          {posts.length === 0 && (
+            <div style={{
+              background: '#fff9e9',
+              border: '4px solid #171717',
+              borderRadius: '16px',
+              padding: '2rem',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                margin: 0,
+                color: '#1b2433',
+                fontWeight: '800',
+                fontSize: '1.1rem'
+              }}>
+                No posts yet. Be the first!
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
