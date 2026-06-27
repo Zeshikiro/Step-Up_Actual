@@ -162,8 +162,64 @@ public class InventoryManager : MonoBehaviour
                     equippedAccessoryId = snapshot.Child("equippedAccessoryId").Value.ToString();
 
                 Debug.Log("Avatar cloud save loaded successfully!");
+                
+                // NEW: Force the AvatarLoader to rebuild the character immediately after we download their saved look!
+                // This fixes the bug where the avatar is invisible at launch because it was waiting for Firebase.
+                OnAvatarEquipmentsChanged?.Invoke();
             }
         });
+    }
+
+    // NEW: Automatically translates clothing between men and women when swapping genders!
+    public void SwapGenderPrefixes(bool toMale)
+    {
+        equippedHeadId = TranslateID(equippedHeadId, toMale);
+        equippedBodyId = TranslateID(equippedBodyId, toMale);
+        equippedLegsId = TranslateID(equippedLegsId, toMale);
+        equippedFeetId = TranslateID(equippedFeetId, toMale);
+        equippedAccessoryId = TranslateID(equippedAccessoryId, toMale);
+        SaveAvatarToCloud();
+    }
+
+    private string TranslateID(string id, bool toMale)
+    {
+        if (string.IsNullOrEmpty(id) || id == "None") return id;
+        
+        string newId = id;
+        if (toMale)
+        {
+            if (id.StartsWith("FCasual")) newId = id.Replace("FCasual", "MCasual2");
+            else if (id.StartsWith("F") && id.Length > 1 && char.IsUpper(id[1])) newId = "M" + id.Substring(1);
+        }
+        else
+        {
+            if (id.StartsWith("MCasual2")) newId = id.Replace("MCasual2", "FCasual");
+            else if (id.StartsWith("M") && id.Length > 1 && char.IsUpper(id[1])) newId = "F" + id.Substring(1);
+        }
+
+        // Verify if the translated ID actually exists in the game database
+        foreach (InventoryItemData item in masterInventoryList)
+        {
+            if (item != null && item.itemId == newId) return newId; // Exists, safe to use!
+        }
+        
+        // If it DOES NOT exist (e.g. Female Farmer), fallback to default clothes to prevent baldness!
+        if (toMale)
+        {
+            if (id.Contains("Head")) return "MCasual2_Head";
+            if (id.Contains("Body") || id.Contains("Torso")) return "MCasual2_Body";
+            if (id.Contains("Legs")) return "MCasual2_Legs";
+            if (id.Contains("Feet")) return "MCasual2_Feet";
+        }
+        else
+        {
+            if (id.Contains("Head")) return "FCasual_Head";
+            if (id.Contains("Body") || id.Contains("Torso")) return "FCasual_Body";
+            if (id.Contains("Legs")) return "FCasual_Legs";
+            if (id.Contains("Feet")) return "FCasual_Feet";
+        }
+
+        return "None";
     }
 
     public bool IsItemUnlocked(string itemId)
@@ -176,6 +232,20 @@ public class InventoryManager : MonoBehaviour
     public string GetMeshNameFromItemId(string itemId)
     {
         if (string.IsNullOrEmpty(itemId) || itemId == "None") return "None";
+
+        // LEGACY SAVE DATA PATCH:
+        if (itemId.StartsWith("Casual_"))
+        {
+            return isMaleAvatar ? itemId.Replace("Casual_", "MCasual2_") : itemId.Replace("Casual_", "FCasual_");
+        }
+
+        // If the Master Inventory Database uses generic names (e.g. "Adventurer_Legs"), 
+        // we MUST automatically prepend "M" or "F" to find the correct mesh in the hierarchy!
+        if (!itemId.StartsWith("M") && !itemId.StartsWith("F") && !itemId.StartsWith("m") && !itemId.StartsWith("f"))
+        {
+            return (isMaleAvatar ? "M" : "F") + itemId;
+        }
+
         return itemId; 
     }
 
@@ -243,6 +313,12 @@ public class InventoryManager : MonoBehaviour
         SaveCoins();
     }
 
+    [Header("Debug / Cheats")]
+    [Tooltip("Check this to override the player's saved coins with the amount below")]
+    public bool overrideCoins = false;
+    [Tooltip("The amount of coins to give the player for testing")]
+    public int debugCoinAmount = 999999;
+
     public void SaveCoins()
     {
         PlayerPrefs.SetInt("PlayerCoins", coins);
@@ -254,6 +330,10 @@ public class InventoryManager : MonoBehaviour
     public void LoadCoins()
     {
         coins = PlayerPrefs.GetInt("PlayerCoins", 0); // Defaults to 0 for new players
+        if (overrideCoins)
+        {
+            coins = debugCoinAmount;
+        }
     }
 
     // 🔄 CALL THIS ONCE WHEN THE STUDENT OPENS THEIR WARDROBE/CUSTOMIZATION PAGE
@@ -270,6 +350,8 @@ public class InventoryManager : MonoBehaviour
         // 2. Loop through our master item slice database
         foreach (InventoryItemData item in masterInventoryList)
         {
+            if (item == null) continue;
+
             // Only spawn the item if the player has actually unlocked/purchased it!
             if (IsItemUnlocked(item.itemId) || IsItemUnlocked(item.associatedOutfitName))
             {

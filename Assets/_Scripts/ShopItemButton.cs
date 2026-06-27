@@ -36,6 +36,16 @@ public class ShopItemButton : MonoBehaviour
 
     private void Start()
     {
+        // Automatically find the Button component and hook up the click event!
+        // This prevents the need to manually assign it in the Unity Inspector.
+        Button btn = GetComponent<Button>();
+        if (btn == null) btn = GetComponentInChildren<Button>();
+        
+        if (btn != null)
+        {
+            btn.onClick.AddListener(BuyOrPreviewItem);
+        }
+
         RefreshButtonState();
     }
 
@@ -49,18 +59,25 @@ public class ShopItemButton : MonoBehaviour
 
         if (priceText != null)
         {
-            priceText.text = shopItem.isPurchased ? "Owned" : shopItem.price.ToString() + " Coins";
+            priceText.text = shopItem.isPurchased ? "Owned" : shopItem.price.ToString();
         }
     }
 
     // 🔘 LINK THIS TO YOUR SHOP BUTTON'S ONCLICK() EVENT IN THE INSPECTOR
     public void BuyOrPreviewItem()
     {
-        if (avatarCustomizer == null) return;
+        Debug.Log($"[ShopItemButton] BuyOrPreviewItem clicked for {shopItem.itemName}");
+
+        if (avatarCustomizer == null) 
+        {
+            Debug.LogError($"[ShopItemButton] CRITICAL ERROR: avatarCustomizer is NULL! Make sure the AvatarCustomizer script is attached to a GameObject in your scene!");
+            return;
+        }
 
         // Transaction Logic: Only runs if the student doesn't own this item card yet
         if (!shopItem.isPurchased)
         {
+            Debug.Log($"[ShopItemButton] Attempting purchase for {shopItem.itemName}. Cost: {shopItem.price}");
             bool purchaseSuccessful = false;
             
             // Deduct coins from global Inventory Manager

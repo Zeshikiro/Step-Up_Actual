@@ -2,11 +2,9 @@ using UnityEngine;
 
 public class AvatarLoader : MonoBehaviour
 {
-    [Header("Gender Containers")]
-    [Tooltip("Drag the Male avatar parent object here")]
-    public GameObject maleAvatar;
-    [Tooltip("Drag the Female avatar parent object here")]
-    public GameObject femaleAvatar;
+    [Header("Avatar Container")]
+    [Tooltip("Drag the single unified AvatarContainer here")]
+    public GameObject avatarContainer;
 
     void OnEnable()
     {
@@ -32,15 +30,15 @@ public class AvatarLoader : MonoBehaviour
             return;
         }
 
-        // 2. Read the global gender choice
-        bool isMale = InventoryManager.Instance.isMaleAvatar;
+        // We now use a single unified Avatar Container
+        GameObject activeAvatarRoot = avatarContainer; 
+        
+        if (activeAvatarRoot != null) activeAvatarRoot.SetActive(true);
 
-        // 3. HARD OPTIMIZATION: Completely disable the unused gender to save memory and draw calls
-        if (maleAvatar != null) maleAvatar.SetActive(isMale);
-        if (femaleAvatar != null) femaleAvatar.SetActive(!isMale);
-
-        GameObject activeAvatarRoot = isMale ? maleAvatar : femaleAvatar;
         if (activeAvatarRoot == null) return;
+
+        // NEW: Automatically fix massive FBX position offsets by shifting the root!
+        CenterAvatar(activeAvatarRoot.transform);
 
         // NEW: Automatically stitch/rebind any broken clothing meshes to the active skeleton!
         AutoRebindBones(activeAvatarRoot.transform);
@@ -56,13 +54,42 @@ public class AvatarLoader : MonoBehaviour
         EquipMesh(activeAvatarRoot.transform, InventoryManager.Instance.GetMeshNameFromItemId(InventoryManager.Instance.equippedAccessoryId));
     }
 
+    private void CenterAvatar(Transform root)
+    {
+        // 2. Find ALL skeletons in the hierarchy and fix their massive Blender offsets!
+        Transform[] allTransforms = root.GetComponentsInChildren<Transform>(true);
+        foreach (Transform t in allTransforms)
+        {
+            if (t.name == "CharacterArmature" && t.parent != null)
+            {
+                // Shift the immediate parent backwards to exactly cancel out the armature's imported offset.
+                // This guarantees every single skeleton perfectly collapses to exactly (0,0,0)!
+                t.parent.localPosition = -t.localPosition;
+            }
+        }
+
+        // Restore the camera to perfectly track the AvatarPivot (which is at 0,0,0 with 0,0,0 rotation).
+        // (Tracking the imported armatures caused the camera offsets to break due to their 90-degree Blender rotations!)
+        Camera previewCam = GameObject.Find("previewcamera")?.GetComponent<Camera>();
+        if (previewCam != null)
+        {
+            AvatarPreviewCamera previewScript = previewCam.GetComponent<AvatarPreviewCamera>();
+            if (previewScript != null)
+            {
+                previewScript.enabled = true;
+                Transform pivot = GameObject.Find("AvatarPivot")?.transform;
+                if (pivot != null) previewScript.targetAvatar = pivot;
+            }
+        }
+    }
+
     private void AutoRebindBones(Transform root)
     {
-        // Find the main skeleton (Armature) that is a DIRECT child of this character
-        Transform armature = root.Find("CharacterArmature");
+        // Find the main skeleton (Armature) recursively 
+        Transform armature = FindChildRecursive(root, "CharacterArmature");
         if (armature == null) 
         {
-            Debug.LogWarning($"[AvatarLoader] CRITICAL: Could not find main CharacterArmature directly under {root.name}!");
+            Debug.LogWarning($"[AvatarLoader] CRITICAL: Could not find main CharacterArmature anywhere under {root.name}!");
             return;
         }
 
@@ -102,22 +129,10 @@ public class AvatarLoader : MonoBehaviour
             smr.rootBone = armature;
             
             // CRITICAL FIXES FOR INVISIBLE MESHES:
-            // 1. Force position, rotation, AND scale to be perfect for the mesh itself
-            smr.transform.localPosition = Vector3.zero;
-            smr.transform.localRotation = Quaternion.identity;
-            smr.transform.localScale = Vector3.one;
-            
-            // 2. Prevent Unity from making it invisible due to broken bounds!
+            // Prevent Unity from aggressively culling the mesh when the camera looks at the bones!
+            // Because the FBX folders have massive offsets, Unity's bounds calculations are completely wrong.
+            // Setting this permanently prevents the "blue skybox" invisible mesh bug!
             smr.updateWhenOffscreen = true;
-
-            // 3. THE MAGIC TELEPORTATION & SCALE FIX!
-            // Snap the clothing folder exactly to the skeleton's coordinates!
-            if (smr.transform.parent != root)
-            {
-                smr.transform.parent.localPosition = armature.localPosition;
-                smr.transform.parent.localRotation = armature.localRotation;
-                smr.transform.parent.localScale = armature.localScale;
-            }
 
             Debug.LogWarning($"[AvatarLoader] Restitched {smr.name}! Bones Matched: {matchedBones}/{smr.bones.Length}.");
         }
@@ -127,12 +142,19 @@ public class AvatarLoader : MonoBehaviour
     {
         foreach (SkinnedMeshRenderer smr in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
         {
-            smr.gameObject.SetActive(false);
+            // Protect the root container and structural folders from disabling themselves!
+            if (smr.gameObject != root.gameObject && smr.gameObject.name != "Male_Casual")
+            {
+                smr.gameObject.SetActive(false);
+            }
         }
         
         foreach (MeshRenderer mr in root.GetComponentsInChildren<MeshRenderer>(true))
         {
-            mr.gameObject.SetActive(false);
+            if (mr.gameObject != root.gameObject && mr.gameObject.name != "Male_Casual")
+            {
+                mr.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -140,14 +162,24 @@ public class AvatarLoader : MonoBehaviour
     {
         if (string.IsNullOrEmpty(meshName) || meshName == "None") return;
 
-        Transform meshTransform = FindChildRecursive(root, meshName);
-        if (meshTransform != null)
+        Transform target = FindChildRecursive(root, meshName);
+        if (target != null)
         {
-            meshTransform.gameObject.SetActive(true);
-            SkinnedMeshRenderer smr = meshTransform.GetComponent<SkinnedMeshRenderer>();
+            // Turn on the specific mesh
+            target.gameObject.SetActive(true);
+            
+            // CRITICAL: Also force its immediate parent folder (like "Casual_2") to be ON!
+            // Unity sometimes attaches hidden MeshRenderers to FBX parent folders. If DeactivateAllMeshes 
+            // accidentally turned off the "Casual_2" folder, this guarantees it gets turned back on so the mesh is visible!
+            if (target.parent != null && target.parent != root)
+            {
+                target.parent.gameObject.SetActive(true);
+            }
+
+            SkinnedMeshRenderer smr = target.GetComponent<SkinnedMeshRenderer>();
             if (smr != null && smr.sharedMesh != null)
             {
-                Debug.LogWarning($"[AvatarLoader] VICTORY DIAGNOSTIC: {meshName} is Active! World Pos: {meshTransform.position} | World Scale: {meshTransform.lossyScale} | Vertices: {smr.sharedMesh.vertexCount}");
+                Debug.LogWarning($"[AvatarLoader] VICTORY DIAGNOSTIC: {meshName} is Active! World Pos: {target.position} | World Scale: {target.lossyScale} | Vertices: {smr.sharedMesh.vertexCount}");
             }
         }
         else

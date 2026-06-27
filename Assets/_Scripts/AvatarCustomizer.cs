@@ -13,9 +13,9 @@ public class AvatarCustomizer : MonoBehaviour
     [Header("Master Inventory System")]
     public System.Collections.Generic.List<string> purchasedItemNames = new System.Collections.Generic.List<string>();
 
-    [Header("Gender Containers")]
-    public GameObject femaleAvatar;
-    public GameObject maleAvatar;
+    [Header("Avatar Container")]
+    [Tooltip("Drag the single unified AvatarContainer here")]
+    public GameObject avatarContainer;
 
     [Header("UI Sub-Panels")]
     public GameObject[] subPanels;
@@ -38,17 +38,6 @@ public class AvatarCustomizer : MonoBehaviour
     public GameObject currentFeet;
     public GameObject currentAccessory;
 
-    [Header("Default Casual Objects (Assign inside Avatar Hierarchy)")]
-    public GameObject defaultMaleHead;
-    public GameObject defaultMaleBody;
-    public GameObject defaultMaleLegs;
-    public GameObject defaultMaleFeet;
-    [Space]
-    public GameObject defaultFemaleHead;
-    public GameObject defaultFemaleBody;
-    public GameObject defaultFemaleLegs;
-    public GameObject defaultFemaleFeet;
-
     [Header("Gender Armature Target")]
     public Transform activeArmatureRoot; 
 
@@ -67,6 +56,17 @@ public class AvatarCustomizer : MonoBehaviour
 
     private void Start()
     {
+        // CLEAR ANY ACCIDENTAL INSPECTOR ASSIGNMENTS!
+        // These fields are strictly for runtime tracking. If they were accidentally populated in the Inspector,
+        // the HandleObjectEquip function would literally turn off the AvatarContainer!
+        currentHead = null;
+        currentBody = null;
+        currentLegs = null;
+        currentFeet = null;
+        currentAccessory = null;
+
+        if (avatarContainer != null) NormalizeScales(avatarContainer.transform);
+
         // Dynamically pass our local UI grids to the persistent InventoryManager!
         if (InventoryManager.Instance != null)
         {
@@ -85,48 +85,19 @@ public class AvatarCustomizer : MonoBehaviour
         ToggleShopPanel(false);
     }
 
+    private void NormalizeScales(Transform obj)
+    {
+        obj.localScale = Vector3.one;
+        foreach (Transform child in obj)
+        {
+            NormalizeScales(child);
+        }
+    }
+
     public void InitializeAvatarState()
     {
-        bool isMale = maleAvatar != null && maleAvatar.activeSelf;
-        
-        UpdateArmatureTarget(isMale);
-        ResetToDefaults(isMale);
-    }
-
-    public void ResetToDefaults(bool isMale)
-    {
-        DeactivateCurrentSet();
-        spawnedParts.Clear();
-
-        if (isMale)
-        {
-            currentHead = defaultMaleHead;
-            currentBody = defaultMaleBody;
-            currentLegs = defaultMaleLegs;
-            currentFeet = defaultMaleFeet;
-        }
-        else
-        {
-            currentHead = defaultFemaleHead;
-            currentBody = defaultFemaleBody;
-            currentLegs = defaultFemaleLegs;
-            currentFeet = defaultFemaleFeet;
-        }
-
-        if (currentHead != null) currentHead.SetActive(true);
-        if (currentBody != null) currentBody.SetActive(true);
-        if (currentLegs != null) currentLegs.SetActive(true);
-        if (currentFeet != null) currentFeet.SetActive(true);
-        if (currentAccessory != null) currentAccessory.SetActive(false);
-    }
-
-    private void DeactivateCurrentSet()
-    {
-        if (currentHead != null) currentHead.SetActive(false);
-        if (currentBody != null) currentBody.SetActive(false);
-        if (currentLegs != null) currentLegs.SetActive(false);
-        if (currentFeet != null) currentFeet.SetActive(false);
-        if (currentAccessory != null) currentAccessory.SetActive(false);
+        // We now use a single unified container, so we just target it directly!
+        UpdateArmatureTarget(true);
     }
 
     public void UpdateCoinDisplay()
@@ -173,7 +144,7 @@ public class AvatarCustomizer : MonoBehaviour
         if (prefab == null) return currentActiveObject;
 
         // 1. Identify which gender avatar root is currently active in your scene hierarchy
-        GameObject activeAvatarRoot = (maleAvatar != null && maleAvatar.activeSelf) ? maleAvatar : femaleAvatar;
+        GameObject activeAvatarRoot = avatarContainer;
         if (activeAvatarRoot == null) return currentActiveObject;
 
         // 2. Search recursively inside the active character structure for a child object matching the prefab name
@@ -208,22 +179,19 @@ public class AvatarCustomizer : MonoBehaviour
     {
         if (InventoryManager.Instance != null)
         {
-            // Sync the gender choice globally and save it instantly!
+            // The Male/Female button is now strictly a Shop UI Filter!
+            // It does NOT change the physical character on the screen.
             InventoryManager.Instance.isMaleAvatar = isMale;
-            InventoryManager.Instance.SaveAvatarToCloud();
-        }
-
-        // Force the AvatarLoader to rebuild the character immediately with the new gender!
-        AvatarLoader loader = FindAnyObjectByType<AvatarLoader>();
-        if (loader != null)
-        {
-            loader.LoadSavedAvatar();
+            
+            // Regenerate the Shop UI dynamically so it shows the selected wardrobe!
+            InventoryManager.Instance.GenerateInventoryUI();
         }
     }
 
     private void UpdateArmatureTarget(bool isMale)
     {
-        GameObject activeAvatarRoot = isMale ? maleAvatar : femaleAvatar;
+        // We now only use a single unified AvatarContainer
+        GameObject activeAvatarRoot = avatarContainer;
         if (activeAvatarRoot != null)
         {
             Transform foundArmature = FindChildRecursive(activeAvatarRoot.transform, "CharacterArmature");
