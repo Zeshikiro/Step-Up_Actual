@@ -13,7 +13,10 @@ public class BMIManager : MonoBehaviour
 
     [Header("Display Elements")]
     public TextMeshProUGUI resultText;
-    public GameObject continueButton;
+    
+    [Header("Buttons")]
+    public GameObject calculateButton; // The main "Calculate BMI" button
+    public GameObject secondaryButtonGroup; // The layout group holding Re-Calculate & Continue
 
     [Header("Routing")]
     public GameObject bmiPanel;
@@ -21,11 +24,9 @@ public class BMIManager : MonoBehaviour
 
     void Start()
     {
-        // Hide the continue button until they calculate
-        if (continueButton != null) 
-        {
-            continueButton.SetActive(false);
-        }
+        // Initial state: Show Calculate, Hide the secondary buttons
+        if (calculateButton != null) calculateButton.SetActive(true);
+        if (secondaryButtonGroup != null) secondaryButtonGroup.SetActive(false);
     }
 
     void OnEnable()
@@ -61,8 +62,7 @@ public class BMIManager : MonoBehaviour
             else if (bmi >= 25f && bmi <= 29.9f) { category = "Overweight"; stepGoal = 12000; } 
             else if (bmi >= 30f) { category = "Obese"; stepGoal = 8000; }
 
-            // Save the calculated goal and category so the Missions panel can use them!
-            // Save the calculated goal and category so the Missions panel can use them!
+            // Save the calculated goal and category
             PlayerPrefs.SetInt("DailyStepGoal", stepGoal);
             PlayerPrefs.SetString("BMICategory", category);
 
@@ -71,7 +71,7 @@ public class BMIManager : MonoBehaviour
             PlayerPrefs.SetString("SavedHeight", heightInput.text);
             PlayerPrefs.SetString("SavedWeight", weightInput.text);
 
-            // ADD THIS LINE HERE: Mark the BMI profile setup as officially done
+            // Mark the BMI profile setup as officially done
             if (FirebaseAuth.DefaultInstance.CurrentUser != null)
             {
                 string userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
@@ -93,13 +93,25 @@ public class BMIManager : MonoBehaviour
             // Display results
             resultText.text = $"Your BMI: {bmi:F1}\nCategory: {category}\n\n<b>Daily Target: {stepGoal} Steps</b>";
             
-            // Show the continue button
-            continueButton.SetActive(true);
+            // SWAP BUTTONS! Hide calculate, show the Continue/Recalculate group
+            if (calculateButton != null) calculateButton.SetActive(false);
+            if (secondaryButtonGroup != null) secondaryButtonGroup.SetActive(true);
         }
         else
         {
             resultText.text = "<color=red>Please enter valid numbers in all fields!</color>";
         }
+    }
+
+    // Call this from the "Re-Calculate" button
+    public void ResetCalculator()
+    {
+        // Clear result
+        if (resultText != null) resultText.text = "Result is 0";
+        
+        // SWAP BUTTONS! Show calculate, hide the group
+        if (calculateButton != null) calculateButton.SetActive(true);
+        if (secondaryButtonGroup != null) secondaryButtonGroup.SetActive(false);
     }
 
     // Call this from the "Continue" button

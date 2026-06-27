@@ -44,4 +44,10 @@ public class MainMenuManager : MonoBehaviour
         Debug.Log("Opening Health Tips...");
         // Add scene load or panel toggle here when ready!
     }
+
+    // 4. Opens a web browser to the provided URL (e.g., About Us website)
+    public void OpenWebsite(string url)
+    {
+        Application.OpenURL(url);
+    }
 }

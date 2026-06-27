@@ -8,20 +8,21 @@ public class EULAManager : MonoBehaviour
     public GameObject mainMenuPanel; // The panel with Start, Customize, Settings, etc.
 
     [Header("Validation")]
-    public UnityEngine.UI.Toggle acceptToggle;
-    public GameObject warningText; // NEW: The red warning text
+    public GameObject warningText; // The red warning text
 
-    // Wire this to your EULA "Accept & Continue" Button's OnClick() event
-    public void OnAcceptEulaClicked()
+    void Start()
     {
-        if (acceptToggle != null && !acceptToggle.isOn)
+        // Make sure the warning text is off by default when the scene loads
+        if (warningText != null) 
         {
-            Debug.LogWarning("You must check the toggle to accept the EULA!");
-            if (warningText != null) warningText.SetActive(true); // Show the warning text
-            return;
+            warningText.SetActive(false);
         }
+    }
 
-        if (warningText != null) warningText.SetActive(false); // Hide it if they pass
+    // Wire this to your EULA "AGREE" Button's OnClick() event
+    public void OnAgreeClicked()
+    {
+        if (warningText != null) warningText.SetActive(false); // Hide the warning
 
         string userId = Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.UserId;
 
@@ -42,5 +43,16 @@ public class EULAManager : MonoBehaviour
         }
 
         PlayerPrefs.Save();
+    }
+
+    // Wire this to your EULA "DECLINE" Button's OnClick() event
+    public void OnDeclineClicked()
+    {
+        Debug.LogWarning("User declined the EULA.");
+        // Show the warning text reminding them they must accept to play
+        if (warningText != null) 
+        {
+            warningText.SetActive(true);
+        }
     }
 }

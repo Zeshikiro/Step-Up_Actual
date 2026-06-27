@@ -99,6 +99,44 @@ public class AuthManager : MonoBehaviour
         passwordField.ForceLabelUpdate(); 
     }
 
+    public void OpenSignUpWebsite(string url)
+    {
+        // You can now type your website URL directly into the Unity Inspector!
+        Application.OpenURL(url);
+    }
+
+    public void SendPasswordResetEmail()
+    {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            if (statusText != null) statusText.text = "No Internet Connection Detected!";
+            return;
+        }
+
+        if (auth == null) return;
+
+        if (string.IsNullOrEmpty(emailField.text))
+        {
+            if (statusText != null) statusText.text = "Please type your email address first!";
+            return;
+        }
+
+        if (statusText != null) statusText.text = "Sending reset link...";
+
+        auth.SendPasswordResetEmailAsync(emailField.text).ContinueWithOnMainThread(task => {
+            if (task.IsFaulted || task.IsCanceled) {
+                string errorMsg = "Failed to send reset email.";
+                if (task.Exception != null) {
+                    errorMsg = task.Exception.GetBaseException().Message;
+                }
+                if (statusText != null) statusText.text = errorMsg;
+                return;
+            }
+
+            if (statusText != null) statusText.text = "Password reset link sent! Check your inbox.";
+        });
+    }
+
     public void RegisterUser()
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
