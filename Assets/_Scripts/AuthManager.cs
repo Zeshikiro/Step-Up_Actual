@@ -236,6 +236,8 @@ public class AuthManager : MonoBehaviour
             }
             else 
             {
+                if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+                if (bmiPanel != null) bmiPanel.SetActive(false);
                 if (eulaPanel != null) eulaPanel.SetActive(true);
             }
         });

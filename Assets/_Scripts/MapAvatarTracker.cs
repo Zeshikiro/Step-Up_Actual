@@ -97,13 +97,45 @@ public class MapAvatarTracker : MonoBehaviour
         trailMat.color = new Color(1.0f, 0.35f, 0.0f, 0.9f); // #fc5a03 (Strava Orange)
         tr.material = trailMat;
         
-        tr.minVertexDistance = 3.0f; // Filters out small GPS jitters for a clean line
+        tr.minVertexDistance = 0.5f; // Filters out small GPS jitters for a clean line
         tr.transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
 
         // (Removed the child destruction loop so your 2D map pin doesn't get deleted!)
 
         // We no longer generate a 2D Blue Dot Avatar!
         // The Custom 3D Avatar child object will be used instead.
+        
+        CreateVisionCone();
+    }
+
+    private void CreateVisionCone()
+    {
+        // Dynamically build a "Google Maps" style blue vision cone
+        GameObject coneObj = new GameObject("VisionCone");
+        Transform custom3DAvatar = transform.Find("Custom 3D Avatar");
+        coneObj.transform.SetParent(custom3DAvatar != null ? custom3DAvatar : transform);
+        coneObj.transform.localPosition = new Vector3(0, 0.2f, 0); // Slightly above ground
+        coneObj.transform.localEulerAngles = Vector3.zero;
+
+        MeshFilter mf = coneObj.AddComponent<MeshFilter>();
+        MeshRenderer mr = coneObj.AddComponent<MeshRenderer>();
+
+        Mesh mesh = new Mesh();
+        Vector3[] vertices = new Vector3[3];
+        vertices[0] = Vector3.zero; // Base at player center
+        vertices[1] = new Vector3(-2f, 0, 5f); // Left edge of cone
+        vertices[2] = new Vector3(2f, 0, 5f);  // Right edge of cone
+
+        int[] triangles = new int[] { 0, 1, 2, 0, 2, 1 }; // Double sided just in case
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.RecalculateNormals();
+        mf.mesh = mesh;
+
+        // Create a transparent blue material
+        Material mat = new Material(Shader.Find("Sprites/Default"));
+        mat.color = new Color(0.0f, 0.5f, 1.0f, 0.4f);
+        mr.material = mat;
     }
 
     private IEnumerator FetchIPLocationFallback()

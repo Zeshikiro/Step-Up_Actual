@@ -139,7 +139,7 @@ public class ARManager : MonoBehaviour
             customAvatar.SetActive(true);
             customAvatar.transform.SetParent(mainCamera.transform, false);
             customAvatar.transform.localPosition = avatarARPosition;
-            customAvatar.transform.localScale = Vector3.one; 
+            // Removed: customAvatar.transform.localScale = Vector3.one; so the prefab keeps its original size!
         }
         UpdateAvatarRotation();
 

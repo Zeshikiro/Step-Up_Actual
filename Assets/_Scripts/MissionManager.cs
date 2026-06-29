@@ -234,10 +234,10 @@ public class MissionManager : MonoBehaviour
             if (currentProgress >= target)
             {
                 // Dynamic Economy: Calculate rewards based on difficulty rank!
-                int baseDailyReward = 100;
-                if (rank == "EXPLORER") baseDailyReward = 150;
-                else if (rank == "TRAILBLAZER") baseDailyReward = 200;
-                else if (rank == "MARATHONER" || rank == "ELITE RUNNER") baseDailyReward = 250;
+                int baseDailyReward = 20;
+                if (rank == "EXPLORER") baseDailyReward = 30;
+                else if (rank == "TRAILBLAZER") baseDailyReward = 40;
+                else if (rank == "MARATHONER" || rank == "ELITE RUNNER") baseDailyReward = 50;
                 
                 // Weekly missions give 5x the daily reward
                 int xpReward = missionIndex >= 7 ? baseDailyReward * 5 : baseDailyReward;

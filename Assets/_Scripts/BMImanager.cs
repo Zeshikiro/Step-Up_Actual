@@ -90,8 +90,8 @@ public class BMIManager : MonoBehaviour
                 dbRef.Child("users").Child(userId).Child("stepGoal").SetValueAsync(stepGoal);
             }
             
-            // Display results
-            resultText.text = $"Your BMI: {bmi:F1}\nCategory: {category}\n\n<b>Daily Target: {stepGoal} Steps</b>";
+            // Display results in a summarized format to fit the box
+            resultText.text = $"{bmi:F1}\n<size=50%>{category}</size>";
             
             // SWAP BUTTONS! Hide calculate, show the Continue/Recalculate group
             if (calculateButton != null) calculateButton.SetActive(false);

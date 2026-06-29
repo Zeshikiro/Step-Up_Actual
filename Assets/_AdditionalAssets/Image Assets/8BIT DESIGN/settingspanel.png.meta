@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2ce1f1b371204024c956def071a10529
+guid: e8a310b1b4ffe68459f5309ff1692630
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -49,7 +49,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 28, w: 0}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -69,10 +69,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: enhancedlogo_0
+      name: settingspanel_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 108
         y: 0
-        width: 500
-        height: 500
+        width: 864
+        height: 1350
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -138,8 +138,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 395a31786f0379e428adfccc7509b237
-      internalID: 1670568468
+      spriteID: 54fa2c5fbfff510428e5fe9b9400d972
+      internalID: -984903623
       vertices: []
       indices: 
       edges: []
@@ -148,8 +148,8 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    spriteID: d1cf258e2d9098a4dbd90012f42f528c
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -160,10 +160,8 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      enhancedlogo_0: 1670568468
-      enhancedlogo_1: -1872795425
-      enhancedlogo_2: 1521813277
-      enhancedlogo_3: 596978954
+      settingspanel_0: -984903623
+      settingspanel_1: 1869740841
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

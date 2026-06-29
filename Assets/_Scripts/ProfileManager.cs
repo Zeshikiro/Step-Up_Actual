@@ -2,6 +2,11 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.IO;
+using System;
+using Firebase;
+using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Extensions;
 
 [System.Serializable]
 public class RankTier
@@ -41,6 +46,7 @@ public class ProfileManager : MonoBehaviour
     private int xpPerLevel = 5000; 
     private bool isEditing = false; 
     private string savedImagePathKey = "CustomAvatarPath";
+    private DateTime lastUsernameChange = DateTime.MinValue;
 
     void OnEnable()
     {
@@ -62,6 +68,29 @@ public class ProfileManager : MonoBehaviour
         string currentName = PlayerPrefs.GetString("UserName", "Player 1"); 
         int totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
         int missionXPEarned = PlayerPrefs.GetInt("MissionXPEarned", 0);
+
+        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+        if (auth != null && auth.CurrentUser != null)
+        {
+            FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(auth.CurrentUser.UserId)
+                .GetValueAsync().ContinueWithOnMainThread(task => {
+                    if (task.IsCompleted && task.Result.Exists)
+                    {
+                        var snapshot = task.Result;
+                        if (snapshot.Child("username").Value != null)
+                        {
+                            currentName = snapshot.Child("username").Value.ToString();
+                            userNameInput.text = currentName;
+                            PlayerPrefs.SetString("UserName", currentName);
+                        }
+                        if (snapshot.Child("lastUsernameChange").Value != null)
+                        {
+                            long ticks = Convert.ToInt64(snapshot.Child("lastUsernameChange").Value);
+                            lastUsernameChange = new DateTime(ticks);
+                        }
+                    }
+                });
+        }
 
         // 2. XP Calculations 
         int totalXP = totalLifetimeSteps + missionXPEarned;
@@ -129,14 +158,37 @@ public class ProfileManager : MonoBehaviour
         }
         else
         {
+            // Validate and enforce character limits on save (Max 10 chars)
+            string cleanName = userNameInput.text;
+            if (cleanName.Length > 10) cleanName = cleanName.Substring(0, 10);
+
+            // Cooldown check (7 days)
+            TimeSpan timeSinceLastChange = DateTime.UtcNow - lastUsernameChange;
+            if (timeSinceLastChange.TotalDays < 7 && lastUsernameChange != DateTime.MinValue && cleanName != PlayerPrefs.GetString("UserName", ""))
+            {
+                int daysLeft = 7 - (int)timeSinceLastChange.TotalDays;
+                if (daysLeft < 1) daysLeft = 1;
+                editButtonText.text = $"Wait {daysLeft} Days!";
+                userNameInput.text = PlayerPrefs.GetString("UserName", "Player 1"); // Revert
+                isEditing = false;
+                UpdateEditModeUI();
+                return;
+            }
+
             editButtonText.text = "EDIT MY PROFILE";
             
-            // Validate and enforce character limits on save
-            string cleanName = userNameInput.text;
-            if (cleanName.Length > 8) cleanName = cleanName.Substring(0, 8);
-
             PlayerPrefs.SetString("UserName", cleanName);
             PlayerPrefs.Save();
+            userNameInput.text = cleanName;
+
+            FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+            if (auth != null && auth.CurrentUser != null)
+            {
+                lastUsernameChange = DateTime.UtcNow;
+                DatabaseReference userRef = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(auth.CurrentUser.UserId);
+                userRef.Child("username").SetValueAsync(cleanName);
+                userRef.Child("lastUsernameChange").SetValueAsync(lastUsernameChange.Ticks);
+            }
         }
 
         UpdateEditModeUI();

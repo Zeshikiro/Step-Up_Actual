@@ -76,7 +76,24 @@ public class LeaderboardManager : MonoBehaviour
 
         foreach (DataSnapshot userDoc in args.Snapshot.Children)
         {
-            string username = userDoc.Child("username").Value?.ToString() ?? "Unknown";
+            string username = "";
+            if (userDoc.Child("username").Value != null && !string.IsNullOrEmpty(userDoc.Child("username").Value.ToString()))
+            {
+                username = userDoc.Child("username").Value.ToString();
+            }
+            else if (userDoc.Child("email").Value != null)
+            {
+                username = userDoc.Child("email").Value.ToString();
+                if (username.Contains("@"))
+                {
+                    username = username.Split('@')[0]; // Take only the part before @
+                }
+            }
+            else 
+            {
+                username = "Unknown";
+            }
+
             long steps = 0;
             
             if (userDoc.Child("TotalLifetimeSteps").Value != null)

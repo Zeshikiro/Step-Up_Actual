@@ -12,6 +12,7 @@ public class ActivitySummaryManager : MonoBehaviour
     [Header("--- Middle Section Cards ---")]
     [SerializeField] private TextMeshProUGUI stepCountTxt;
     [SerializeField] private TextMeshProUGUI distanceTxt;
+    [SerializeField] private TextMeshProUGUI timeUsageTxt; // NEW: For Active Minutes!
 
     [Header("--- Navigation & Panel References ---")]
     [SerializeField] private Button viewLeaderboardBtn;
@@ -91,6 +92,15 @@ public class ActivitySummaryManager : MonoBehaviour
             if (distanceTxt.TryGetComponent(out UINumberCounter distCounter)) distCounter.CountToFloat(calculatedDistanceKm, 1.0f, "F2");
             else distanceTxt.text = calculatedDistanceKm.ToString("F2");
         }
+
+        // App Time Usage (Minutes)
+        if (timeUsageTxt != null) {
+            // Calculate how many minutes the app has been open today
+            float activeMinutes = Time.realtimeSinceStartup / 60f;
+            
+            if (timeUsageTxt.TryGetComponent(out UINumberCounter timeCounter)) timeCounter.CountTo(Mathf.RoundToInt(activeMinutes));
+            else timeUsageTxt.text = Mathf.RoundToInt(activeMinutes).ToString();
+        }
     }
 
     private void OnViewLeaderboardClicked()
@@ -104,12 +114,32 @@ public class ActivitySummaryManager : MonoBehaviour
 
     private void OnShareProgressClicked()
     {
-        Debug.Log("Native Share Integration Hook Triggered.");
-        
-        // Share via Android Native Share
+        Debug.Log("Native Share Integration Hook Triggered. Taking screenshot...");
+        StartCoroutine(TakeScreenshotAndShare());
+    }
+
+    private System.Collections.IEnumerator TakeScreenshotAndShare()
+    {
+        // Wait for the end of the frame to ensure the UI is fully rendered
+        yield return new WaitForEndOfFrame();
+
+        // Capture the entire screen
+        Texture2D ss = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+        ss.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        ss.Apply();
+
+        // Save the screenshot to a temporary file on the phone
+        string filePath = System.IO.Path.Combine(Application.temporaryCachePath, "shared_summary.png");
+        System.IO.File.WriteAllBytes(filePath, ss.EncodeToPNG());
+
+        // Destroy the texture to avoid memory leaks
+        Destroy(ss);
+
+        // Share via Android Native Share, attaching the screenshot image!
         new NativeShare()
+            .AddFile(filePath)
             .SetSubject("My Step-Up Activity!")
-            .SetText($"I just burned {calorieTxt.text} and walked {stepCountTxt.text} steps today on the Step-Up app!")
+            .SetText($"I just burned {calorieTxt.text} KCAL and walked {stepCountTxt.text} steps today! Can you beat my score?")
             .SetUrl("https://stepup-app.com")
             .SetCallback((result, shareTarget) => Debug.Log("Share result: " + result + ", selected app: " + shareTarget))
             .Share();

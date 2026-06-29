@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2ce1f1b371204024c956def071a10529
+guid: 2315cee637cbacd4d804553df3b80ae9
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -49,7 +49,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 28, w: 0}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -69,10 +69,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -123,23 +123,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: enhancedlogo_0
+      name: summarytitle_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 500
-        height: 500
+        x: 6
+        y: 194
+        width: 1194
+        height: 187
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 395a31786f0379e428adfccc7509b237
-      internalID: 1670568468
+      spriteID: 965cc9876d85cd94c8442cf98fb45f3d
+      internalID: 395761239
       vertices: []
       indices: 
       edges: []
@@ -148,8 +148,8 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    spriteID: cf4cf861928eac2438162d8933b38880
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -160,10 +160,35 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      enhancedlogo_0: 1670568468
-      enhancedlogo_1: -1872795425
-      enhancedlogo_2: 1521813277
-      enhancedlogo_3: 596978954
+      summarytitle_0: 395761239
+      summarytitle_1: -1380396093
+      summarytitle_10: -1459089912
+      summarytitle_11: 412133304
+      summarytitle_12: 730398905
+      summarytitle_13: 1087487388
+      summarytitle_14: -1408848220
+      summarytitle_15: 1139093940
+      summarytitle_16: 1247838385
+      summarytitle_17: -505526715
+      summarytitle_18: 975355028
+      summarytitle_19: -1813318970
+      summarytitle_2: 2089935759
+      summarytitle_20: -1457029418
+      summarytitle_21: 1139533784
+      summarytitle_22: 47847972
+      summarytitle_23: 1755524534
+      summarytitle_24: 1324023062
+      summarytitle_25: -1705455425
+      summarytitle_26: -1271561386
+      summarytitle_27: -1711893074
+      summarytitle_28: -909477351
+      summarytitle_3: -342078810
+      summarytitle_4: -1545052004
+      summarytitle_5: -1246279119
+      summarytitle_6: -368508746
+      summarytitle_7: 1486900888
+      summarytitle_8: 624374901
+      summarytitle_9: -628869105
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

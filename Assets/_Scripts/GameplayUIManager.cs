@@ -123,32 +123,36 @@ public class GameplayUIManager : MonoBehaviour
         HideAllPanels();
     }
 
+    public GameObject closePopupBackground; // Drag your ClosePupUp button here!
+
     public void ShowRandomTip()
     {
         int randomIndex = Random.Range(0, funFacts.Length);
         tipTitleText.text = "Did you know?";
         tipBodyText.text = funFacts[randomIndex];
         tipPopupPanel.SetActive(true); 
+        if (closePopupBackground != null) closePopupBackground.SetActive(true);
     }
 
     public void CloseTipPopup()
     {
         tipPopupPanel.SetActive(false);
+        if (closePopupBackground != null) closePopupBackground.SetActive(false);
     }
 
     public void ReturnToMainMenu()
     {
-        SceneManager.LoadScene(mainMenuSceneName);
+        SceneManager.LoadSceneAsync(mainMenuSceneName);
     }
 
     public void SwapViewMode()
     {
-        SceneManager.LoadScene(alternateViewSceneName);
+        SceneManager.LoadSceneAsync(alternateViewSceneName);
     }
 
     public void GoToCustomizeScene()
     {
-        SceneManager.LoadScene("CustomizeScene");
+        SceneManager.LoadSceneAsync("CustomizeScene");
     }
 
     public void RecenterMap()

@@ -31,9 +31,9 @@ public class StepManager : MonoBehaviour
     public float maxContinuousWalkMinutes = 0f;
 
     // Auto-Session Detection variables
-    private float lastWalkingTime = 0f;
+    private System.DateTime lastWalkingTime = System.DateTime.Now;
     private int autoSessionSteps = 0;
-    private float autoSessionStartTime = 0f;
+    private System.DateTime autoSessionStartTime = System.DateTime.Now;
     private bool inAutoSession = false;
 
     [Header("Hardware Pedometer")]
@@ -51,7 +51,7 @@ public class StepManager : MonoBehaviour
     [Header("Mission Active Session (Anti-Cheat)")]
     public bool isSessionActive = false;
     public int sessionSteps = 0;
-    public float sessionStartTime = 0f;
+    public System.DateTime sessionStartTime = System.DateTime.Now;
     public float sessionDurationMinutes = 0f;
     public float sessionDistanceMeters = 0f; 
 
@@ -263,7 +263,7 @@ public class StepManager : MonoBehaviour
         if (inAutoSession)
         {
             // If they haven't walked for 2 minutes, the session ends
-            if (Time.time - lastWalkingTime > 120f)
+            if ((System.DateTime.Now - lastWalkingTime).TotalSeconds > 120f)
             {
                 EndAutoSession();
             }
@@ -274,7 +274,7 @@ public class StepManager : MonoBehaviour
     {
         if (!inAutoSession) return;
         
-        float durationMins = (lastWalkingTime - autoSessionStartTime) / 60f;
+        float durationMins = (float)(lastWalkingTime - autoSessionStartTime).TotalMinutes;
         if (durationMins > maxContinuousWalkMinutes) maxContinuousWalkMinutes = durationMins;
         
         if (autoSessionSteps > maxSessionStepsToday) maxSessionStepsToday = autoSessionSteps;
@@ -297,7 +297,7 @@ public class StepManager : MonoBehaviour
     {
         if (isPaused)
         {
-            EndAutoSession(); // End session safely if they background the app
+            // We no longer call EndAutoSession here! This allows the session to continue while backgrounded!
 #if UNITY_ANDROID
             SendStepNotification();
 #endif
@@ -364,11 +364,11 @@ public class StepManager : MonoBehaviour
         if (!inAutoSession)
         {
             inAutoSession = true;
-            autoSessionStartTime = Time.time;
+            autoSessionStartTime = System.DateTime.Now;
             autoSessionSteps = 0;
         }
         autoSessionSteps++;
-        lastWalkingTime = Time.time;
+        lastWalkingTime = System.DateTime.Now;
 
         if (currentDailySteps % 50 == 0) SaveAllProgress(); // Periodically save
         
@@ -415,7 +415,7 @@ public class StepManager : MonoBehaviour
         sessionSteps = 0;
         sessionDistanceMeters = 0f;
         sessionDurationMinutes = durationMinutes;
-        sessionStartTime = Time.time;
+        sessionStartTime = System.DateTime.Now;
         Debug.Log($"[StepManager] Started a {durationMinutes}-minute mission!");
     }
     

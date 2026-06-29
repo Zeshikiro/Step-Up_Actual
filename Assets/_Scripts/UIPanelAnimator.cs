@@ -59,9 +59,13 @@ public class UIPanelAnimator : MonoBehaviour
             float t = timeElapsed / animationDuration;
             float easeOutT = 1f - Mathf.Pow(1f - t, 3f); // Creates a snappy, arcade-like deceleration
 
-            // Apply fade and slide
+            // Apply fade, slide, AND soft scale popup!
             canvasGroup.alpha = Mathf.Lerp(0f, 1f, easeOutT);
             rectTransform.anchoredPosition = Vector2.Lerp(startPos, originalPosition, easeOutT);
+            
+            // Starts slightly smaller (0.9x) and pops into normal size (1x)
+            float scale = Mathf.Lerp(0.9f, 1f, easeOutT);
+            rectTransform.localScale = new Vector3(scale, scale, 1f);
 
             yield return null;
         }
@@ -69,5 +73,6 @@ public class UIPanelAnimator : MonoBehaviour
         // Snap to exact final values
         canvasGroup.alpha = 1f;
         rectTransform.anchoredPosition = originalPosition;
+        rectTransform.localScale = Vector3.one;
     }
 }
