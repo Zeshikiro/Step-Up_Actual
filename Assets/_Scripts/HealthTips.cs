@@ -1,20 +1,20 @@
 using UnityEngine;
 
-public class TutorialManager : MonoBehaviour
+public class HealthTips : MonoBehaviour
 {
     [Header("UI Panels")]
-    public GameObject tutorialHubPanel;
+    public GameObject healthTipsHubPanel;
 
     // Call this from the Main Menu button to open the hub
-    public void OpenTutorialHub()
+    public void OpenHealthTipsHub()
     {
-        tutorialHubPanel.SetActive(true);
+        if (healthTipsHubPanel != null) healthTipsHubPanel.SetActive(true);
     }
 
     // Call this from your new Close button to hide the hub
-    public void CloseTutorialHub()
+    public void CloseHealthTipsHub()
     {
-        tutorialHubPanel.SetActive(false);
+        if (healthTipsHubPanel != null) healthTipsHubPanel.SetActive(false);
     }
 
     // Call this from your Posture, Cooldown, WarmUp, and FitnessTips buttons!

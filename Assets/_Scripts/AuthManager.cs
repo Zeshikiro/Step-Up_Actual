@@ -38,28 +38,24 @@ public class AuthManager : MonoBehaviour
                 // "REMEMBER ME"
                 // ==============================================
                 if (auth.CurrentUser != null) {
-                    if (!auth.CurrentUser.IsEmailVerified) {
-                        auth.SignOut();
-                    } else {
-                        Debug.Log("User recognized! Bypassing login...");
-                        if (loginPanel != null) loginPanel.SetActive(false);
+                    Debug.Log("User recognized! Bypassing login...");
+                    if (loginPanel != null) loginPanel.SetActive(false);
 
-                        // Save email to DB to ensure leaderboard visibility
-                        FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(auth.CurrentUser.UserId).Child("email").SetValueAsync(auth.CurrentUser.Email);
+                    // Save email to DB to ensure leaderboard visibility
+                    FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(auth.CurrentUser.UserId).Child("email").SetValueAsync(auth.CurrentUser.Email);
 
-                        // --- THE NEW ONBOARDING LOCK CHECK ---
-                        if (PlayerPrefs.GetInt("OnboardingComplete_" + auth.CurrentUser.UserId, 0) == 1) 
-                        {
-                            if (eulaPanel != null) eulaPanel.SetActive(false);
-                            if (bmiPanel != null) bmiPanel.SetActive(false);
-                            if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
-                        }
-                        else 
-                        {
-                            if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
-                            if (bmiPanel != null) bmiPanel.SetActive(false);
-                            if (eulaPanel != null) eulaPanel.SetActive(true);
-                        }
+                    // --- THE NEW ONBOARDING LOCK CHECK ---
+                    if (PlayerPrefs.GetInt("OnboardingComplete_" + auth.CurrentUser.UserId, 0) == 1) 
+                    {
+                        if (eulaPanel != null) eulaPanel.SetActive(false);
+                        if (bmiPanel != null) bmiPanel.SetActive(false);
+                        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+                    }
+                    else 
+                    {
+                        if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+                        if (bmiPanel != null) bmiPanel.SetActive(false);
+                        if (eulaPanel != null) eulaPanel.SetActive(true);
                     }
                 }
 
@@ -208,13 +204,6 @@ public class AuthManager : MonoBehaviour
             }
             
             FirebaseUser user = auth.CurrentUser;
-            if (user != null && !user.IsEmailVerified)
-            {
-                if(statusText != null) statusText.text = "Please verify your email first!";
-                if (loginButton != null) loginButton.interactable = true;
-                auth.SignOut();
-                return;
-            }
 
             failedAttempts = 0; 
             if(statusText != null) statusText.text = "Login Successful!";
