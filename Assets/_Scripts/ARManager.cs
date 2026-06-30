@@ -208,32 +208,44 @@ public class ARManager : MonoBehaviour
     {
         if (fallbackBackground != null)
         {
-            // 1. Completely disable the UI Image so it doesn't block the 3D Avatar!
-            fallbackBackground.SetActive(false); 
-
-            // 2. Spawn a perfectly formatted 3D Quad behind the Avatar to hold the image
-            Image img = fallbackBackground.GetComponent<Image>();
-            if (img != null && img.sprite != null)
+            fallbackBackground.SetActive(true);
+            
+            // Put the fallback background in a special camera-space canvas so it renders behind the 3D avatar!
+            Canvas bgCanvas = fallbackBackground.GetComponentInParent<Canvas>();
+            if (bgCanvas != null)
             {
-                if (dynamicBgQuad == null)
+                if (bgCanvas.renderMode != RenderMode.ScreenSpaceCamera)
                 {
-                    dynamicBgQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    Destroy(dynamicBgQuad.GetComponent<Collider>());
-                    dynamicBgQuad.transform.SetParent(mainCamera.transform, false);
+                    // Create a new canvas just for the background so animations keep playing normally!
+                    GameObject newCanvasObj = new GameObject("FallbackBackgroundCanvas");
+                    Canvas newCanvas = newCanvasObj.AddComponent<Canvas>();
+                    newCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+                    newCanvas.worldCamera = mainCamera;
+                    newCanvas.planeDistance = 20f; // Far behind the avatar (avatar is at 5f)
+                    newCanvas.sortingOrder = -100; // Force it to the back
                     
-                    // Put it 20 meters away so it's far behind the avatar (avatar is at Z=5)
-                    dynamicBgQuad.transform.localPosition = new Vector3(0, 0, 20f); 
-                    
-                    // Stretch to perfectly fill the camera's FOV at 20 meters
-                    float h = Mathf.Tan(mainCamera.fieldOfView * Mathf.Deg2Rad * 0.5f) * 20f * 2f;
-                    float w = h * mainCamera.aspect;
-                    dynamicBgQuad.transform.localScale = new Vector3(w, h, 1f);
+                    UnityEngine.UI.CanvasScaler scaler = newCanvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
+                    scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                    scaler.referenceResolution = new Vector2(1080, 1920);
+                    scaler.matchWidthOrHeight = 0.5f;
 
-                    Material mat = new Material(Shader.Find("Unlit/Texture"));
-                    mat.mainTexture = img.sprite.texture;
-                    dynamicBgQuad.GetComponent<MeshRenderer>().material = mat;
+                    fallbackBackground.transform.SetParent(newCanvasObj.transform, false);
+                    
+                    // Reset its rect transform to stretch fully
+                    RectTransform rt = fallbackBackground.GetComponent<RectTransform>();
+                    if (rt != null)
+                    {
+                        rt.anchorMin = Vector2.zero;
+                        rt.anchorMax = Vector2.one;
+                        rt.offsetMin = Vector2.zero;
+                        rt.offsetMax = Vector2.zero;
+                    }
                 }
-                dynamicBgQuad.SetActive(true);
+                else
+                {
+                    bgCanvas.worldCamera = mainCamera;
+                    bgCanvas.planeDistance = 20f;
+                }
             }
         }
     }

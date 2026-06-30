@@ -22404,8 +22404,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3961892883323150685}
   m_HandleRect: {fileID: 174809392001564676}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -29422,6 +29422,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTutorialManager
   isFirstSceneOfTutorial: 0
+  isLastSceneOfTutorial: 1
   loadSceneOnComplete: 1
   nextSceneToLoad: LoginScene
   tutorialPromptPanel: {fileID: 0}

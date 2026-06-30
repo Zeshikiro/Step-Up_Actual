@@ -20,7 +20,8 @@ public class AvatarAnimatorSync : MonoBehaviour
 
     void Start()
     {
-        if (avatarAnimator == null) avatarAnimator = GetComponent<Animator>();
+        // BUG FIX: The Animator is usually attached to the mesh deep inside the prefab!
+        if (avatarAnimator == null) avatarAnimator = GetComponentInChildren<Animator>();
         if (stepManager == null) stepManager = FindFirstObjectByType<StepManager>();
 
         if (stepManager != null)
@@ -65,12 +66,13 @@ public class AvatarAnimatorSync : MonoBehaviour
 
     private void PlayAnimation(string stateName)
     {
-        if (string.IsNullOrEmpty(stateName)) return;
+        if (string.IsNullOrEmpty(stateName) || avatarAnimator == null) return;
 
-        // Only CrossFade if we aren't already playing this exact state
+        // Only switch if we aren't already playing this exact state
         if (_currentState != stateName)
         {
-            avatarAnimator.CrossFadeInFixedTime(stateName, 0.25f);
+            // Use Play instead of CrossFade to guarantee it overrides any stuck blend trees!
+            avatarAnimator.Play(stateName);
             _currentState = stateName;
         }
     }

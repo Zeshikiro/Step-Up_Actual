@@ -82,10 +82,6 @@ public class GameplayUIManager : MonoBehaviour
 
     private IEnumerator TipRoutine()
     {
-        // Wait a few seconds before the very first popup so the map can load
-        yield return new WaitForSeconds(5f);
-        ShowRandomTip();
-
         while (true)
         {
             yield return new WaitForSeconds(tipPopupInterval);
@@ -142,17 +138,20 @@ public class GameplayUIManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
-        SceneManager.LoadSceneAsync(mainMenuSceneName);
+        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene(mainMenuSceneName);
+        else SceneManager.LoadSceneAsync(mainMenuSceneName);
     }
 
     public void SwapViewMode()
     {
-        SceneManager.LoadSceneAsync(alternateViewSceneName);
+        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene(alternateViewSceneName);
+        else SceneManager.LoadSceneAsync(alternateViewSceneName);
     }
 
     public void GoToCustomizeScene()
     {
-        SceneManager.LoadSceneAsync("CustomizeScene");
+        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene("CustomizeScene");
+        else SceneManager.LoadSceneAsync("CustomizeScene");
     }
 
     public void RecenterMap()

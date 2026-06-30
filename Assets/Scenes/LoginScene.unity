@@ -9162,6 +9162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTutorialManager
   isFirstSceneOfTutorial: 1
+  isLastSceneOfTutorial: 0
   loadSceneOnComplete: 1
   nextSceneToLoad: SampleScene
   tutorialPromptPanel: {fileID: 6906463353283465297}
@@ -9439,6 +9440,38 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5857302946474592178, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5857302946474592178, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5857302946474592178, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5857302946474592178, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
+      objectReference: {fileID: 0}
+    - target: {fileID: 5857302946474592178, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 5857302946474592178, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6762443212881735724, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 6762443212881735724, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 7077059376627836523, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -9454,6 +9487,62 @@ PrefabInstance:
     - target: {fileID: 7077059376627836523, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488804361021451655, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488804361021451655, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488804361021451655, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488804361021451655, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488804361021451655, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 7488804361021451655, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8524486355935904152, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontSize
+      value: 72
+      objectReference: {fileID: 0}
+    - target: {fileID: 8524486355935904152, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 8848488465938430526, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8848488465938430526, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8848488465938430526, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8848488465938430526, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
+      objectReference: {fileID: 0}
+    - target: {fileID: 8848488465938430526, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 8848488465938430526, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9116626092316980901, guid: d029bd660cdab64499d4ddea79cf91bb, type: 3}
       propertyPath: m_Name

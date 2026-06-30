@@ -6,6 +6,8 @@ public class GameTutorialManager : MonoBehaviour
     [Header("Cross-Scene Chaining")]
     [Tooltip("If true, shows the Yes/No prompt. If false, auto-starts the tutorial if a tutorial tour is in progress.")]
     public bool isFirstSceneOfTutorial = true;
+    [Tooltip("If true, this marks the absolute end of the cross-scene tour. It will wipe the progress flag and give the coin reward BEFORE teleporting.")]
+    public bool isLastSceneOfTutorial = false;
     [Tooltip("If true, teleport to the next scene when this tutorial finishes.")]
     public bool loadSceneOnComplete = false;
     [Tooltip("The name of the next scene to load (e.g. SampleScene)")]
@@ -110,6 +112,20 @@ public class GameTutorialManager : MonoBehaviour
     {
         HideAllSteps();
 
+        if (isLastSceneOfTutorial)
+        {
+            // The tour is officially over! Wipe the progress flag so it doesn't auto-start next time they enter a scene
+            PlayerPrefs.SetInt("Tutorial_InProgress", 0);
+            PlayerPrefs.Save();
+
+            // Reward the player with 100 coins for finishing the whole tour!
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.AddCoins(100);
+                Debug.Log("[Tutorial] Player finished the tour! Rewarded 100 Coins!");
+            }
+        }
+
         if (loadSceneOnComplete && !string.IsNullOrEmpty(nextSceneToLoad))
         {
             // Teleport to the next scene in the chain!
@@ -122,18 +138,11 @@ public class GameTutorialManager : MonoBehaviour
                 SceneManager.LoadSceneAsync(nextSceneToLoad);
             }
         }
-        else
+        else if (!isLastSceneOfTutorial)
         {
-            // The tour is officially over! Wipe the progress flag so it doesn't auto-start next time they enter a scene
+            // Just in case it wasn't checked, but we are stopping here
             PlayerPrefs.SetInt("Tutorial_InProgress", 0);
             PlayerPrefs.Save();
-
-            // Reward the player with 100 coins for finishing the whole tour!
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.AddCoins(100);
-                Debug.Log("[Tutorial] Player finished the tour! Rewarded 100 Coins!");
-            }
         }
     }
 
