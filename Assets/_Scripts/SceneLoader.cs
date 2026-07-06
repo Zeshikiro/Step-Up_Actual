@@ -33,7 +33,7 @@ public class SceneLoader : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (Instance == null || Instance == this)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
@@ -50,16 +50,21 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadScene(string sceneName)
     {
+        Debug.Log("SCENELOADER TRACE: LoadScene called for " + sceneName);
         StartCoroutine(LoadSceneRoutine(sceneName));
     }
 
     private IEnumerator LoadSceneRoutine(string sceneName)
     {
-        // 1. Setup UI
-        loadingScreenCanvas.SetActive(true);
+        Debug.Log("SCENELOADER TRACE: Starting LoadSceneRoutine. Activating Canvas.");
+        
+        // 1. Setup UI with Null Checks
+        if (loadingScreenCanvas != null) loadingScreenCanvas.SetActive(true);
+        else Debug.LogError("SCENELOADER CRITICAL: loadingScreenCanvas is missing from the inspector!");
+
         if (tapToContinuePrompt != null) tapToContinuePrompt.SetActive(false);
         if (loadingTextPrompt != null) loadingTextPrompt.SetActive(true);
-        progressBar.value = 0f;
+        if (progressBar != null) progressBar.value = 0f;
 
         // Pick random tip
         if (healthTips.Length > 0 && healthTipText != null)
@@ -69,7 +74,13 @@ public class SceneLoader : MonoBehaviour
 
         // 2. Start Async Loading
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
-        operation.allowSceneActivation = false; // Prevents Unity from auto-switching when reaching 90%
+        if (operation == null)
+        {
+            Debug.LogError("SCENELOADER CRITICAL: Failed to start AsyncOperation!");
+            yield break;
+        }
+        
+        operation.allowSceneActivation = false; 
 
         float timeElapsed = 0f;
 
@@ -78,20 +89,31 @@ public class SceneLoader : MonoBehaviour
         {
             timeElapsed += Time.deltaTime;
             
-            // Unity's load progress stops at 0.9. We map it to 0-1 for the slider.
-            float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            progressBar.value = progress;
+            // Calculate real loading progress vs fake time-based progress
+            float realProgress = Mathf.Clamp01(operation.progress / 0.9f);
+            float fakeProgress = Mathf.Clamp01(timeElapsed / minimumLoadingTime);
+            
+            // Show whichever is smaller so it fills smoothly over 2 seconds
+            float displayProgress = Mathf.Min(realProgress, fakeProgress);
+            if (progressBar != null) progressBar.value = displayProgress;
 
-            // Check if loading is mathematically complete AND our minimum reading time has passed
             if (operation.progress >= 0.9f && timeElapsed >= minimumLoadingTime)
             {
-                progressBar.value = 1f;
-                if (tapToContinuePrompt != null) tapToContinuePrompt.SetActive(true); // Show blinking text
-                if (loadingTextPrompt != null) loadingTextPrompt.SetActive(false); // Hide "Loading..."
+                if (progressBar != null) progressBar.value = 1f;
+                if (loadingTextPrompt != null) loadingTextPrompt.SetActive(false); 
 
-                // 4. Wait for user input to finalize
+                // Blinking effect for "Tap to continue"
+                if (tapToContinuePrompt != null) 
+                {
+                    // Blinks exactly twice per second
+                    bool isBlinking = Mathf.Sin(Time.time * 6f) > 0;
+                    tapToContinuePrompt.SetActive(isBlinking);
+                }
+
+                // 4. Wait for user input
                 if (Input.GetMouseButtonDown(0) || Input.touchCount > 0)
                 {
+                    if (tapToContinuePrompt != null) tapToContinuePrompt.SetActive(true); // Force on before leaving
                     operation.allowSceneActivation = true;
                 }
             }
@@ -100,6 +122,6 @@ public class SceneLoader : MonoBehaviour
         }
 
         // 5. Cleanup
-        loadingScreenCanvas.SetActive(false);
+        if (loadingScreenCanvas != null) loadingScreenCanvas.SetActive(false);
     }
 }

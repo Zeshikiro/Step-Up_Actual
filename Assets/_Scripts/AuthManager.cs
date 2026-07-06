@@ -159,6 +159,9 @@ public class AuthManager : MonoBehaviour
             FirebaseUser newUser = auth.CurrentUser;
             if (newUser != null)
             {
+                // Nuke old GPS trail from a previous account on this phone
+                PlayerPrefs.DeleteKey("SavedGPSTrail");
+
                 newUser.SendEmailVerificationAsync().ContinueWithOnMainThread(emailTask => {
                     if (loginButton != null) loginButton.interactable = true;
                     if (emailTask.IsFaulted || emailTask.IsCanceled) {

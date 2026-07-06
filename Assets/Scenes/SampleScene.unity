@@ -250,6 +250,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8184071221221925383}
   - {fileID: 1863294808}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -20398,7 +20399,6 @@ RectTransform:
   - {fileID: 1649741220}
   - {fileID: 425671456}
   - {fileID: 1236584878}
-  - {fileID: 8184071221221925383}
   m_Father: {fileID: 7788969}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -25604,6 +25604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTutorialManager
   isFirstSceneOfTutorial: 0
+  isLastSceneOfTutorial: 0
   loadSceneOnComplete: 1
   nextSceneToLoad: CustomizeScene
   tutorialPromptPanel: {fileID: 0}
@@ -27419,7 +27420,7 @@ Transform:
   m_Children:
   - {fileID: 6651189947427875612}
   - {fileID: 199364742622004345}
-  m_Father: {fileID: 1863294808}
+  m_Father: {fileID: 7788969}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!222 &8210037453901259883
 CanvasRenderer:

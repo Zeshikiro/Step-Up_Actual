@@ -210,43 +210,14 @@ public class ARManager : MonoBehaviour
         {
             fallbackBackground.SetActive(true);
             
-            // Put the fallback background in a special camera-space canvas so it renders behind the 3D avatar!
-            Canvas bgCanvas = fallbackBackground.GetComponentInParent<Canvas>();
-            if (bgCanvas != null)
-            {
-                if (bgCanvas.renderMode != RenderMode.ScreenSpaceCamera)
-                {
-                    // Create a new canvas just for the background so animations keep playing normally!
-                    GameObject newCanvasObj = new GameObject("FallbackBackgroundCanvas");
-                    Canvas newCanvas = newCanvasObj.AddComponent<Canvas>();
-                    newCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-                    newCanvas.worldCamera = mainCamera;
-                    newCanvas.planeDistance = 20f; // Far behind the avatar (avatar is at 5f)
-                    newCanvas.sortingOrder = -100; // Force it to the back
-                    
-                    UnityEngine.UI.CanvasScaler scaler = newCanvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
-                    scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                    scaler.referenceResolution = new Vector2(1080, 1920);
-                    scaler.matchWidthOrHeight = 0.5f;
-
-                    fallbackBackground.transform.SetParent(newCanvasObj.transform, false);
-                    
-                    // Reset its rect transform to stretch fully
-                    RectTransform rt = fallbackBackground.GetComponent<RectTransform>();
-                    if (rt != null)
-                    {
-                        rt.anchorMin = Vector2.zero;
-                        rt.anchorMax = Vector2.one;
-                        rt.offsetMin = Vector2.zero;
-                        rt.offsetMax = Vector2.zero;
-                    }
-                }
-                else
-                {
-                    bgCanvas.worldCamera = mainCamera;
-                    bgCanvas.planeDistance = 20f;
-                }
-            }
+            // Revert back to 3D Quad rendering instead of a UI Canvas wrapper!
+            // Ensure the background is positioned far enough away (Z=20) so it doesn't block the Avatar (Z=5).
+            fallbackBackground.transform.SetParent(mainCamera.transform, false);
+            fallbackBackground.transform.localPosition = new Vector3(0, 0, 20f);
+            fallbackBackground.transform.localRotation = Quaternion.identity;
+            
+            // Make sure the background is big enough to fill the screen
+            fallbackBackground.transform.localScale = new Vector3(50f, 100f, 1f);
         }
     }
 

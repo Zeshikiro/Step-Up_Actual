@@ -485,6 +485,10 @@ PrefabInstance:
       propertyPath: coins
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: overrideCoins
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8402000206842630692, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
       propertyPath: m_Name
       value: InventoryManager
@@ -8107,8 +8111,78 @@ PrefabInstance:
     m_TransformParent: {fileID: 1783795981}
     m_Modifications:
     - target: {fileID: 148139105845249553, guid: a5c50e9a7bc2c55469afa3cd6d66816d, type: 3}
+      propertyPath: m_text
+      value: "Please read this agreement before using STEP-UP. By creating an account,
+        signing in, or tapping \u201CAGREE,\u201D you confirm that you have read,
+        understood, and accepted these terms. If you do not agree, please tap \u201CDECLINE\u201D
+        and do not use the application.\n\r\n1. Purpose of the Application\r\nSTEP-UP
+        is a capstone thesis project developed for academic and research purposes.
+        The application is designed to encourage physical activity through step tracking,
+        GPS-based walking features, gamification, avatar customization, leaderboard
+        ranking, health tips, and community interaction.\r\nSTEP-UP is not a commercial
+        medical application and is not a substitute for professional medical advice,
+        diagnosis, or treatment.\n\r\n2. Academic and Research Use\r\nThis application
+        is used only for the evaluation and completion of the STEP-UP capstone study.
+        Data gathered from the application may be used by the researchers for system
+        testing, usability evaluation, research analysis, and academic documentation.\r\nThe
+        results may be included in the final research paper, presentation, or defense,
+        but personal identities will not be publicly disclosed in the research output.\n\r\n3.
+        Data Collected\r\nTo make the application work properly, STEP-UP may collect
+        and process the following data:\r\n\u2022 Email address or account login
+        information\r\n\u2022 Step count and walking progress\r\n\u2022 Total lifetime
+        steps and daily steps\r\n\u2022 GPS/location data used for map tracking\r\n\u2022
+        Avatar, points, rewards, leaderboard progress, and app activity\r\n\u2022
+        Community feed posts or messages made inside the app\r\n\u2022 Evaluation
+        responses or feedback related to the capstone study\r\nThe application will
+        only collect data needed for the features and evaluation of the STEP-UP study.\n\r\n4.
+        GPS and Step Tracking\r\nSTEP-UP uses your device\u2019s pedometer and GPS/location
+        services to track physical movement and map walking activity. Location access
+        is needed for map and route-related features.\r\nUsers must remain aware
+        of their surroundings while walking. Do not use the application in unsafe
+        areas, private property, restricted locations, roadways, or places where
+        phone use may cause accidents.\n\r\n5. Data Privacy and Confidentiality\r\nThe
+        researchers will handle user data with care and will use it only for academic
+        and system evaluation purposes. User data will not be sold, rented, or shared
+        with advertisers.\r\nData may be stored using Firebase and other tools needed
+        to operate the application. Only authorized researchers/developers may access
+        the data for testing, maintenance, and research documentation.\n\r\n6. Data
+        Retention\r\nUser data will be kept only for as long as needed for the capstone
+        evaluation, system testing, and academic requirements. After the study is
+        completed, data may be deleted, anonymized, or retained only as part of the
+        final academic documentation.\n\r\n7. User Responsibilities\r\nBy using STEP-UP,
+        you agree to:\r\n\u2022 Provide accurate account information\r\n\u2022 Use
+        the app only for its intended academic and fitness-related purpose\r\n\u2022
+        Avoid posting harmful, offensive, false, or inappropriate content\r\n\u2022
+        Avoid cheating, manipulating step counts, or abusing the leaderboard\r\n\u2022
+        Use the app safely and responsibly while walking\r\n\u2022 Respect other
+        users in the community feed\n\r\n8. Health and Safety Disclaimer\r\nSTEP-UP
+        provides general fitness tips and movement guidance for educational purposes
+        only. It does not provide medical advice. If you have a medical condition,
+        injury, dizziness, pain, shortness of breath, or any health concern, stop
+        using the app and consult a qualified healthcare professional.\r\nThe researchers
+        and developers are not responsible for injuries, accidents, or health problems
+        caused by unsafe use of the application.\n\r\n9. Account Suspension or Removal\r\nThe
+        researchers/developers may remove posts, reset invalid data, suspend accounts,
+        or restrict access if a user violates this agreement, abuses the system,
+        posts inappropriate content, or interferes with the research evaluation.\n\r\n10.
+        Limitation of Liability\r\nSTEP-UP is provided as an academic prototype.
+        While the researchers aim to make the application functional and reliable,
+        errors, bugs, inaccurate step counts, GPS issues, or temporary service interruptions
+        may occur.\r\nThe researchers and developers are not liable for data loss,
+        device issues, injuries, or damages caused by improper use of the application.\n\r\n11.
+        Withdrawal from the Study\r\nParticipation in the STEP-UP evaluation is voluntary.
+        Users may stop using the application at any time. Users may also request
+        account removal or ask the researchers about their data by contacting the
+        STEP-UP research team.\n\r\n12. Acceptance\r\nBy tapping \u201CAGREE,\u201D
+        I confirm that:\r\n\u2022 I have read and understood this agreement.\r\n\u2022
+        I voluntarily agree to use STEP-UP for the capstone study.\r\n\u2022 I allow
+        the researchers to collect and process the necessary app data for academic
+        evaluation.\r\n\u2022 I understand that I may stop using the application
+        at any time."
+      objectReference: {fileID: 0}
+    - target: {fileID: 148139105845249553, guid: a5c50e9a7bc2c55469afa3cd6d66816d, type: 3}
       propertyPath: m_fontSize
-      value: 54.85
+      value: 37.4
       objectReference: {fileID: 0}
     - target: {fileID: 3425768038877988309, guid: a5c50e9a7bc2c55469afa3cd6d66816d, type: 3}
       propertyPath: m_AnchorMax.y

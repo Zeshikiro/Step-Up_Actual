@@ -6,17 +6,14 @@ public class AvatarAnimatorSync : MonoBehaviour
     public Animator avatarAnimator;
     public StepManager stepManager;
 
-    [Header("Animation State Names")]
-    [Tooltip("Exact name of the Idle animation state in your Animator")]
-    public string idleStateName = "CharacterArmature|Idle";
-    [Tooltip("Exact name of the Walk animation state in your Animator")]
-    public string walkStateName = "CharacterArmature|Walk";
-    [Tooltip("Exact name of the Run animation state in your Animator")]
-    public string runStateName = "CharacterArmature|Run";
+    [Header("Animator Parameters")]
+    [Tooltip("The exact name of your float parameter for Speed (e.g. 'Speed')")]
+    public string speedParameter = "Speed";
+    [Tooltip("The exact name of your boolean parameter for Walking (e.g. 'IsWalking')")]
+    public string isWalkingParameter = "IsWalking";
 
     private int _lastStepCount;
     private float _lastStepTime;
-    private string _currentState = "";
 
     void Start()
     {
@@ -28,8 +25,6 @@ public class AvatarAnimatorSync : MonoBehaviour
         {
             _lastStepCount = stepManager.currentDailySteps;
         }
-
-        PlayAnimation(idleStateName);
     }
 
     void Update()
@@ -48,32 +43,23 @@ public class AvatarAnimatorSync : MonoBehaviour
 
         if (isMoving)
         {
-            // If GPS says we are moving faster than 2.5 meters/second, it's a run!
+            // Set the boolean to true for state transitions
+            avatarAnimator.SetBool(isWalkingParameter, true);
+
+            // If GPS says we are moving faster than 2.5 meters/second, feed a high speed for Run blends!
             if (stepManager.CurrentSpeedMPS > 2.5f)
             {
-                PlayAnimation(runStateName);
+                avatarAnimator.SetFloat(speedParameter, 2.0f); // 2.0 = Running
             }
             else
             {
-                PlayAnimation(walkStateName);
+                avatarAnimator.SetFloat(speedParameter, 1.0f); // 1.0 = Walking
             }
         }
         else
         {
-            PlayAnimation(idleStateName);
-        }
-    }
-
-    private void PlayAnimation(string stateName)
-    {
-        if (string.IsNullOrEmpty(stateName) || avatarAnimator == null) return;
-
-        // Only switch if we aren't already playing this exact state
-        if (_currentState != stateName)
-        {
-            // Use Play instead of CrossFade to guarantee it overrides any stuck blend trees!
-            avatarAnimator.Play(stateName);
-            _currentState = stateName;
+            avatarAnimator.SetBool(isWalkingParameter, false);
+            avatarAnimator.SetFloat(speedParameter, 0f);       // 0.0 = Idle
         }
     }
 }

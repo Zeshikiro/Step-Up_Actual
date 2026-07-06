@@ -9,13 +9,35 @@ public class MainMenuManager : MonoBehaviour
     // 1. Starts the core game tracking map scene
     public void StartGame()
     {
-        SceneManager.LoadSceneAsync("SampleScene"); 
+        if (SceneLoader.Instance == null) 
+        {
+            SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.gameObject.SetActive(true);
+        }
+
+        if (SceneLoader.Instance != null) 
+        {
+            Debug.Log("USING SCENELOADER TO GO TO SAMPLE SCENE");
+            SceneLoader.Instance.LoadScene("SampleScene");
+        }
+        else 
+        {
+            Debug.LogWarning("SCENELOADER IS NULL! Bypassing Cutscene...");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene"); 
+        }
     }
 
     // 2. Transits cleanly over to your customizer studio scene
     public void OpenCustomize()
     {
-        SceneManager.LoadSceneAsync("CustomizeScene");
+        if (SceneLoader.Instance == null) 
+        {
+            SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.gameObject.SetActive(true);
+        }
+
+        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene("CustomizeScene");
+        else UnityEngine.SceneManagement.SceneManager.LoadScene("CustomizeScene");
     }
 
     // 3. Settings Canvas Toggles

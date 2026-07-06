@@ -299,12 +299,26 @@ public class AvatarCustomizer : MonoBehaviour
 
     public void GoToSampleScene()
     {
-        SceneManager.LoadScene("SampleScene");
+        if (SceneLoader.Instance == null) 
+        {
+            SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.gameObject.SetActive(true);
+        }
+
+        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene("SampleScene");
+        else UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene");
     }
 
     public void GoToMainMenu()
     {
-        SceneManager.LoadScene("LoginScene");
+        if (SceneLoader.Instance == null) 
+        {
+            SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.gameObject.SetActive(true);
+        }
+
+        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene("LoginScene");
+        else UnityEngine.SceneManagement.SceneManager.LoadScene("LoginScene");
     }
 
     public void ToggleSettingsPanel()

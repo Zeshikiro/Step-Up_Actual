@@ -58,6 +58,13 @@ public class MissionManager : MonoBehaviour
         
         dailyGoal = PlayerPrefs.GetInt("DailyStepGoal", 10000);
         
+        // Delay generation by 1 frame to ensure StepManager.Start() has fully loaded the PlayerPrefs!
+        StartCoroutine(DelayedGenerate());
+    }
+
+    private System.Collections.IEnumerator DelayedGenerate()
+    {
+        yield return new WaitForEndOfFrame();
         GenerateMissionBoard();
     }
 

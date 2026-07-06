@@ -48,13 +48,15 @@ public class GameplayUIManager : MonoBehaviour
 
         // Force all panels to turn off immediately so they don't block the map!
         HideAllPanels();
+        if (tipPopupPanel != null) tipPopupPanel.SetActive(false);
+        if (closePopupBackground != null) closePopupBackground.SetActive(false);
 
-        // Start the continuous looping routine
-        StartCoroutine(TipRoutine());
+        // Temporarily disabled pending leader feedback so it doesn't interrupt the main game
+        // StartCoroutine(TipRoutine());
 
         // Turn on the phone's internal compass sensor and location to allow True North tracking
         Input.compass.enabled = true;
-        Input.location.Start();
+        Input.location.Start(0.1f, 0.1f);
 
         // Grab Mapbox's highly accurate location provider which handles device tilt (portrait mode) automatically!
         if (LocationProviderFactory.Instance != null)
@@ -138,20 +140,54 @@ public class GameplayUIManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
-        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene(mainMenuSceneName);
-        else SceneManager.LoadSceneAsync(mainMenuSceneName);
+        if (SceneLoader.Instance == null) 
+        {
+            SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.gameObject.SetActive(true);
+        }
+
+        if (SceneLoader.Instance != null) 
+        {
+            Debug.Log("USING SCENELOADER TO GO TO MAIN MENU");
+            SceneLoader.Instance.LoadScene(mainMenuSceneName);
+        }
+        else 
+        {
+            Debug.LogWarning("SCENELOADER IS NULL! Bypassing Cutscene...");
+            UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuSceneName);
+        }
     }
 
     public void SwapViewMode()
     {
+        if (SceneLoader.Instance == null) 
+        {
+            SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.gameObject.SetActive(true);
+        }
+
         if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene(alternateViewSceneName);
-        else SceneManager.LoadSceneAsync(alternateViewSceneName);
+        else UnityEngine.SceneManagement.SceneManager.LoadScene(alternateViewSceneName);
     }
 
     public void GoToCustomizeScene()
     {
-        if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene("CustomizeScene");
-        else SceneManager.LoadSceneAsync("CustomizeScene");
+        if (SceneLoader.Instance == null) 
+        {
+            SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
+            if (SceneLoader.Instance != null) SceneLoader.Instance.gameObject.SetActive(true);
+        }
+
+        if (SceneLoader.Instance != null) 
+        {
+            Debug.Log("USING SCENELOADER TO GO TO CUSTOMIZE");
+            SceneLoader.Instance.LoadScene("CustomizeScene");
+        }
+        else 
+        {
+            Debug.LogWarning("SCENELOADER IS NULL! Bypassing Cutscene...");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("CustomizeScene");
+        }
     }
 
     public void RecenterMap()

@@ -34,6 +34,10 @@ public class MapAvatarTracker : MonoBehaviour
     // Safety Cooldown
     private Vector2d _lastRecenteredGPS = Vector2d.zero;
 
+    // Saved Trail System
+    private System.Collections.Generic.List<Vector2d> _savedGPSPoints = new System.Collections.Generic.List<Vector2d>();
+    private float _lastSaveTime;
+
     void Start()
     {
         // Auto-find the map if you forget to drag it in
@@ -99,6 +103,40 @@ public class MapAvatarTracker : MonoBehaviour
         
         tr.minVertexDistance = 0.5f; // Filters out small GPS jitters for a clean line
         tr.transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
+
+        // --- DYNAMICALLY ADD LINE RENDERER FOR SAVED TRAIL HISTORY ---
+        LineRenderer lr = gameObject.GetComponent<LineRenderer>();
+        if (lr == null) lr = gameObject.AddComponent<LineRenderer>();
+        lr.startWidth = 1.5f;
+        lr.endWidth = 1.5f;
+        lr.numCapVertices = 5;
+        lr.numCornerVertices = 5;
+        lr.material = trailMat; // Reuse Strava Orange
+        lr.useWorldSpace = true;
+
+        // Load Saved GPS Points for the Trail
+        string savedTrail = PlayerPrefs.GetString("SavedGPSTrail", "");
+        if (!string.IsNullOrEmpty(savedTrail))
+        {
+            string[] points = savedTrail.Split('|');
+            foreach (string p in points)
+            {
+                if (string.IsNullOrEmpty(p)) continue;
+                string[] coords = p.Split(',');
+                if (coords.Length == 2 && double.TryParse(coords[0], out double lat) && double.TryParse(coords[1], out double lon))
+                {
+                    _savedGPSPoints.Add(new Vector2d(lat, lon));
+                }
+            }
+        }
+        
+        // INSTANTLY SPAWN AT LAST KNOWN GPS INSTEAD OF WAITING FOR WI-FI FALLBACK!
+        if (_savedGPSPoints.Count > 0)
+        {
+            _fallbackLatLon = _savedGPSPoints[_savedGPSPoints.Count - 1];
+            try { mapManager.Initialize(_fallbackLatLon, mapManager.AbsoluteZoom); }
+            catch { mapManager.UpdateMap(_fallbackLatLon, mapManager.AbsoluteZoom); }
+        }
 
         // (Removed the child destruction loop so your 2D map pin doesn't get deleted!)
 
@@ -223,6 +261,45 @@ public class MapAvatarTracker : MonoBehaviour
 
         // If neither GPS nor Fallback is ready, do nothing (wait)
         if (currentLocation == Vector2d.zero) return;
+
+        // --- SAVE GPS POINTS PERIODICALLY ---
+        if (Time.time - _lastSaveTime > 5f && currentLocation != _fallbackLatLon)
+        {
+            _lastSaveTime = Time.time;
+            
+            // ANTI-TELEPORT: If the GPS jumps by more than ~2 kilometers instantly (like Editor spawning at 0,0), wipe the trail!
+            if (_savedGPSPoints.Count > 0 && Vector2d.Distance(currentLocation, _savedGPSPoints[_savedGPSPoints.Count - 1]) > 0.02)
+            {
+                _savedGPSPoints.Clear();
+                PlayerPrefs.DeleteKey("SavedGPSTrail");
+            }
+
+            if (_savedGPSPoints.Count == 0 || Vector2d.Distance(currentLocation, _savedGPSPoints[_savedGPSPoints.Count - 1]) > 0.00005) // ~5 meters
+            {
+                _savedGPSPoints.Add(currentLocation);
+                if (_savedGPSPoints.Count > 500) _savedGPSPoints.RemoveAt(0); // Keep last 500 to prevent RAM crashes
+                
+                string saveString = "";
+                foreach(var pt in _savedGPSPoints) saveString += pt.x + "," + pt.y + "|";
+                PlayerPrefs.SetString("SavedGPSTrail", saveString);
+            }
+        }
+
+        // --- REDRAW SAVED TRAIL HISTORY EVERY FRAME TO HANDLE MAP SHIFTS ---
+        if (_savedGPSPoints.Count > 0)
+        {
+            LineRenderer lr = GetComponent<LineRenderer>();
+            if (lr != null)
+            {
+                lr.positionCount = _savedGPSPoints.Count;
+                for (int i = 0; i < _savedGPSPoints.Count; i++)
+                {
+                    Vector3 worldPt = mapManager.GeoToWorldPosition(_savedGPSPoints[i], true);
+                    worldPt.y = 0.5f; // Keep it on the ground
+                    lr.SetPosition(i, worldPt);
+                }
+            }
+        }
 
         // --- DESTROY PESKY DEFAULT MAPBOX RED PINS ---
         // (Commented out because the user wants to keep the red pin and blue cone!)

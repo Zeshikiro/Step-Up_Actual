@@ -219,7 +219,14 @@ public class StepManager : MonoBehaviour
         {
             int currentHardwareSteps = StepCounter.current.stepCounter.ReadValue();
             
-            if (currentHardwareSteps > 0)
+            // ANTI-CHEAT: If moving faster than 6 meters/second (13 mph), you are in a car! Ignore steps!
+            if (_currentSpeedMPS > 6.0f && lastHardwareStepCount != -1)
+            {
+                // Constantly update the baseline so we don't accidentally award these "car steps" when they slow down
+                lastHardwareStepCount = currentHardwareSteps;
+                PlayerPrefs.SetInt("LastHardwareStepCount", lastHardwareStepCount);
+            }
+            else if (currentHardwareSteps > 0)
             {
                 if (baselineHardwareSteps == -1 || (lastHardwareStepCount != -1 && currentHardwareSteps < lastHardwareStepCount))
                 {
