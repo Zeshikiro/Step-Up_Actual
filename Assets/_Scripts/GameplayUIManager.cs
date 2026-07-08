@@ -54,9 +54,8 @@ public class GameplayUIManager : MonoBehaviour
         // Temporarily disabled pending leader feedback so it doesn't interrupt the main game
         // StartCoroutine(TipRoutine());
 
-        // Turn on the phone's internal compass sensor and location to allow True North tracking
-        Input.compass.enabled = true;
-        Input.location.Start(0.1f, 0.1f);
+        // Ask for permissions using the Google Play Prominent Disclosure first!
+        ProminentDisclosure.CheckAndShow();
 
         // Grab Mapbox's highly accurate location provider which handles device tilt (portrait mode) automatically!
         if (LocationProviderFactory.Instance != null)
@@ -79,6 +78,52 @@ public class GameplayUIManager : MonoBehaviour
             // If camera twists to the right (positive Y), map North goes left on screen (positive Z)
             float cameraYRotation = Camera.main.transform.eulerAngles.y;
             compassUI.localRotation = Quaternion.Euler(0, 0, cameraYRotation);
+        }
+
+        CheckInternetConnection();
+    }
+
+    private GameObject noInternetPanel;
+
+    private void CheckInternetConnection()
+    {
+        bool hasInternet = Application.internetReachability != NetworkReachability.NotReachable;
+
+        if (!hasInternet && noInternetPanel == null)
+        {
+            // Dynamically create the No Internet UI so the user doesn't have to build it in the editor
+            noInternetPanel = new GameObject("NoInternetPanel");
+            Canvas canvas = noInternetPanel.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 9998; // Just below the Disclosure UI
+            noInternetPanel.AddComponent<UnityEngine.UI.CanvasScaler>().uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+
+            GameObject bg = new GameObject("Background");
+            bg.transform.SetParent(noInternetPanel.transform, false);
+            UnityEngine.UI.Image img = bg.AddComponent<UnityEngine.UI.Image>();
+            img.color = new Color(0.2f, 0.2f, 0.2f, 1f); // Solid Grey
+            RectTransform bgRect = bg.GetComponent<RectTransform>();
+            bgRect.anchorMin = Vector2.zero;
+            bgRect.anchorMax = Vector2.one;
+            bgRect.sizeDelta = Vector2.zero;
+
+            GameObject textObj = new GameObject("Text");
+            textObj.transform.SetParent(bg.transform, false);
+            TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
+            text.text = "Needs internet to load the map...";
+            text.fontSize = 50;
+            text.color = Color.white;
+            text.alignment = TextAlignmentOptions.Center;
+            text.fontStyle = FontStyles.Bold;
+            RectTransform textRect = textObj.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.sizeDelta = Vector2.zero;
+        }
+
+        if (noInternetPanel != null)
+        {
+            noInternetPanel.SetActive(!hasInternet);
         }
     }
 

@@ -66,15 +66,9 @@ public class StepManager : MonoBehaviour
     {
 #if UNITY_ANDROID
         AndroidNotificationCenter.CancelAllNotifications();
-        if (!Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
-        {
-            Permission.RequestUserPermission("android.permission.ACTIVITY_RECOGNITION");
-        }
+        AndroidNotificationCenter.CancelScheduledNotification(888); // Cancel short-term reminder
+        AndroidNotificationCenter.CancelScheduledNotification(999); // Cancel long-term reminder
 #endif
-        if (StepCounter.current != null)
-        {
-            InputSystem.EnableDevice(StepCounter.current);
-        }
 
         baselineHardwareSteps = PlayerPrefs.GetInt("BaselineHardwareSteps", -1);
         lastHardwareStepCount = PlayerPrefs.GetInt("LastHardwareStepCount", -1);
@@ -104,6 +98,26 @@ public class StepManager : MonoBehaviour
         {
             _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
         }
+    }
+
+    public void InitializeSensors()
+    {
+        // Explicitly add the StepCounter device to fix missing sensors on some Android phones
+        if (StepCounter.current == null)
+        {
+            InputSystem.AddDevice<StepCounter>();
+        }
+
+        if (StepCounter.current != null)
+        {
+            InputSystem.EnableDevice(StepCounter.current);
+            Debug.Log("[StepManager] StepCounter explicitly added and enabled.");
+        }
+        else
+        {
+            Debug.LogWarning("[StepManager] StepCounter could not be added. Device might not have a hardware pedometer.");
+        }
+
     }
 
     private void PerformDateRolloverCheck()
@@ -307,6 +321,7 @@ public class StepManager : MonoBehaviour
             // We no longer call EndAutoSession here! This allows the session to continue while backgrounded!
 #if UNITY_ANDROID
             SendStepNotification();
+            ScheduleReminders();
 #endif
             SaveAllProgress();
         }
@@ -314,6 +329,8 @@ public class StepManager : MonoBehaviour
         {
 #if UNITY_ANDROID
             AndroidNotificationCenter.CancelNotification(777); 
+            AndroidNotificationCenter.CancelScheduledNotification(888); // Cancel short-term reminder
+            AndroidNotificationCenter.CancelScheduledNotification(999); // Cancel long-term reminder
 #endif
             PerformDateRolloverCheck(); // Check if day changed while suspended
         }
@@ -325,6 +342,7 @@ public class StepManager : MonoBehaviour
         SaveAllProgress();
 #if UNITY_ANDROID
         AndroidNotificationCenter.CancelAllNotifications();
+        ScheduleReminders(); // Ensure reminders are scheduled even if fully quit
 #endif
     }
 
@@ -347,6 +365,27 @@ public class StepManager : MonoBehaviour
         notification.SmallIcon = "icon"; 
 
         AndroidNotificationCenter.SendNotificationWithExplicitID(notification, "step_tracker_background", 777);
+    }
+
+    private void ScheduleReminders()
+    {
+        // 1. Short-term reminder (Every 4 hours while in background)
+        var shortReminder = new AndroidNotification();
+        shortReminder.Title = "Step-Up is waiting!";
+        shortReminder.Text = "Don't forget to complete your walking missions today!";
+        shortReminder.FireTime = System.DateTime.Now.AddHours(4);
+        shortReminder.RepeatInterval = System.TimeSpan.FromHours(4);
+        shortReminder.SmallIcon = "icon"; 
+        AndroidNotificationCenter.SendNotificationWithExplicitID(shortReminder, "step_tracker_background", 888);
+
+        // 2. Long-term reminder (Every 4 days to bring user back)
+        var longReminder = new AndroidNotification();
+        longReminder.Title = "We miss you on Step-Up!";
+        longReminder.Text = "It's been a while! Come back and continue your fitness journey!";
+        longReminder.FireTime = System.DateTime.Now.AddDays(4);
+        longReminder.RepeatInterval = System.TimeSpan.FromDays(4);
+        longReminder.SmallIcon = "icon"; 
+        AndroidNotificationCenter.SendNotificationWithExplicitID(longReminder, "step_tracker_background", 999);
     }
 #endif
 

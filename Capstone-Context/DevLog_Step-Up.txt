@@ -418,3 +418,17 @@ Date: June 21, 2026
 
 3. Android Hardware Integration:
 - Rewrote the AR Camera logic (ARManager.cs) into an asynchronous Coroutine. The system now gracefully waits for Android permission popups instead of failing instantly, ensuring the AR webcam feed or Fallback Background correctly deploys behind the 3D Avatar.
+
+==================================================
+Date: July 8, 2026
+
+1. Google Play Compliance & Android Permissions:
+- Implemented ProminentDisclosure.cs to dynamically generate a full-screen Canvas explaining background location and pedometer tracking before querying Android permissions, ensuring full compliance with Google Play Store policies.
+
+2. Hardware Step Counter Fixes:
+- Restructured StepManager.cs initialization to explicitly inject the StepCounter device into the Unity Input System (InputSystem.AddDevice<StepCounter>()), fixing an issue where Android tester devices failed to register physical steps.
+- Set up dual-layer Android background notifications: a 4-hour repeating short-term reminder while the app is in the background, and a 4-day repeating "Comeback" reminder if the app is closed for extended periods. Both notifications smartly cancel upon app resume to prevent spam.
+
+3. Mapbox Network Resilience:
+- Developed an active internet-watcher in GameplayUIManager.cs that monitors Application.internetReachability.
+- Automatically generates and displays a clean, dark-grey "Needs internet to load the map..." overlay screen if the connection drops, hiding Mapbox's default broken black grid.
