@@ -432,3 +432,24 @@ Date: July 8, 2026
 3. Mapbox Network Resilience:
 - Developed an active internet-watcher in GameplayUIManager.cs that monitors Application.internetReachability.
 - Automatically generates and displays a clean, dark-grey "Needs internet to load the map..." overlay screen if the connection drops, hiding Mapbox's default broken black grid.
+==================================================
+Date: July 26, 2026
+
+1. Migrated to New Input System
+- Successfully transitioned the project to use Unity's Input System Package (New) to fix build errors related to ARCore and Input Handling mismatch.
+- Refactored multiple scripts to ensure compatibility, replacing all legacy Input.* calls with UnityEngine.InputSystem equivalents.
+
+2. Fixed Animation Bugs
+- AvatarAnimatorSync: Fixed an issue where the animator grabbed the first inactive skeleton. It now iterates through ALL active animators and forces state transitions.
+- Fixed GPS sliding detection. The script was checking its own position (avatarContainer) instead of its parent (MapAvatarTracker), causing it to never register movement. It now traverses up the hierarchy to track the correct transform.
+- Added safety checks using Animator.StringToHash to prevent missing parameter exceptions.
+
+3. Fixed Legacy Input Crashes
+- SceneLoader: Upgraded to Touchscreen.current and Mouse.current so the "Tap to Continue" loading screen works properly on the New Input System.
+- MapAvatarTracker & CompassUI: Wrapped legacy Input.compass calls in try/catch blocks to prevent silent crashes in the Update() loop.
+- ProminentDisclosure: Wrapped Input.location.Start() and Input.compass.enabled in try/catch blocks.
+- StepManager: Migrated the debug Spacebar step simulator to the New Input System.
+- MapZoom: Completely refactored to use the New Input System's Touchscreen API for pinch-to-zoom.
+
+4. ARCore Fallback Implementation
+- ARManager: Implemented a forceFallbackMode bypass. This bypass ignores ARCore entirely and forces the 3D map fallback background immediately, preventing the "Download Google Play Services for AR (XR)" prompt on devices without AR support.
