@@ -24,6 +24,12 @@ public class ProminentDisclosure : MonoBehaviour
 
     private void ExecuteCheck()
     {
+#if UNITY_EDITOR
+        // ULTIMATE PC BYPASS: Never show this UI in the Editor, just instantly start the game!
+        PlayerPrefs.SetInt("HasSeenDisclosure", 1);
+        PlayerPrefs.Save();
+#endif
+
         if (PlayerPrefs.GetInt("HasSeenDisclosure", 0) == 1)
         {
             // Already accepted. Just request Android permissions if missing
@@ -113,6 +119,37 @@ public class ProminentDisclosure : MonoBehaviour
         btnTextRect.sizeDelta = Vector2.zero;
     }
 
+#if UNITY_EDITOR
+    private void Update()
+    {
+        // PC TESTING BYPASS: Allow forcefully dismissing via New Input System
+        bool keyPressed = false;
+        if (UnityEngine.InputSystem.Keyboard.current != null)
+        {
+            if (UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame || 
+                UnityEngine.InputSystem.Keyboard.current.enterKey.wasPressedThisFrame)
+            {
+                keyPressed = true;
+            }
+        }
+        
+        bool mouseClicked = false;
+        if (UnityEngine.InputSystem.Mouse.current != null)
+        {
+            if (UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                mouseClicked = true;
+            }
+        }
+
+        if (disclosureUI != null && (keyPressed || mouseClicked))
+        {
+            Debug.Log("[ProminentDisclosure] Bypassed via PC Keyboard/Mouse input!");
+            OnAcceptClicked();
+        }
+    }
+#endif
+
     private void OnAcceptClicked()
     {
         PlayerPrefs.SetInt("HasSeenDisclosure", 1);
@@ -149,14 +186,28 @@ public class ProminentDisclosure : MonoBehaviour
     private void NotifySystemsToStart()
     {
         // 1. Turn on Compass and Location Tracking
-        Input.compass.enabled = true;
-        Input.location.Start(0.1f, 0.1f);
+        // Wrapped in try-catch because the legacy Input class may throw
+        // if Active Input Handling is set to "Input System Package (New)" exclusively.
+        try
+        {
+            Input.compass.enabled = true;
+            Input.location.Start(0.1f, 0.1f);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("[ProminentDisclosure] Legacy Input compass/location unavailable (New Input System mode): " + e.Message);
+        }
 
         // 2. Tell StepManager to initialize its sensor
         StepManager stepManager = FindFirstObjectByType<StepManager>();
         if (stepManager != null)
         {
             stepManager.InitializeSensors();
+            Debug.Log("[ProminentDisclosure] StepManager.InitializeSensors() called successfully!");
+        }
+        else
+        {
+            Debug.LogError("[ProminentDisclosure] CRITICAL: Could not find StepManager in scene!");
         }
     }
 }

@@ -13,6 +13,7 @@ public class ActivitySummaryManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stepCountTxt;
     [SerializeField] private TextMeshProUGUI distanceTxt;
     [SerializeField] private TextMeshProUGUI timeUsageTxt; // NEW: For Active Minutes!
+    [SerializeField] private TextMeshProUGUI lifetimeStepsTxt; // Moved from ProfilePanel
 
     [Header("--- Navigation & Panel References ---")]
     [SerializeField] private Button viewLeaderboardBtn;
@@ -45,11 +46,13 @@ public class ActivitySummaryManager : MonoBehaviour
     public void RefreshSummaryDashboard()
     {
         int currentSteps = 0;
+        int lifetimeSteps = 0;
         int actualStreak = 0;
 
         if (stepManager != null)
         {
             currentSteps = Mathf.RoundToInt(stepManager.currentDailySteps);
+            lifetimeSteps = stepManager.totalLifetimeSteps;
         }
 
         if (userData != null)
@@ -85,6 +88,12 @@ public class ActivitySummaryManager : MonoBehaviour
         if (stepCountTxt != null) {
             if (stepCountTxt.TryGetComponent(out UINumberCounter stepCounter)) stepCounter.CountTo(currentSteps);
             else stepCountTxt.text = currentSteps.ToString("N0");
+        }
+
+        // Lifetime Steps
+        if (lifetimeStepsTxt != null) {
+            if (lifetimeStepsTxt.TryGetComponent(out UINumberCounter lifeCounter)) lifeCounter.CountTo(lifetimeSteps);
+            else lifetimeStepsTxt.text = lifetimeSteps.ToString("N0");
         }
 
         // Distance (Float)

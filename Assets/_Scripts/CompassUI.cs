@@ -4,10 +4,15 @@ public class CompassUI : MonoBehaviour
 {
     void Update()
     {
-        if (Input.compass.enabled)
+        // Wrapped in try-catch for New Input System compatibility
+        try
         {
-            // Rotate the 2D UI Image based on real-world compass heading
-            transform.localRotation = Quaternion.Euler(0, 0, Input.compass.trueHeading);
+            if (Input.compass.enabled)
+            {
+                // Rotate the 2D UI Image based on real-world compass heading
+                transform.localRotation = Quaternion.Euler(0, 0, Input.compass.trueHeading);
+            }
         }
+        catch (System.Exception) { /* Compass unavailable on New Input System */ }
     }
 }

@@ -110,8 +110,27 @@ public class SceneLoader : MonoBehaviour
                     tapToContinuePrompt.SetActive(isBlinking);
                 }
 
-                // 4. Wait for user input
-                if (Input.GetMouseButtonDown(0) || Input.touchCount > 0)
+                // 4. Wait for user input (Upgraded to New Input System!)
+                bool hasInput = false;
+
+                if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+                {
+                    hasInput = true;
+                }
+                
+                if (UnityEngine.InputSystem.Touchscreen.current != null && UnityEngine.InputSystem.Touchscreen.current.touches.Count > 0)
+                {
+                    foreach (var touch in UnityEngine.InputSystem.Touchscreen.current.touches)
+                    {
+                        if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+                        {
+                            hasInput = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (hasInput)
                 {
                     if (tapToContinuePrompt != null) tapToContinuePrompt.SetActive(true); // Force on before leaving
                     operation.allowSceneActivation = true;

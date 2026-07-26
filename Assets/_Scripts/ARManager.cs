@@ -28,6 +28,7 @@ public class ARManager : MonoBehaviour
     public Sprite icon2D;
     
     [Header("--- AR Settings ---")]
+    public bool forceFallbackMode = true; // Bypass ARCore entirely on phones without AR!
     public Vector3 avatarARPosition = new Vector3(0, -1.5f, 5f); 
     
     [Header("--- Fallback UI ---")]
@@ -51,6 +52,9 @@ public class ARManager : MonoBehaviour
     
     private GameObject dynamicBgQuad;
     
+    private CameraClearFlags originalClearFlags;
+    private Color originalBgColor;
+    
     private bool isPermissionRequested = false;
 
     void Start()
@@ -63,6 +67,8 @@ public class ARManager : MonoBehaviour
             originalCameraPos = mainCamera.transform.localPosition;
             originalCameraRot = mainCamera.transform.localRotation;
             originalOrthoSize = mainCamera.orthographicSize;
+            originalClearFlags = mainCamera.clearFlags;
+            originalBgColor = mainCamera.backgroundColor;
         }
 
         if (customAvatar != null) customAvatar.SetActive(false);
@@ -152,7 +158,14 @@ public class ARManager : MonoBehaviour
 
         if (cameraReady)
         {
-            if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
+            if (forceFallbackMode)
+            {
+                Debug.Log("[ARManager] Force Fallback Mode is enabled. Bypassing ARCore entirely!");
+                ActivateFallbackBackground();
+            }
+            else
+            {
+                if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
             {
                 // ADDED TIMEOUT: Don't hang forever if ARCore is broken on this phone
                 float arTimeout = 5f;
@@ -189,8 +202,9 @@ public class ARManager : MonoBehaviour
                     arCameraManager = mainCamera.gameObject.AddComponent<ARCameraManager>();
                     arCameraBackground = mainCamera.gameObject.AddComponent<ARCameraBackground>();
                 }
-                arCameraManager.enabled = true;
-                arCameraBackground.enabled = true;
+                    arCameraManager.enabled = true;
+                    arCameraBackground.enabled = true;
+                }
             }
         }
         else
@@ -206,14 +220,20 @@ public class ARManager : MonoBehaviour
 
     private void ActivateFallbackBackground()
     {
+        // 1. Force the camera to clear to a Solid Color (Grey) so it's never a black void!
+        if (mainCamera != null)
+        {
+            mainCamera.clearFlags = CameraClearFlags.SolidColor;
+            mainCamera.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 1f); // Dark Grey
+        }
+
         if (fallbackBackground != null)
         {
             fallbackBackground.SetActive(true);
             
-            // Revert back to 3D Quad rendering instead of a UI Canvas wrapper!
-            // Ensure the background is positioned far enough away (Z=20) so it doesn't block the Avatar (Z=5).
+            // Position the background closer (Z=15) to guarantee it isn't clipped by the camera's Far Clip Plane
             fallbackBackground.transform.SetParent(mainCamera.transform, false);
-            fallbackBackground.transform.localPosition = new Vector3(0, 0, 20f);
+            fallbackBackground.transform.localPosition = new Vector3(0, 0, 15f);
             fallbackBackground.transform.localRotation = Quaternion.identity;
             
             // Make sure the background is big enough to fill the screen
@@ -261,6 +281,9 @@ public class ARManager : MonoBehaviour
         mainCamera.orthographicSize = originalOrthoSize;
         mainCamera.transform.localPosition = originalCameraPos;
         mainCamera.transform.localRotation = originalCameraRot;
+        
+        mainCamera.clearFlags = originalClearFlags;
+        mainCamera.backgroundColor = originalBgColor;
 
         if (rotateAvatarButton != null) rotateAvatarButton.SetActive(false);
         if (toggleButtonImage != null && icon3D != null) toggleButtonImage.sprite = icon3D;

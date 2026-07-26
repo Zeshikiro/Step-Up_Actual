@@ -43,6 +43,13 @@ public class AvatarLoader : MonoBehaviour
         // NEW: Automatically stitch/rebind any broken clothing meshes to the active skeleton!
         AutoRebindBones(activeAvatarRoot.transform);
 
+        // NEW: Force the AvatarAnimatorSync script to attach so we NEVER have broken animations!
+        if (activeAvatarRoot.GetComponent<AvatarAnimatorSync>() == null)
+        {
+            activeAvatarRoot.AddComponent<AvatarAnimatorSync>();
+            Debug.Log("[AvatarLoader] Dynamically attached AvatarAnimatorSync to fix missing script!");
+        }
+
         // 4. HARD OPTIMIZATION: Instantly turn off EVERY mesh first. 
         DeactivateAllMeshes(activeAvatarRoot.transform);
 

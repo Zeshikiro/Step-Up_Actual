@@ -143,6 +143,34 @@ function App() {
           Spend your points in the shop to unlock premium outfits. Express yourself with thousands of combinations.
         </p>
       </div>
+
+      <div className="glass-card">
+        <h3>🔔 Smart Reminders</h3>
+        <div style={{
+          fontSize: '3rem',
+          textAlign: 'center',
+          margin: '1rem 0'
+        }}>
+          🔔
+        </div>
+        <p>
+          Customized Android background notifications to keep you on track, with friendly "we miss you" alerts if you forget to walk!
+        </p>
+      </div>
+
+      <div className="glass-card">
+        <h3>📶 Offline Resiliency</h3>
+        <div style={{
+          fontSize: '3rem',
+          textAlign: 'center',
+          margin: '1rem 0'
+        }}>
+          📶
+        </div>
+        <p>
+          Automatically detects network drops and protects your GPS data, seamlessly loading a custom fallback interface until internet returns.
+        </p>
+      </div>
     </section>
   </>
 )}

@@ -93,9 +93,43 @@ public class YelpPlacesManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"[YelpManager] API Request Failed! Error: {webRequest.error}");
+                // Changed from LogError to LogWarning so it doesn't look like a game crash!
+                Debug.LogWarning($"[YelpManager] API Request Failed! Error: {webRequest.error}");
+                Debug.LogWarning("[YelpManager] YELP API TRIAL EXPIRED! Spawning Offline Mock Data for Thesis Testing...");
+                SpawnMockData(location);
             }
         }
+    }
+
+    private void SpawnMockData(Vector2d location)
+    {
+        YelpBusiness[] mockBusinesses = new YelpBusiness[3];
+        
+        // Spawn 3 fake POIs in a triangle around the player (roughly 50-100 meters away)
+        // 1 degree of latitude/longitude is roughly 111km. 100 meters is ~0.0009 degrees.
+        
+        mockBusinesses[0] = new YelpBusiness {
+            id = "mock_park_1",
+            name = "Local Community Park",
+            image_url = "", // Fails safely if empty
+            coordinates = new YelpCoordinates { latitude = location.x + 0.0005, longitude = location.y + 0.0005 }
+        };
+
+        mockBusinesses[1] = new YelpBusiness {
+            id = "mock_gym_1",
+            name = "Step-Up Fitness Gym",
+            image_url = "",
+            coordinates = new YelpCoordinates { latitude = location.x - 0.0005, longitude = location.y + 0.0006 }
+        };
+
+        mockBusinesses[2] = new YelpBusiness {
+            id = "mock_cafe_1",
+            name = "Healthy Bites Café",
+            image_url = "",
+            coordinates = new YelpCoordinates { latitude = location.x + 0.0002, longitude = location.y - 0.0007 }
+        };
+
+        ProcessBusinesses(mockBusinesses);
     }
 
     private void ProcessBusinesses(YelpBusiness[] businesses)

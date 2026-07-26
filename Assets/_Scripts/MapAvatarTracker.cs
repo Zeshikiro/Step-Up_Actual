@@ -53,8 +53,9 @@ public class MapAvatarTracker : MonoBehaviour
             Permission.RequestUserPermission(Permission.FineLocation);
         }
 #endif
-        // 2. Turn on the hardware compass
-        Input.compass.enabled = true;
+        // 2. Turn on the hardware compass (wrapped for New Input System compatibility)
+        try { Input.compass.enabled = true; }
+        catch (System.Exception) { Debug.LogWarning("[MapAvatarTracker] Legacy Input.compass unavailable."); }
 
         // Setup the cinematic "Strava" zoom-in animation
         if (Camera.main != null)
@@ -235,6 +236,40 @@ public class MapAvatarTracker : MonoBehaviour
             }
         }
 
+#if UNITY_EDITOR
+        // --- PC ONLY: WASD GPS SPOOFER FOR TESTING ---
+        // Since PC has no pedometer and no real GPS, WASD will fake walking!
+        if (UnityEngine.InputSystem.Keyboard.current != null)
+        {
+            var kb = UnityEngine.InputSystem.Keyboard.current;
+            if (kb.wKey.isPressed || kb.aKey.isPressed || kb.sKey.isPressed || kb.dKey.isPressed)
+            {
+                float moveX = 0f;
+                float moveY = 0f;
+                
+                if (kb.aKey.isPressed) moveX = -1f;
+                if (kb.dKey.isPressed) moveX = 1f;
+                if (kb.sKey.isPressed) moveY = -1f;
+                if (kb.wKey.isPressed) moveY = 1f;
+                
+                // 0.00002 degrees is roughly 2 meters per frame
+                double latShift = moveY * 0.00005 * Time.deltaTime;
+                double lonShift = moveX * 0.00005 * Time.deltaTime;
+
+                if (_lastValidGPS == Vector2d.zero) _lastValidGPS = _fallbackLatLon;
+                
+                _lastValidGPS = new Vector2d(_lastValidGPS.x + latShift, _lastValidGPS.y + lonShift);
+                
+                // Simulate pedometer steps since we are walking!
+                StepManager sm = FindFirstObjectByType<StepManager>();
+                if (sm != null && UnityEngine.Random.Range(0, 10) > 8)
+                {
+                    sm.currentDailySteps++;
+                }
+            }
+        }
+#endif
+
         Vector2d currentLocation = _lastValidGPS;
         if (currentLocation == Vector2d.zero) currentLocation = _fallbackLatLon;
 
@@ -356,16 +391,20 @@ public class MapAvatarTracker : MonoBehaviour
         }
 
         // 4. Sync Avatar Rotation to Real-World Compass Heading!
-        float targetAngle = Input.compass.trueHeading;
-        float currentAngle = transform.eulerAngles.y;
-        float smoothAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * 5f);
-        
-        // Rotate the actual 3D Avatar child object to face the compass direction!
-        Transform custom3DAvatar = transform.Find("Custom 3D Avatar");
-        if (custom3DAvatar != null)
+        try
         {
-            custom3DAvatar.eulerAngles = new Vector3(0, smoothAngle, 0);
+            float targetAngle = Input.compass.trueHeading;
+            float currentAngle = transform.eulerAngles.y;
+            float smoothAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * 5f);
+            
+            // Rotate the actual 3D Avatar child object to face the compass direction!
+            Transform custom3DAvatar = transform.Find("Custom 3D Avatar");
+            if (custom3DAvatar != null)
+            {
+                custom3DAvatar.eulerAngles = new Vector3(0, smoothAngle, 0);
+            }
         }
+        catch (System.Exception) { /* Compass unavailable on New Input System */ }
     }
 
     private IEnumerator SnapAndClear(Vector3 targetPosition)
@@ -401,22 +440,36 @@ public class MapCameraPanner : MonoBehaviour
 
     void Update()
     {
+        bool hasTouch = UnityEngine.InputSystem.Touchscreen.current != null && UnityEngine.InputSystem.Touchscreen.current.touches.Count > 0;
+        int touchCount = hasTouch ? UnityEngine.InputSystem.Touchscreen.current.touches.Count : 0;
+        
+        bool isPointerOverUI = false;
+        
         // Prevent panning when touching UI (like the Shop menu!)
         if (EventSystem.current != null)
         {
-            if (Input.touchCount > 0 && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
-            if (Input.touchCount == 0 && EventSystem.current.IsPointerOverGameObject()) return;
+            if (touchCount > 0)
+            {
+                var touch = UnityEngine.InputSystem.Touchscreen.current.touches[0];
+                if (EventSystem.current.IsPointerOverGameObject(touch.touchId.ReadValue())) isPointerOverUI = true;
+            }
+            else if (EventSystem.current.IsPointerOverGameObject()) 
+            {
+                isPointerOverUI = true;
+            }
         }
+        
+        if (isPointerOverUI) return;
 
-        // --- MOBILE TOUCH CONTROLS ---
-        if (Input.touchCount == 1)
+        // --- MOBILE TOUCH CONTROLS (NEW INPUT SYSTEM) ---
+        if (touchCount == 1)
         {
             // 1 Finger: Pan the Map
-            Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Moved)
+            var touch = UnityEngine.InputSystem.Touchscreen.current.touches[0];
+            if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Moved)
             {
-                // Calculate movement delta
-                Vector3 panDelta = new Vector3(-touch.deltaPosition.x, 0, -touch.deltaPosition.y) * panSpeed * 0.05f;
+                Vector2 delta = touch.delta.ReadValue();
+                Vector3 panDelta = new Vector3(-delta.x, 0, -delta.y) * panSpeed * 0.05f;
                 
                 // Rotate the movement direction so it matches the camera's current twisted angle
                 panDelta = Quaternion.Euler(0, _rotationAngle, 0) * panDelta;
@@ -426,17 +479,22 @@ public class MapCameraPanner : MonoBehaviour
                 _isPanning = true;
             }
         }
-        else if (Input.touchCount == 2)
+        else if (touchCount == 2)
         {
             // 2 Fingers: Twist to Rotate
-            Touch t1 = Input.GetTouch(0);
-            Touch t2 = Input.GetTouch(1);
+            var t1 = UnityEngine.InputSystem.Touchscreen.current.touches[0];
+            var t2 = UnityEngine.InputSystem.Touchscreen.current.touches[1];
 
-            if (t1.phase == TouchPhase.Moved || t2.phase == TouchPhase.Moved)
+            if (t1.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Moved || t2.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Moved)
             {
+                Vector2 t1Pos = t1.position.ReadValue();
+                Vector2 t2Pos = t2.position.ReadValue();
+                Vector2 t1Delta = t1.delta.ReadValue();
+                Vector2 t2Delta = t2.delta.ReadValue();
+                
                 // Calculate angle change between the two fingers
-                Vector2 prevDir = (t1.position - t1.deltaPosition) - (t2.position - t2.deltaPosition);
-                Vector2 currDir = t1.position - t2.position;
+                Vector2 prevDir = (t1Pos - t1Delta) - (t2Pos - t2Delta);
+                Vector2 currDir = t1Pos - t2Pos;
 
                 float angle = Vector2.SignedAngle(prevDir, currDir);
                 _rotationAngle += angle * rotationSpeed;
@@ -445,13 +503,13 @@ public class MapCameraPanner : MonoBehaviour
             }
         }
         // --- PC MOUSE FALLBACK FOR TESTING ---
-        else if (Input.GetMouseButton(0) && Input.touchCount == 0)
+        else if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.isPressed && touchCount == 0)
         {
-            float deltaX = Input.GetAxis("Mouse X");
-            float deltaY = Input.GetAxis("Mouse Y");
-            if (Mathf.Abs(deltaX) > 0.01f || Mathf.Abs(deltaY) > 0.01f)
+            Vector2 mouseDelta = UnityEngine.InputSystem.Mouse.current.delta.ReadValue();
+            if (Mathf.Abs(mouseDelta.x) > 0.01f || Mathf.Abs(mouseDelta.y) > 0.01f)
             {
-                Vector3 panDelta = new Vector3(-deltaX, 0, -deltaY) * panSpeed * 2f;
+                // Mouse delta is generally much larger than old GetAxis, so we multiply by a smaller factor
+                Vector3 panDelta = new Vector3(-mouseDelta.x, 0, -mouseDelta.y) * panSpeed * 0.05f;
                 panDelta = Quaternion.Euler(0, _rotationAngle, 0) * panDelta;
                 
                 _panOffset += panDelta;
@@ -461,7 +519,8 @@ public class MapCameraPanner : MonoBehaviour
         }
 
         // Release touches
-        if (Input.touchCount == 0 && !Input.GetMouseButton(0))
+        bool mouseNotPressed = UnityEngine.InputSystem.Mouse.current == null || !UnityEngine.InputSystem.Mouse.current.leftButton.isPressed;
+        if (touchCount == 0 && mouseNotPressed)
         {
             _isPanning = false;
         }

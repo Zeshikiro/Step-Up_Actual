@@ -18,28 +18,41 @@ public class MapZoom : MonoBehaviour
 
     void Update()
     {
-        // Check if the user is touching the screen with exactly 2 fingers
-        if (Input.touchCount == 2)
-        {
-            Touch touchZero = Input.GetTouch(0);
-            Touch touchOne = Input.GetTouch(1);
+        // Upgraded to New Input System touchscreen
+        if (UnityEngine.InputSystem.Touchscreen.current == null) return;
 
-            // Find out how the touches moved since the last frame
-            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+        var touches = UnityEngine.InputSystem.Touchscreen.current.touches;
+        if (touches.Count < 2) return;
 
-            // Calculate the distance between the fingers
-            float prevMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
-            float currentMagnitude = (touchZero.position - touchOne.position).magnitude;
+        var touchZero = touches[0];
+        var touchOne = touches[1];
 
-            // Difference in distance
-            float difference = currentMagnitude - prevMagnitude;
+        // Only process if both fingers are actively touching
+        var phase0 = touchZero.phase.ReadValue();
+        var phase1 = touchOne.phase.ReadValue();
+        if (phase0 == UnityEngine.InputSystem.TouchPhase.Ended || phase0 == UnityEngine.InputSystem.TouchPhase.None) return;
+        if (phase1 == UnityEngine.InputSystem.TouchPhase.Ended || phase1 == UnityEngine.InputSystem.TouchPhase.None) return;
 
-            // Apply the zoom to the Orthographic camera
-            mapCamera.orthographicSize -= difference * zoomSpeed;
+        Vector2 touchZeroPos = touchZero.position.ReadValue();
+        Vector2 touchOnePos = touchOne.position.ReadValue();
+        Vector2 touchZeroDelta = touchZero.delta.ReadValue();
+        Vector2 touchOneDelta = touchOne.delta.ReadValue();
 
-            // Clamp the zoom so they can't zoom out into outer space or zoom in past the floor
-            mapCamera.orthographicSize = Mathf.Clamp(mapCamera.orthographicSize, minZoom, maxZoom);
-        }
+        // Find out how the touches moved since the last frame
+        Vector2 touchZeroPrevPos = touchZeroPos - touchZeroDelta;
+        Vector2 touchOnePrevPos = touchOnePos - touchOneDelta;
+
+        // Calculate the distance between the fingers
+        float prevMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+        float currentMagnitude = (touchZeroPos - touchOnePos).magnitude;
+
+        // Difference in distance
+        float difference = currentMagnitude - prevMagnitude;
+
+        // Apply the zoom to the Orthographic camera
+        mapCamera.orthographicSize -= difference * zoomSpeed;
+
+        // Clamp the zoom so they can't zoom out into outer space or zoom in past the floor
+        mapCamera.orthographicSize = Mathf.Clamp(mapCamera.orthographicSize, minZoom, maxZoom);
     }
 }

@@ -111,6 +111,8 @@ public class StepManager : MonoBehaviour
         if (StepCounter.current != null)
         {
             InputSystem.EnableDevice(StepCounter.current);
+            // Force the pedometer to poll faster to reduce the 5-second delay!
+            StepCounter.current.samplingFrequency = 30;
             Debug.Log("[StepManager] StepCounter explicitly added and enabled.");
         }
         else
@@ -143,6 +145,12 @@ public class StepManager : MonoBehaviour
                 PlayerPrefs.SetInt("DaysGoalMetThisWeek", daysGoalMetThisWeek);
             }
 
+            // RESET ALL DAILY MISSIONS (0 to 6)
+            for (int i = 0; i <= 6; i++)
+            {
+                PlayerPrefs.DeleteKey("MissionClaimed_" + i);
+            }
+
             // Reset Daily Stats
             currentDailySteps = 0;
             arStepsToday = 0;
@@ -158,6 +166,12 @@ public class StepManager : MonoBehaviour
                 daysGoalMetThisWeek = 0;
                 PlayerPrefs.SetInt("DaysGoalMetThisWeek", 0);
                 PlayerPrefs.SetInt("WeeklyARSteps", 0);
+
+                // RESET ALL WEEKLY MISSIONS (7 to 9)
+                for (int i = 7; i <= 9; i++)
+                {
+                    PlayerPrefs.DeleteKey("MissionClaimed_" + i);
+                }
             }
 
             SaveAllProgress();
@@ -187,7 +201,9 @@ public class StepManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        // Debug: Press Space to simulate a step (New Input System safe)
+        if (UnityEngine.InputSystem.Keyboard.current != null && 
+            UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             RegisterStep();
         }
@@ -416,11 +432,13 @@ public class StepManager : MonoBehaviour
         autoSessionSteps++;
         lastWalkingTime = System.DateTime.Now;
 
-        if (currentDailySteps % 50 == 0) SaveAllProgress(); // Periodically save
-        
         UpdateStepUI();
-        SyncStepsToFirebase();
 
+        if (currentDailySteps % 50 == 0) 
+        {
+            SaveAllProgress(); // Periodically save local and cloud data
+        }
+        
 #if UNITY_ANDROID
         if (currentDailySteps % 10 == 0)
         {
@@ -437,13 +455,16 @@ public class StepManager : MonoBehaviour
         PlayerPrefs.SetInt("ARStepsToday", arStepsToday);
         PlayerPrefs.SetInt("WeeklyARSteps", totalWeeklyARSteps);
         PlayerPrefs.Save();
+
+        // ONLY sync to Firebase when saving to prevent massive network lag on every step!
+        SyncStepsToFirebase();
     }
 
     private void UpdateStepUI()
     {
         if (stepTextDisplay != null)
         {
-            stepTextDisplay.text = totalLifetimeSteps.ToString("N0");
+            stepTextDisplay.text = currentDailySteps.ToString("N0"); // HUD NOW SHOWS DAILY STEPS!
         }
     }
 

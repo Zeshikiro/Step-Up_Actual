@@ -24,14 +24,28 @@ export default function SocialFeed() {
     });
   }, []);
 
+  const censorText = (text) => {
+    // List of inappropriate words (you can expand this later)
+    const badWords = ['fuck', 'shit', 'bitch', 'asshole', 'dick', 'cunt', 'damn', 'crap', 'piss', 'slut', 'whore', 'bastard'];
+    let censored = text;
+    badWords.forEach(word => {
+      // Use regex to match whole words case-insensitively
+      const regex = new RegExp(`\\b${word}\\b`, 'gi');
+      censored = censored.replace(regex, '***');
+    });
+    return censored;
+  };
+
   const handlePost = () => {
     if (!newPost.trim() || !currentUser) return;
+
+    const sanitizedText = censorText(newPost);
 
     const postsRef = ref(db, 'posts');
     const newPostRef = push(postsRef);
     set(newPostRef, {
       author: currentUser.email.split('@')[0],
-      text: newPost,
+      text: sanitizedText,
       timestamp: Date.now()
     });
     setNewPost("");

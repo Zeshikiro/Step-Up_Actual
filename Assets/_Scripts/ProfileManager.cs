@@ -26,7 +26,6 @@ public class ProfileManager : MonoBehaviour
 
     [Header("Stats UI")]
     public GameObject summaryPanel;
-    
     [Header("XP Progress Bar")]
     public Slider xpProgressBar; 
     public TextMeshProUGUI xpProgressText; // Optional: To print "2500 / 5000 XP"
