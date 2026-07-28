@@ -220,25 +220,64 @@ public class ARManager : MonoBehaviour
 
     private void ActivateFallbackBackground()
     {
-        // 1. Force the camera to clear to a Solid Color (Grey) so it's never a black void!
+        // 1. Force the camera to clear to a Solid Color so it's never a black void
         if (mainCamera != null)
         {
             mainCamera.clearFlags = CameraClearFlags.SolidColor;
-            mainCamera.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 1f); // Dark Grey
+            mainCamera.backgroundColor = new Color(0.15f, 0.15f, 0.2f, 1f); // Dark blue-grey
         }
 
+        // 2. Try the inspector-assigned fallback first
         if (fallbackBackground != null)
         {
             fallbackBackground.SetActive(true);
             
-            // Position the background closer (Z=15) to guarantee it isn't clipped by the camera's Far Clip Plane
+            // Reparent to camera so it follows the view
             fallbackBackground.transform.SetParent(mainCamera.transform, false);
             fallbackBackground.transform.localPosition = new Vector3(0, 0, 15f);
             fallbackBackground.transform.localRotation = Quaternion.identity;
-            
-            // Make sure the background is big enough to fill the screen
             fallbackBackground.transform.localScale = new Vector3(50f, 100f, 1f);
+            
+            // Force a renderer material so it's NEVER invisible
+            Renderer rend = fallbackBackground.GetComponent<Renderer>();
+            if (rend != null && rend.sharedMaterial == null)
+            {
+                rend.material = new Material(Shader.Find("Unlit/Color"));
+                rend.material.color = new Color(0.2f, 0.25f, 0.35f, 1f);
+            }
+            
+            Debug.Log("[ARManager] Fallback background activated: " + fallbackBackground.name);
         }
+        
+        // 3. ALWAYS create a guaranteed backup quad in case fallbackBackground is null or invisible
+        if (dynamicBgQuad == null)
+        {
+            dynamicBgQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            dynamicBgQuad.name = "DynamicFallbackBG";
+            
+            // Remove the collider so it doesn't block raycasts
+            Collider col = dynamicBgQuad.GetComponent<Collider>();
+            if (col != null) Destroy(col);
+            
+            // Attach to camera
+            dynamicBgQuad.transform.SetParent(mainCamera.transform, false);
+            dynamicBgQuad.transform.localPosition = new Vector3(0, 0, mainCamera.farClipPlane * 0.9f);
+            dynamicBgQuad.transform.localRotation = Quaternion.identity;
+            
+            // Scale to fill the entire camera frustum at that distance
+            float frustumHeight = 2.0f * mainCamera.farClipPlane * 0.9f * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            float frustumWidth = frustumHeight * mainCamera.aspect;
+            dynamicBgQuad.transform.localScale = new Vector3(frustumWidth * 1.2f, frustumHeight * 1.2f, 1f);
+            
+            // Create a visible unlit material
+            Renderer quadRend = dynamicBgQuad.GetComponent<Renderer>();
+            Material bgMat = new Material(Shader.Find("Unlit/Color"));
+            bgMat.color = new Color(0.12f, 0.14f, 0.22f, 1f); // Dark navy
+            quadRend.material = bgMat;
+        }
+        dynamicBgQuad.SetActive(true);
+        
+        Debug.Log("[ARManager] Fallback mode fully active. Dynamic BG quad created.");
     }
 
     private void StopAR()

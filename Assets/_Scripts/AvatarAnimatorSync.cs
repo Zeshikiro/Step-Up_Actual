@@ -26,6 +26,11 @@ public class AvatarAnimatorSync : MonoBehaviour
     private int _speedHash;
     private int _isWalkingHash;
 
+    // Cached parameter existence flags (avoids scanning every frame)
+    private bool _hasSpeedParam = false;
+    private bool _hasIsWalkingParam = false;
+    private bool _paramsCached = false;
+
     void Start()
     {
         Debug.Log("[AvatarAnimatorSync] Script is ALIVE and running on: " + gameObject.name);
@@ -37,8 +42,6 @@ public class AvatarAnimatorSync : MonoBehaviour
         _isWalkingHash = Animator.StringToHash(isWalkingParameter);
 
         // Find the MapAvatarTracker (the object that actually moves via GPS)
-        // AvatarAnimatorSync sits on avatarContainer, which is a CHILD of the MapAvatarTracker.
-        // We need to track the parent's world position to detect GPS sliding!
         _trackerTransform = FindTrackerParent();
         if (_trackerTransform != null)
         {
@@ -47,7 +50,6 @@ public class AvatarAnimatorSync : MonoBehaviour
         }
         else
         {
-            // Fallback: use our own position
             _lastPosition = transform.position;
             Debug.LogWarning("[AvatarAnimatorSync] Could not find MapAvatarTracker parent, using own transform.");
         }
@@ -85,6 +87,7 @@ public class AvatarAnimatorSync : MonoBehaviour
         {
             _lastStepCount = stepManager.currentDailySteps;
             _lastStepTime = Time.time;
+            Debug.Log($"[AvatarAnimatorSync] Step detected! Count: {_lastStepCount}");
         }
 
         // 2. Check for Physical GPS Sliding on the TRACKER transform (not this object!)
@@ -97,8 +100,8 @@ public class AvatarAnimatorSync : MonoBehaviour
         _lastPosition = posSource.position;
 
         // If we stepped recently OR moved physically recently, we are walking!
-        bool isStepping = (Time.time - _lastStepTime) < 2.0f;
-        bool isSliding = (Time.time - _lastMoveTime) < 1.0f;
+        bool isStepping = (Time.time - _lastStepTime) < 3.0f;  // Extended to 3s for smoother animation
+        bool isSliding = (Time.time - _lastMoveTime) < 1.5f;
 
         bool shouldWalk = isStepping || isSliding;
 
@@ -107,42 +110,42 @@ public class AvatarAnimatorSync : MonoBehaviour
             if (anim == null || !anim.isActiveAndEnabled) continue;
             if (anim.runtimeAnimatorController == null) continue;
 
+            // Cache parameter existence on first valid animator we find
+            if (!_paramsCached)
+            {
+                CacheParameterExistence(anim);
+            }
+
             if (shouldWalk)
             {
                 float targetSpeed = (stepManager.CurrentSpeedMPS > 2.5f) ? 2.0f : 1.0f;
-                SafeSetBool(anim, isWalkingParameter, _isWalkingHash, true);
-                SafeSetFloat(anim, speedParameter, _speedHash, targetSpeed);
+                if (_hasIsWalkingParam) anim.SetBool(_isWalkingHash, true);
+                if (_hasSpeedParam) anim.SetFloat(_speedHash, targetSpeed);
             }
             else
             {
-                SafeSetBool(anim, isWalkingParameter, _isWalkingHash, false);
-                SafeSetFloat(anim, speedParameter, _speedHash, 0f);
+                if (_hasIsWalkingParam) anim.SetBool(_isWalkingHash, false);
+                if (_hasSpeedParam) anim.SetFloat(_speedHash, 0f);
             }
         }
     }
 
-    // Only set the parameter if it actually exists on the animator controller!
-    private void SafeSetBool(Animator anim, string paramName, int hash, bool value)
+    private void CacheParameterExistence(Animator anim)
     {
         foreach (var p in anim.parameters)
         {
-            if (p.nameHash == hash && p.type == AnimatorControllerParameterType.Bool)
-            {
-                anim.SetBool(hash, value);
-                return;
-            }
+            if (p.nameHash == _speedHash && p.type == AnimatorControllerParameterType.Float)
+                _hasSpeedParam = true;
+            if (p.nameHash == _isWalkingHash && p.type == AnimatorControllerParameterType.Bool)
+                _hasIsWalkingParam = true;
         }
-    }
+        _paramsCached = true;
 
-    private void SafeSetFloat(Animator anim, string paramName, int hash, float value)
-    {
-        foreach (var p in anim.parameters)
-        {
-            if (p.nameHash == hash && p.type == AnimatorControllerParameterType.Float)
-            {
-                anim.SetFloat(hash, value);
-                return;
-            }
-        }
+        if (!_hasIsWalkingParam)
+            Debug.LogWarning($"[AvatarAnimatorSync] Animator '{anim.name}' does NOT have '{isWalkingParameter}' bool parameter!");
+        if (!_hasSpeedParam)
+            Debug.LogWarning($"[AvatarAnimatorSync] Animator '{anim.name}' does NOT have '{speedParameter}' float parameter!");
+        
+        Debug.Log($"[AvatarAnimatorSync] Cached params on '{anim.name}': HasSpeed={_hasSpeedParam}, HasIsWalking={_hasIsWalkingParam}");
     }
 }

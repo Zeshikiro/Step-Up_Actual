@@ -1,0 +1,98 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="utf-8">
+<title>Step-Up: Project Development Report</title>
+<style>
+body { font-family: 'Calibri', sans-serif; font-size: 11pt; }
+h1 { color: #2F5496; font-size: 18pt; }
+h2 { color: #2F5496; font-size: 14pt; border-bottom: 1px solid #4472C4; padding-bottom: 2px;}
+h3 { color: #1F3763; font-size: 12pt; }
+li { margin-bottom: 6px; }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+th, td { border: 1px solid #000; padding: 5px; text-align: left; }
+th { background-color: #D9E1F2; }
+</style>
+</head>
+<body>
+<h1>Step-Up: Project Development Report</h1>
+<p>This document serves as a comprehensive retrospective on the creation of <strong>Step-Up</strong>, detailing the technologies utilized, the development phases, the Agile methodologies applied, and a visual project timeline.</p>
+
+<h2>1. Technology Stack & Tools</h2>
+<p>The development of Step-Up required a robust combination of software engines, APIs, and AI assistance to deliver a feature-rich, location-based mobile application.</p>
+
+<h3>Core Frameworks & Languages</h3>
+<ul>
+<li><strong>Game Engine:</strong> Unity 6 (C#)</li>
+<li><strong>Target Platforms:</strong> Android & iOS</li>
+<li><strong>Companion Web App:</strong> React (Vite) + Tailwind CSS</li>
+</ul>
+
+<h3>APIs & Plugins</h3>
+<ul>
+<li><strong>Mapbox Unity SDK:</strong> Handled real-world GPS tracking, orthogonal 2D map generation, and street-grid scaling.</li>
+<li><strong>Firebase SDK:</strong> Powered the backend infrastructure.
+    <ul>
+    <li><em>Firebase Authentication:</em> Handled secure logins, email verification, and persistent sessions.</li>
+    <li><em>Firebase Realtime Database:</em> Handled cloud saves for user step counts, unlocked avatar items, and leaderboard syncing.</li>
+    </ul>
+</li>
+<li><strong>Unity New Input System:</strong> Managed hardware interactions including the Android Native Pedometer (StepCounter), accelerometer, gyroscope, touchscreens, and GPS location services.</li>
+<li><strong>Yelp Fusion API:</strong> Replaced Google Places to dynamically fetch nearby Points of Interest (Parks, Fitness Centers, Cafes) to encourage physical exploration.</li>
+<li><strong>AR Foundation / ARCore:</strong> Powered the 3D augmented reality camera view, allowing the player's customized avatar to exist in the real world.</li>
+<li><strong>Native Share & Native Gallery:</strong> Handled local device storage access for profile pictures and social media sharing of fitness milestones.</li>
+</ul>
+
+<h3>AI Integration (Antigravity by DeepMind)</h3>
+<p>AI pair programming was heavily utilized throughout the project lifecycle to accelerate development and overcome complex technical hurdles. Key AI contributions included:</p>
+<ul>
+<li><strong>Architecture Refactoring:</strong> Restructuring massive monolithic scripts into modular managers (e.g., StepManager, InventoryManager, AvatarCustomizer).</li>
+<li><strong>Bug Squashing & Debugging:</strong> Diagnosing cryptic compiler errors (e.g., CS1061, UnassignedReferenceException) and resolving runtime death-loops caused by legacy Input systems or Mapbox desynchronization.</li>
+<li><strong>Procedural Tooling:</strong> Writing editor scripts (like the YelpPrefabBuilder) to procedurally generate 3D floating canvases.</li>
+<li><strong>UI/UX Logic:</strong> Assisting with mathematically calculating fractional mission milestones, radial graphs, and dynamic scaling for mobile screens.</li>
+</ul>
+
+<h2>2. The Agile Development Process</h2>
+<p>We adhered to an <strong>Agile Methodology</strong>, treating development as a series of rapid, iterative sprints with constant evaluation and adaptation.</p>
+<ul>
+<li><strong>Iterative Sprints:</strong> Development was broken down into focused sprints (e.g., The "UI Foundation Sprint", the "Avatar Wardrobe Sprint", the "Sensor Integration Sprint").</li>
+<li><strong>Daily Standups (DevLogs):</strong> Detailed developer logs were maintained at the end of each session to document architecture changes, list squashed bugs, and set the explicit "Road Map" for the next day.</li>
+<li><strong>Rapid Pivoting:</strong> Agile allowed us to pivot quickly when blockers arose.
+    <ul>
+    <li><em>Example 1:</em> When Google Places API required a credit card, we instantly pivoted to the Yelp Fusion API.</li>
+    <li><em>Example 2:</em> When swapping raw .sharedMesh files broke the 3D Avatar rig, we pivoted the architecture to a "GameObject Toggling" system.</li>
+    <li><em>Example 3:</em> When ARCore caused issues on non-AR devices, we quickly developed a seamless forceFallbackMode.</li>
+    </ul>
+</li>
+<li><strong>Continuous Integration:</strong> The project was continuously pushed to a remote GitHub repository to maintain version control and safeguard against asset corruption.</li>
+</ul>
+
+<h2>3. Development Phases</h2>
+<ul>
+<li><strong>Phase 1: UI Foundation & Routing (April)</strong><br>Built the core wireframes and user flow. Implemented the Login, EULA, and BMI screens. Established the Canvas Scaler architecture to ensure the app UI stretched perfectly across any mobile device shape.</li>
+<li><strong>Phase 2: Security & Backend Integration (Early May)</strong><br>Integrated Firebase for persistent user sessions. Built a 3-strike login lockout system to prevent brute force attacks, implemented local PlayerPrefs for saving settings (volume/notifications), and finalized the gamified Profile XP system.</li>
+<li><strong>Phase 3: Hardware Sensors & Gamification (Mid May)</strong><br>Transitioned from keyboard testing to real-world Android hardware. Initialized the Native StepCounter and Accelerometer. Developed StepManager to handle anti-cheat speed detection (ignoring steps if moving > 6 m/s) and fractional daily step milestones based on the user's BMI goal.</li>
+<li><strong>Phase 4: The 3D Avatar Customization Engine (Late May)</strong><br>Scrapped the initial fragmented avatar system for a unified rigging system. Built AvatarCustomizer and InventoryManager to allow players to spend coins to unlock clothing. Ensured mesh swaps were clean and didn't break bone hierarchies.</li>
+<li><strong>Phase 5: Mapbox, ARCore & Cloud Saves (Early June)</strong><br>Integrated real-world GPS tracking via Mapbox. Built MapAvatarTracker to smoothly move the avatar along the real-world street grid. Introduced ARCore to allow players to view their avatar in the physical world via their device camera. Synced all avatar inventory and step data to Firebase Cloud.</li>
+<li><strong>Phase 6: Yelp POIs & Companion Web App (Mid June)</strong><br>Built the companion React website featuring live leaderboards fetched from Firebase. Integrated the Yelp Fusion API to dynamically spawn floating 3D billboards over real-world cafes and parks inside the Unity Mapbox view.</li>
+<li><strong>Phase 7: Compliance, Polish & Overhaul (July)</strong><br>Migrated the entire project to Unity's "New Input System" to fix conflicting library crashes. Implemented ProminentDisclosure to comply with Google Play Store background location policies. Optimized Mapbox zoom levels to prevent mobile lag spikes.</li>
+</ul>
+
+<h2>4. Project Timeline (Gantt Chart)</h2>
+<table>
+<tr>
+    <th>Development Sprint</th>
+    <th>Start Date</th>
+    <th>Duration</th>
+</tr>
+<tr><td>UI Foundation & BMI</td><td>April 11, 2026</td><td>10 days</td></tr>
+<tr><td>Security & Settings</td><td>May 4, 2026</td><td>7 days</td></tr>
+<tr><td>Hardware Pedometer & GPS</td><td>May 12, 2026</td><td>6 days</td></tr>
+<tr><td>Gamification (Missions & Leaderboard)</td><td>May 20, 2026</td><td>5 days</td></tr>
+<tr><td>Avatar Customization Engine</td><td>May 26, 2026</td><td>4 days</td></tr>
+<tr><td>Firebase Cloud & Web App</td><td>May 31, 2026</td><td>3 days</td></tr>
+<tr><td>Mapbox & ARCore Integration</td><td>June 1, 2026</td><td>12 days</td></tr>
+<tr><td>Yelp Fusion POIs</td><td>June 13, 2026</td><td>8 days</td></tr>
+<tr><td>Polish, Input Overhaul & Compliance</td><td>July 8, 2026</td><td>18 days</td></tr>
+</table>
+</body>
+</html>

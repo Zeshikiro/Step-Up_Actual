@@ -41,6 +41,17 @@ public class StepManager : MonoBehaviour
     private int lastHardwareStepCount = -1;
     private bool hasPermission = false;
 
+    // Real-Time Accelerometer Step Detection (supplements hardware StepCounter to eliminate delay)
+    private float _accelMagnitudePrev = 0f;
+    private bool _accelPeakDetected = false;
+    private float _lastAccelStepTime = 0f;
+    private int _accelStepCount = 0;
+    private int _hardwareStepCount = 0; // Tracks hardware-confirmed steps
+    [Header("Accelerometer Tuning")]
+    [SerializeField] private float stepThreshold = 1.25f;  // Peak acceleration to count as a step
+    [SerializeField] private float resetThreshold = 0.9f;   // Acceleration must drop below this before next step
+    [SerializeField] private float minStepInterval = 0.25f; // Minimum seconds between steps (prevents double-count)
+
     // GPS Speed Tracking
     private ILocationProvider _locationProvider;
     private Vector2d _lastGPSPos;
@@ -111,15 +122,28 @@ public class StepManager : MonoBehaviour
         if (StepCounter.current != null)
         {
             InputSystem.EnableDevice(StepCounter.current);
-            // Force the pedometer to poll faster to reduce the 5-second delay!
-            StepCounter.current.samplingFrequency = 30;
+            
+            // Try to increase polling rate (some devices support this, some don't)
+            try { StepCounter.current.samplingFrequency = 30; }
+            catch (System.Exception) { /* Device doesn't support custom sampling frequency */ }
+            
             Debug.Log("[StepManager] StepCounter explicitly added and enabled.");
         }
         else
         {
-            Debug.LogWarning("[StepManager] StepCounter could not be added. Device might not have a hardware pedometer.");
+            Debug.LogWarning("[StepManager] StepCounter could not be added. Using accelerometer fallback only.");
         }
 
+        // Enable the accelerometer for real-time step detection
+        if (UnityEngine.InputSystem.Accelerometer.current == null)
+        {
+            InputSystem.AddDevice<UnityEngine.InputSystem.Accelerometer>();
+        }
+        if (UnityEngine.InputSystem.Accelerometer.current != null)
+        {
+            InputSystem.EnableDevice(UnityEngine.InputSystem.Accelerometer.current);
+            Debug.Log("[StepManager] Accelerometer enabled for real-time step detection.");
+        }
     }
 
     private void PerformDateRolloverCheck()
@@ -208,6 +232,11 @@ public class StepManager : MonoBehaviour
             RegisterStep();
         }
 
+        // ========== REAL-TIME ACCELEROMETER STEP DETECTION ==========
+        // This fires INSTANTLY when the phone bounces, eliminating the 3-5 second hardware delay.
+        // The hardware StepCounter is still used as the authoritative source to prevent drift.
+        DetectAccelerometerStep();
+
         // GPS Speed Tracker
         if (_locationProvider != null && _locationProvider.CurrentLocation.LatitudeLongitude != Vector2d.zero)
         {
@@ -288,7 +317,14 @@ public class StepManager : MonoBehaviour
                     int stepsTaken = currentHardwareSteps - lastHardwareStepCount;
                     if (stepsTaken > 0)
                     {
-                        for (int i = 0; i < stepsTaken; i++) RegisterStep();
+                        // Sync the hardware counter with the accelerometer counter
+                        _hardwareStepCount += stepsTaken;
+                        
+                        // Only register steps the accelerometer hasn't already counted
+                        int accelAhead = _accelStepCount - (_hardwareStepCount - stepsTaken);
+                        int stepsToRegister = Mathf.Max(0, stepsTaken - Mathf.Max(0, accelAhead));
+                        
+                        for (int i = 0; i < stepsToRegister; i++) RegisterStep();
                         lastHardwareStepCount = currentHardwareSteps;
                         PlayerPrefs.SetInt("LastHardwareStepCount", lastHardwareStepCount);
                     }
@@ -305,6 +341,41 @@ public class StepManager : MonoBehaviour
                 EndAutoSession();
             }
         }
+    }
+
+    private void DetectAccelerometerStep()
+    {
+        // Read the phone's accelerometer (works on ALL Android devices, no permissions needed)
+        if (UnityEngine.InputSystem.Accelerometer.current == null) return;
+        Vector3 accel = UnityEngine.InputSystem.Accelerometer.current.acceleration.ReadValue();
+
+        float magnitude = accel.magnitude;
+
+        // Peak detection: acceleration goes UP past the threshold, then DOWN past reset
+        if (!_accelPeakDetected && magnitude > stepThreshold)
+        {
+            _accelPeakDetected = true;
+        }
+        else if (_accelPeakDetected && magnitude < resetThreshold)
+        {
+            _accelPeakDetected = false;
+
+            // Enforce minimum interval to prevent vibration/jitter double-counting
+            if (Time.time - _lastAccelStepTime > minStepInterval)
+            {
+                _lastAccelStepTime = Time.time;
+                _accelStepCount++;
+
+                // Only register if accelerometer is AHEAD of hardware counter
+                // This means the hardware hasn't caught up yet, so we give instant feedback
+                if (_accelStepCount > _hardwareStepCount)
+                {
+                    RegisterStep();
+                }
+            }
+        }
+
+        _accelMagnitudePrev = magnitude;
     }
 
     private void EndAutoSession()
