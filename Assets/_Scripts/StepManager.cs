@@ -154,9 +154,30 @@ public class StepManager : MonoBehaviour
         currentDailySteps = PlayerPrefs.GetInt("DailySteps", 0);
         currentWeeklySteps = PlayerPrefs.GetInt("WeeklySteps", 0);
         totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
+        int currentStreak = PlayerPrefs.GetInt("CurrentStreak", 0);
 
-        if (lastDate != todayDate && !string.IsNullOrEmpty(lastDate))
+        if (string.IsNullOrEmpty(lastDate))
         {
+            // First ever login
+            currentStreak = 1;
+            PlayerPrefs.SetInt("CurrentStreak", currentStreak);
+        }
+        else if (lastDate != todayDate)
+        {
+            // Calculate consecutive days
+            if (System.DateTime.TryParseExact(lastDate, "yyyyMMdd", null, System.Globalization.DateTimeStyles.None, out System.DateTime lastLoginDateObj))
+            {
+                int daysMissed = (int)(System.DateTime.Today - lastLoginDateObj.Date).TotalDays;
+                
+                if (daysMissed == 1) currentStreak++; // Consecutive login!
+                else if (daysMissed > 1) currentStreak = 1; // Missed a day, reset to 1
+            }
+            else
+            {
+                currentStreak = 1; // Fallback
+            }
+            PlayerPrefs.SetInt("CurrentStreak", currentStreak);
+
             // Rollover!
             yesterdaysSteps = currentDailySteps;
             PlayerPrefs.SetInt("YesterdaysSteps", yesterdaysSteps);

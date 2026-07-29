@@ -55,10 +55,8 @@ public class ActivitySummaryManager : MonoBehaviour
             lifetimeSteps = stepManager.totalLifetimeSteps;
         }
 
-        if (userData != null)
-        {
-            actualStreak = userData.currentStreak; 
-        }
+        // Pull the real tracked streak from PlayerPrefs!
+        actualStreak = PlayerPrefs.GetInt("CurrentStreak", 0);
 
         float calculatedCalories = currentSteps * caloriesPerStep;
         float calculatedDistanceKm = (currentSteps * stepStrideLengthMeters) / 1000f;
