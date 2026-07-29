@@ -220,11 +220,14 @@ public class ARManager : MonoBehaviour
 
     private void ActivateFallbackBackground()
     {
+        Debug.Log("[ARManager] ActivateFallbackBackground() called.");
+        
         // 1. Force the camera to clear to a Solid Color so it's never a black void
         if (mainCamera != null)
         {
             mainCamera.clearFlags = CameraClearFlags.SolidColor;
             mainCamera.backgroundColor = new Color(0.15f, 0.15f, 0.2f, 1f); // Dark blue-grey
+            Debug.Log("[ARManager] Camera clearFlags set to SolidColor.");
         }
 
         // 2. Try the inspector-assigned fallback first
@@ -234,19 +237,33 @@ public class ARManager : MonoBehaviour
             
             // Reparent to camera so it follows the view
             fallbackBackground.transform.SetParent(mainCamera.transform, false);
-            fallbackBackground.transform.localPosition = new Vector3(0, 0, 15f);
+            fallbackBackground.transform.localPosition = new Vector3(0, 0, 10f);
             fallbackBackground.transform.localRotation = Quaternion.identity;
-            fallbackBackground.transform.localScale = new Vector3(50f, 100f, 1f);
+            fallbackBackground.transform.localScale = new Vector3(50f, 50f, 1f);
             
             // Force a renderer material so it's NEVER invisible
             Renderer rend = fallbackBackground.GetComponent<Renderer>();
-            if (rend != null && rend.sharedMaterial == null)
+            if (rend != null)
             {
-                rend.material = new Material(Shader.Find("Unlit/Color"));
-                rend.material.color = new Color(0.2f, 0.25f, 0.35f, 1f);
+                if (rend.sharedMaterial == null)
+                {
+                    Material mat = CreateFallbackMaterial();
+                    if (mat != null) rend.material = mat;
+                }
+                Debug.Log("[ARManager] Fallback BG renderer: enabled=" + rend.enabled + 
+                          ", material=" + (rend.sharedMaterial != null ? rend.sharedMaterial.name : "NULL") +
+                          ", shader=" + (rend.sharedMaterial != null ? rend.sharedMaterial.shader.name : "NULL"));
+            }
+            else
+            {
+                Debug.LogWarning("[ARManager] fallbackBackground has NO Renderer component! Type: " + fallbackBackground.GetType().Name);
             }
             
             Debug.Log("[ARManager] Fallback background activated: " + fallbackBackground.name);
+        }
+        else
+        {
+            Debug.LogWarning("[ARManager] fallbackBackground is NULL in Inspector!");
         }
         
         // 3. ALWAYS create a guaranteed backup quad in case fallbackBackground is null or invisible
@@ -259,25 +276,60 @@ public class ARManager : MonoBehaviour
             Collider col = dynamicBgQuad.GetComponent<Collider>();
             if (col != null) Destroy(col);
             
-            // Attach to camera
+            // Attach to camera at a REASONABLE distance (not farClipPlane which could be 1000+)
+            float bgDistance = 10f;
             dynamicBgQuad.transform.SetParent(mainCamera.transform, false);
-            dynamicBgQuad.transform.localPosition = new Vector3(0, 0, mainCamera.farClipPlane * 0.9f);
+            dynamicBgQuad.transform.localPosition = new Vector3(0, 0, bgDistance);
             dynamicBgQuad.transform.localRotation = Quaternion.identity;
             
             // Scale to fill the entire camera frustum at that distance
-            float frustumHeight = 2.0f * mainCamera.farClipPlane * 0.9f * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            float frustumHeight = 2.0f * bgDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
             float frustumWidth = frustumHeight * mainCamera.aspect;
-            dynamicBgQuad.transform.localScale = new Vector3(frustumWidth * 1.2f, frustumHeight * 1.2f, 1f);
+            dynamicBgQuad.transform.localScale = new Vector3(frustumWidth * 1.5f, frustumHeight * 1.5f, 1f);
             
-            // Create a visible unlit material
+            // Create a visible material (URP-safe)
             Renderer quadRend = dynamicBgQuad.GetComponent<Renderer>();
-            Material bgMat = new Material(Shader.Find("Unlit/Color"));
-            bgMat.color = new Color(0.12f, 0.14f, 0.22f, 1f); // Dark navy
-            quadRend.material = bgMat;
+            Material bgMat = CreateFallbackMaterial();
+            if (bgMat != null)
+            {
+                quadRend.material = bgMat;
+            }
+            
+            Debug.Log("[ARManager] Dynamic BG Quad created. Scale: " + dynamicBgQuad.transform.localScale + 
+                       ", Distance: " + bgDistance + ", Material: " + (quadRend.sharedMaterial != null ? quadRend.sharedMaterial.shader.name : "NONE"));
         }
         dynamicBgQuad.SetActive(true);
         
-        Debug.Log("[ARManager] Fallback mode fully active. Dynamic BG quad created.");
+        Debug.Log("[ARManager] Fallback mode fully active.");
+    }
+    
+    /// <summary>
+    /// Creates a fallback material that works on BOTH Built-in RP and URP.
+    /// Shader.Find("Unlit/Color") returns NULL on URP builds!
+    /// </summary>
+    private Material CreateFallbackMaterial()
+    {
+        Color bgColor = new Color(0.12f, 0.14f, 0.22f, 1f); // Dark navy
+        
+        // Try URP unlit shader first (most likely on this project)
+        Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
+        if (shader == null) shader = Shader.Find("Unlit/Color");
+        if (shader == null) shader = Shader.Find("UI/Default");
+        if (shader == null) shader = Shader.Find("Sprites/Default");
+        
+        if (shader != null)
+        {
+            Material mat = new Material(shader);
+            mat.color = bgColor;
+            // URP uses _BaseColor instead of _Color
+            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", bgColor);
+            if (mat.HasProperty("_Color")) mat.SetColor("_Color", bgColor);
+            Debug.Log("[ARManager] Created fallback material with shader: " + shader.name);
+            return mat;
+        }
+        
+        Debug.LogError("[ARManager] CRITICAL: Could not find ANY shader for fallback material!");
+        return null;
     }
 
     private void StopAR()

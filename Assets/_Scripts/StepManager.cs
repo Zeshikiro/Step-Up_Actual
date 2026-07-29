@@ -347,6 +347,18 @@ public class StepManager : MonoBehaviour
     {
         // Read the phone's accelerometer (works on ALL Android devices, no permissions needed)
         if (UnityEngine.InputSystem.Accelerometer.current == null) return;
+
+        // ANTI-CHEAT: If GPS says we're moving faster than 6 m/s (~13 mph), we're in a vehicle.
+        // Car vibrations trigger the accelerometer constantly — block ALL accel-based step detection.
+        if (_currentSpeedMPS > 6.0f)
+        {
+            // Reset peak state so we don't get a phantom step when the car stops
+            _accelPeakDetected = false;
+            // Sync accel counter up to hardware counter so no burst of fake steps on slowdown
+            _accelStepCount = _hardwareStepCount;
+            return;
+        }
+
         Vector3 accel = UnityEngine.InputSystem.Accelerometer.current.acceleration.ReadValue();
 
         float magnitude = accel.magnitude;
