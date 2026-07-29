@@ -468,3 +468,17 @@ Date: July 28, 2026
 - Fixed the hardware step counter 3-second delay by implementing a dual-track system: a real-time accelerometer peak detector was added to provide instant UI feedback on footsteps, while still relying on the Android native StepCounter to deduplicate and prevent drift.
 - Fixed an issue where the `fallbackBackground` wasn't rendering on devices lacking ARCore by dynamically generating a fullscreen unlit colored quad if the UI fallback failed.
 - Repaired the `AvatarAnimatorSync` by caching the Animator parameters on load instead of every frame, and extended the walk detection window from 2 to 3 seconds for smoother transition between batched step deliveries.
+
+==================================================
+Date: July 29, 2026
+
+1. Anti-Cheat Fix (Vehicle Detection):
+- Discovered that the new accelerometer-based step detector was bypassing the existing GPS speed anti-cheat. Car vibrations (engine rumble, road bumps) were triggering the peak detector and registering fake steps while the user was in a vehicle.
+- Fixed by adding a GPS speed gate (`_currentSpeedMPS > 6.0f`) to `DetectAccelerometerStep()`, matching the existing hardware StepCounter anti-cheat threshold.
+- Added counter-sync logic: when the user is detected in a vehicle, the accelerometer step counter is synced to the hardware counter to prevent a burst of phantom steps when the car slows down.
+
+2. Fallback Background Fix (URP Shader Compatibility):
+- Identified root cause: `Shader.Find("Unlit/Color")` returns NULL on Universal Render Pipeline (URP) builds, causing the dynamically created fallback quad to have no material and be invisible.
+- Created a `CreateFallbackMaterial()` helper that tries shaders in priority order: `Universal Render Pipeline/Unlit` → `Unlit/Color` → `UI/Default` → `Sprites/Default`.
+- Also fixed a scaling issue: the dynamic quad was placed at `farClipPlane * 0.9` (potentially Z=900), making it invisible due to floating-point precision. Now uses a fixed distance of Z=10.
+- Added extensive diagnostic logging to trace fallback activation on-device.
