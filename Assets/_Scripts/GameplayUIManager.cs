@@ -178,7 +178,7 @@ public class GameplayUIManager : MonoBehaviour
         TogglePanel(leaderboardPanel);
     }
     
-    // Helper to run pop-up animations and manage FPS
+    // Helper to manage FPS when opening/closing UI
     private void TogglePanel(GameObject panel)
     {
         if (panel == null) return;
@@ -189,10 +189,6 @@ public class GameplayUIManager : MonoBehaviour
         {
             HideAllPanels(); // Close others first
             panel.SetActive(true);
-            
-            // Pop-up animation
-            panel.transform.localScale = Vector3.one * 0.8f;
-            StartCoroutine(PopUpAnim(panel.transform));
         }
         else
         {
@@ -200,21 +196,6 @@ public class GameplayUIManager : MonoBehaviour
         }
         
         SetOptimalFPS(); // Adjust FPS based on whether UI is open
-    }
-    
-    private IEnumerator PopUpAnim(Transform t)
-    {
-        float timer = 0;
-        while(timer < 0.15f)
-        {
-            timer += Time.deltaTime;
-            float progress = timer / 0.15f;
-            // Simple ease out cubic
-            float ease = 1f - Mathf.Pow(1f - progress, 3f);
-            t.localScale = Vector3.Lerp(Vector3.one * 0.8f, Vector3.one, ease);
-            yield return null;
-        }
-        t.localScale = Vector3.one;
     }
     
     /// <summary>

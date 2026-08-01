@@ -633,21 +633,7 @@ public class StepManager : MonoBehaviour
         SyncStepsToFirebase();
     }
 
-    // --- BATCH PLAYERPREFS SAVING (OPTIMIZATION) ---
-    private void OnApplicationPause(bool pauseStatus)
-    {
-        if (pauseStatus) 
-        {
-            SaveAllProgress();
-            Debug.Log("[StepManager] App paused. Batched PlayerPrefs save executed.");
-        }
-    }
 
-    private void OnApplicationQuit()
-    {
-        SaveAllProgress();
-        Debug.Log("[StepManager] App quitting. Batched PlayerPrefs save executed.");
-    }
 
     public void StartMissionSession(float durationMinutes)
     {

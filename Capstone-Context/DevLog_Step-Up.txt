@@ -513,3 +513,21 @@ Date: July 29, 2026
 
 5. Background Step Tracking (VERIFIED WORKING):
 - The hardware `StepCounter` continues counting while the app is backgrounded. When the app resumes, the `Update()` loop detects the gap between `lastHardwareStepCount` and the current hardware count, registering all missed steps. No code changes needed — this was already functional. The live mission getters now ensure that mission progress reflects these background steps immediately upon resume.
+
+--- Optimization & QOL Sprint ---
+
+1. Dynamic FPS Switching (ADDED):
+- The game now runs at 30 FPS when the 2D Map is active to conserve massive amounts of battery and prevent overheating. When AR Mode is activated, or when any UI Panel (Missions, Leaderboard, etc.) is opened, the game seamlessly boosts to 60 FPS for smooth scrolling and camera tracking.
+
+2. Network Check Optimization (FIXED):
+- Moved the `Application.internetReachability` check out of `Update()` and into a Coroutine running every 3 seconds. Checking this property every frame causes native OS API calls which drain battery and cause micro-stutters.
+
+3. Offline Capabilities & Cloud Sync (ADDED):
+- The app tracks steps and missions completely offline using `PlayerPrefs`.
+- Added `ForceCloudSync()` to `StepManager.cs`. The internet-checking Coroutine now detects when the device regains internet connection and automatically batches local steps and pushes them to the Firebase Leaderboard.
+
+5. Mission Board Object Pooling (FIXED):
+- `MissionManager.cs` no longer destroys and instantiates 10 new UI cards every time the board is generated. It now uses Object Pooling to reuse existing cards, drastically reducing memory fragmentation.
+
+6. Batched PlayerPrefs Saving (FIXED):
+- Reduced synchronous `PlayerPrefs.Save()` calls during gameplay. Added `OnApplicationPause` and `OnApplicationQuit` to `StepManager.cs` to batch-save all PlayerPrefs to disk only when the user suspends the app.
