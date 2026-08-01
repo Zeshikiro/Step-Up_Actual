@@ -205,7 +205,7 @@ public class GameplayUIManager : MonoBehaviour
     {
         bool isARActive = false;
         ARManager ar = FindFirstObjectByType<ARManager>();
-        if (ar != null && ar.isARModeActive) isARActive = true;
+        if (ar != null && ar.IsARMode) isARActive = true;
         
         bool isUIOpen = (missionPanel != null && missionPanel.activeSelf) ||
                         (settingsPanel != null && settingsPanel.activeSelf) ||
