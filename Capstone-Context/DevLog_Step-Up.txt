@@ -531,3 +531,8 @@ Date: July 29, 2026
 
 6. Batched PlayerPrefs Saving (FIXED):
 - Reduced synchronous `PlayerPrefs.Save()` calls during gameplay. Added `OnApplicationPause` and `OnApplicationQuit` to `StepManager.cs` to batch-save all PlayerPrefs to disk only when the user suspends the app.
+
+--- Sprint Hotfixes ---
+- FIXED CS0111 Compile Error in `StepManager.cs`: Removed accidentally duplicated `OnApplicationPause` and `OnApplicationQuit` definitions that conflicted with existing saving logic.
+- REVERTED UI Animation code in `GameplayUIManager.cs`: Removed the custom Coroutine popup animation to prevent overriding and breaking the project's existing native UI transition logic.
+- FIXED CS1061 Compile Error in `GameplayUIManager.cs`: Corrected a typo when checking AR state (`ar.isARModeActive` -> `ar.IsARMode`).
