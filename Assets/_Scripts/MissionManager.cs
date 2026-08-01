@@ -79,10 +79,8 @@ public class MissionManager : MonoBehaviour
 
     public void GenerateMissionBoard()
     {
-        // 1. Clear old cards
-        foreach (var c in spawnedCards) Destroy(c);
-        spawnedCards.Clear();
-        cardUIs.Clear();
+        // 1. REUSE old cards instead of destroying them to save massive memory spikes!
+        // We no longer call Destroy() or Clear() here.
 
         // 2. Fetch User Data
         string bmiCat = PlayerPrefs.GetString("BMICategory", "Normal");
@@ -145,38 +143,50 @@ public class MissionManager : MonoBehaviour
     {
         if (missionCardPrefab == null || scrollContentParent == null) return;
 
-        GameObject cardObj = Instantiate(missionCardPrefab, scrollContentParent);
-        cardObj.SetActive(true); // <--- THIS FIXES THE INVISIBLE PREFAB BUG!
-        cardObj.transform.localScale = Vector3.one;
-        cardObj.transform.localPosition = new Vector3(cardObj.transform.localPosition.x, cardObj.transform.localPosition.y, 0f);
+        GameObject cardObj;
+        MissionCardUI ui;
         
-        MissionCardUI ui = new MissionCardUI();
-        
-        // Find children dynamically no matter how deep they are nested in the prefab!
-        TextMeshProUGUI[] allTexts = cardObj.GetComponentsInChildren<TextMeshProUGUI>(true);
-        foreach (var t in allTexts)
+        // REUSE existing card if it exists, otherwise instantiate a new one
+        if (missionIndex < spawnedCards.Count)
         {
-            if (t.gameObject.name == "TitleText") ui.titleText = t;
-            else if (t.gameObject.name == "DescText") ui.descText = t;
-            else if (t.transform.parent != null && t.transform.parent.name == "ClaimButton") ui.claimBtnText = t;
-            else if (t.gameObject.name == "Text (TMP)") ui.claimBtnText = t; // Fallback
+            cardObj = spawnedCards[missionIndex];
+            ui = cardUIs[missionIndex];
         }
-
-        Slider[] allSliders = cardObj.GetComponentsInChildren<Slider>(true);
-        if (allSliders.Length > 0) ui.progressBar = allSliders[0];
-
-        Button[] allButtons = cardObj.GetComponentsInChildren<Button>(true);
-        foreach (var b in allButtons)
+        else
         {
-            if (b.gameObject.name == "ClaimButton") ui.claimButton = b;
+            cardObj = Instantiate(missionCardPrefab, scrollContentParent);
+            cardObj.SetActive(true); // THIS FIXES THE INVISIBLE PREFAB BUG!
+            cardObj.transform.localScale = Vector3.one;
+            cardObj.transform.localPosition = new Vector3(cardObj.transform.localPosition.x, cardObj.transform.localPosition.y, 0f);
+            
+            ui = new MissionCardUI();
+            
+            // Find children dynamically no matter how deep they are nested in the prefab!
+            TextMeshProUGUI[] allTexts = cardObj.GetComponentsInChildren<TextMeshProUGUI>(true);
+            foreach (var t in allTexts)
+            {
+                if (t.gameObject.name == "TitleText") ui.titleText = t;
+                else if (t.gameObject.name == "DescText") ui.descText = t;
+                else if (t.transform.parent != null && t.transform.parent.name == "ClaimButton") ui.claimBtnText = t;
+                else if (t.gameObject.name == "Text (TMP)") ui.claimBtnText = t; // Fallback
+            }
+
+            Slider[] allSliders = cardObj.GetComponentsInChildren<Slider>(true);
+            if (allSliders.Length > 0) ui.progressBar = allSliders[0];
+
+            Button[] allButtons = cardObj.GetComponentsInChildren<Button>(true);
+            foreach (var b in allButtons)
+            {
+                if (b.gameObject.name == "ClaimButton") ui.claimButton = b;
+            }
+            
+            // Cache for live updates
+            spawnedCards.Add(cardObj);
+            cardUIs.Add(ui);
         }
 
         if (ui.titleText != null) ui.titleText.text = title;
         if (ui.descText != null) ui.descText.text = desc;
-        
-        // Cache for live updates
-        spawnedCards.Add(cardObj);
-        cardUIs.Add(ui);
 
         string rank = "STARTER";
         if (profileManager != null && profileManager.activityLevelText != null) rank = profileManager.activityLevelText.text.ToUpper();

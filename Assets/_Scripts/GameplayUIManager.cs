@@ -43,8 +43,8 @@ public class GameplayUIManager : MonoBehaviour
 
     void Start()
     {
-        // CRITICAL MOBILE OPTIMIZATION: Cap FPS to 30 to save massive battery and stop phone overheating!
-        Application.targetFrameRate = 30;
+        // FPS is now dynamically managed by SetOptimalFPS() instead of hardcoded to 30.
+        SetOptimalFPS();
 
         // Force all panels to turn off immediately so they don't block the map!
         HideAllPanels();
@@ -53,6 +53,9 @@ public class GameplayUIManager : MonoBehaviour
 
         // Temporarily disabled pending leader feedback so it doesn't interrupt the main game
         // StartCoroutine(TipRoutine());
+
+        // Start checking internet connection periodically, not every frame!
+        StartCoroutine(InternetCheckRoutine());
 
         // Ask for permissions using the Google Play Prominent Disclosure first!
         ProminentDisclosure.CheckAndShow();
@@ -79,15 +82,30 @@ public class GameplayUIManager : MonoBehaviour
             float cameraYRotation = Camera.main.transform.eulerAngles.y;
             compassUI.localRotation = Quaternion.Euler(0, 0, cameraYRotation);
         }
-
-        CheckInternetConnection();
     }
 
     private GameObject noInternetPanel;
 
+    private IEnumerator InternetCheckRoutine()
+    {
+        while (true)
+        {
+            CheckInternetConnection();
+            yield return new WaitForSeconds(3.0f); // Check every 3 seconds instead of 60 times a second
+        }
+    }
+
     private void CheckInternetConnection()
     {
         bool hasInternet = Application.internetReachability != NetworkReachability.NotReachable;
+        
+        // --- OFFLINE SYNC FIX: Inform StepManager if internet was just restored ---
+        if (hasInternet && noInternetPanel != null && noInternetPanel.activeSelf)
+        {
+            // We just got internet back! Trigger a cloud sync for our local steps.
+            StepManager sm = FindFirstObjectByType<StepManager>();
+            if (sm != null) sm.ForceCloudSync();
+        }
 
         if (!hasInternet && noInternetPanel == null)
         {
@@ -153,12 +171,81 @@ public class GameplayUIManager : MonoBehaviour
     }
 
     // Call these from your specific HUD buttons
-    public void OpenMissionPanel() { HideAllPanels(); if (missionPanel) missionPanel.SetActive(true); }
-    public void OpenSettingsPanel() { HideAllPanels(); if (settingsPanel) settingsPanel.SetActive(true); }
-    public void OpenLeaderboardPanel() { HideAllPanels(); if (leaderboardPanel) leaderboardPanel.SetActive(true); }
-    public void OpenProfilePanel() { HideAllPanels(); if (profilePanel) profilePanel.SetActive(true); }
-    public void OpenSummaryPanel() { HideAllPanels(); if (summaryPanel) summaryPanel.SetActive(true); }
-    public void OpenCustomizerPanel() { HideAllPanels(); if (customizerPanel) customizerPanel.SetActive(true); InventoryManager.Instance?.GenerateInventoryUI(); }
+    public void OpenMissionPanel() { TogglePanel(missionPanel); }
+    public void OpenSettingsPanel() { TogglePanel(settingsPanel); }
+    public void ToggleLeaderboard()
+    {
+        TogglePanel(leaderboardPanel);
+    }
+    
+    // Helper to run pop-up animations and manage FPS
+    private void TogglePanel(GameObject panel)
+    {
+        if (panel == null) return;
+        
+        bool willBeActive = !panel.activeSelf;
+        
+        if (willBeActive)
+        {
+            HideAllPanels(); // Close others first
+            panel.SetActive(true);
+            
+            // Pop-up animation
+            panel.transform.localScale = Vector3.one * 0.8f;
+            StartCoroutine(PopUpAnim(panel.transform));
+        }
+        else
+        {
+            panel.SetActive(false);
+        }
+        
+        SetOptimalFPS(); // Adjust FPS based on whether UI is open
+    }
+    
+    private IEnumerator PopUpAnim(Transform t)
+    {
+        float timer = 0;
+        while(timer < 0.15f)
+        {
+            timer += Time.deltaTime;
+            float progress = timer / 0.15f;
+            // Simple ease out cubic
+            float ease = 1f - Mathf.Pow(1f - progress, 3f);
+            t.localScale = Vector3.Lerp(Vector3.one * 0.8f, Vector3.one, ease);
+            yield return null;
+        }
+        t.localScale = Vector3.one;
+    }
+    
+    /// <summary>
+    /// Dynmically switches FPS to save battery when idle, but provides smooth 60fps for UI and AR
+    /// </summary>
+    public void SetOptimalFPS()
+    {
+        bool isARActive = false;
+        ARManager ar = FindFirstObjectByType<ARManager>();
+        if (ar != null && ar.isARModeActive) isARActive = true;
+        
+        bool isUIOpen = (missionPanel != null && missionPanel.activeSelf) ||
+                        (settingsPanel != null && settingsPanel.activeSelf) ||
+                        (leaderboardPanel != null && leaderboardPanel.activeSelf) ||
+                        (profilePanel != null && profilePanel.activeSelf) ||
+                        (summaryPanel != null && summaryPanel.activeSelf) ||
+                        (customizerPanel != null && customizerPanel.activeSelf);
+                        
+        if (isARActive || isUIOpen)
+        {
+            Application.targetFrameRate = 60; // Smooth for UI and Camera
+        }
+        else
+        {
+            Application.targetFrameRate = 30; // Battery saver for Mapbox
+        }
+    }
+
+    public void OpenProfilePanel() { TogglePanel(profilePanel); }
+    public void OpenSummaryPanel() { TogglePanel(summaryPanel); }
+    public void OpenCustomizerPanel() { TogglePanel(customizerPanel); InventoryManager.Instance?.GenerateInventoryUI(); }
 
     // Call this from the "Back" arrows inside your new panels
     public void CloseCurrentPanel()

@@ -490,3 +490,26 @@ Date: July 29, 2026
 - If the user missed a day (>1 day ago), their streak resets back to 1.
 - Updated `ActivitySummaryManager.cs` to dynamically pull the tracked streak from `PlayerPrefs` instead of a dead inspector variable, meaning the UI dashboard will now actively reflect their real login streak.
 
+=== August 1, 2026 ===
+
+--- Critical 5-Bug Fix Sprint ---
+
+1. AR Fallback Background (FIXED):
+- ROOT CAUSE: The `fallbackBackground` GameObject is a UI element on a Canvas (`BackgroundCanvas`). The old code reparented it to the camera with `SetParent(mainCamera.transform)`, which ripped it OUT of the Canvas hierarchy. UI elements MUST be children of a Canvas to render — so reparenting it made it invisible on every device.
+- FIX: Rewrote `ActivateFallbackBackground()` in `ARManager.cs` to enable the fallback UI IN PLACE without reparenting. The parent Canvas is now explicitly activated with `sortingOrder = -1` to render behind everything. Also removed the fragile `dynamicBgQuad` and `CreateFallbackMaterial()` system that relied on `Shader.Find()` (which returns null on stripped URP builds). The camera's `SolidColor` clear mode now acts as the guaranteed baseline fallback on ALL devices.
+- Also updated `StopAR()` to properly disable the parent Canvas when switching back to 2D map.
+
+2. Simultaneous Mission Tracking (FIXED):
+- ROOT CAUSE: Missions M2 (session steps), M3 (sessions completed), and M4 (continuous walk minutes) only updated when `EndAutoSession()` fired after 2 minutes of idle. During an active walk, only M1 (daily steps) showed progress — making it LOOK like missions were sequential.
+- FIX: Added 3 new public live-data getters to `StepManager.cs`: `GetLiveMaxSessionSteps()`, `GetLiveContinuousWalkMinutes()`, `GetLiveSessionsOver()`. These return the MAXIMUM of the finalized value and the current in-progress session value. Updated `MissionManager.cs` to use these live getters in both `GenerateMissionBoard()` and `UpdateAllProgress()`. All 10 missions now update simultaneously in real-time.
+
+3. AR Step Persistence (FIXED):
+- ROOT CAUSE: `arStepsToday` was only saved to PlayerPrefs during periodic `SaveAllProgress()` calls (every 50 steps). If the user toggled back to 2D or paused the app before the next save threshold, the AR steps were lost from memory.
+- FIX: Added immediate `PlayerPrefs.SetInt("ARStepsToday", arStepsToday)` inside `RegisterStep()` whenever an AR step is counted. AR step counts now survive mode toggles, app pauses, and app restarts.
+
+4. Map Panning (FIXED):
+- ROOT CAUSE: `EventSystem.current.IsPointerOverGameObject(touch.touchId.ReadValue())` in `MapCameraPanner` was blocking ALL touch input. The `SafeAreaPanel` and other fullscreen transparent UI elements had `raycastTarget = true`, causing every touch to register as "over UI" and aborting the pan.
+- FIX: Replaced the broad `IsPointerOverGameObject` check with a precise `ShouldBlockPanning()` method that: (a) blocks all panning when a fullscreen panel (Mission, Settings, etc.) is active, and (b) when no panel is open, only blocks if the touch hits an actual `Selectable` component (Button, Slider, Toggle, etc.). Transparent UI backgrounds no longer eat touches.
+
+5. Background Step Tracking (VERIFIED WORKING):
+- The hardware `StepCounter` continues counting while the app is backgrounded. When the app resumes, the `Update()` loop detects the gap between `lastHardwareStepCount` and the current hardware count, registering all missed steps. No code changes needed — this was already functional. The live mission getters now ensure that mission progress reflects these background steps immediately upon resume.

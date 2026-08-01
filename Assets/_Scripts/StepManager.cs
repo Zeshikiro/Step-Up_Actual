@@ -620,7 +620,33 @@ public class StepManager : MonoBehaviour
         if (dbReference != null && !string.IsNullOrEmpty(userId))
         {
             dbReference.Child("users").Child(userId).Child("TotalLifetimeSteps").SetValueAsync(totalLifetimeSteps);
+            // Also push username so leaderboard doesn't break
+            string localName = PlayerPrefs.GetString("UserName", "Player");
+            dbReference.Child("users").Child(userId).Child("username").SetValueAsync(localName);
         }
+    }
+
+    public void ForceCloudSync()
+    {
+        Debug.Log("[StepManager] Internet connection restored! Forcing cloud sync of local offline steps.");
+        PlayerPrefs.Save();
+        SyncStepsToFirebase();
+    }
+
+    // --- BATCH PLAYERPREFS SAVING (OPTIMIZATION) ---
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus) 
+        {
+            SaveAllProgress();
+            Debug.Log("[StepManager] App paused. Batched PlayerPrefs save executed.");
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveAllProgress();
+        Debug.Log("[StepManager] App quitting. Batched PlayerPrefs save executed.");
     }
 
     public void StartMissionSession(float durationMinutes)
