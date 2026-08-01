@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
 using Mapbox.Unity.Map;
 using Mapbox.Unity.Location;
 using Mapbox.Utils;
@@ -8,6 +9,7 @@ using Mapbox.Utils;
 using UnityEngine.Android;
 #endif
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class IPLocationData
@@ -438,28 +440,23 @@ public class MapCameraPanner : MonoBehaviour
     private float _lastTouchTime;
     private bool _isPanning = false;
 
+    private GameplayUIManager _cachedUIMgr;
+
     void Update()
     {
         bool hasTouch = UnityEngine.InputSystem.Touchscreen.current != null && UnityEngine.InputSystem.Touchscreen.current.touches.Count > 0;
         int touchCount = hasTouch ? UnityEngine.InputSystem.Touchscreen.current.touches.Count : 0;
         
-        bool isPointerOverUI = false;
-        
-        // Prevent panning when touching UI (like the Shop menu!)
-        if (EventSystem.current != null)
+        // Smart UI check: only block panning for REAL interactive elements, not transparent backgrounds
+        if (touchCount > 0)
         {
-            if (touchCount > 0)
-            {
-                var touch = UnityEngine.InputSystem.Touchscreen.current.touches[0];
-                if (EventSystem.current.IsPointerOverGameObject(touch.touchId.ReadValue())) isPointerOverUI = true;
-            }
-            else if (EventSystem.current.IsPointerOverGameObject()) 
-            {
-                isPointerOverUI = true;
-            }
+            var firstTouch = UnityEngine.InputSystem.Touchscreen.current.touches[0];
+            if (ShouldBlockPanning(firstTouch.position.ReadValue())) return;
         }
-        
-        if (isPointerOverUI) return;
+        else if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.isPressed)
+        {
+            if (ShouldBlockPanning(UnityEngine.InputSystem.Mouse.current.position.ReadValue())) return;
+        }
 
         // --- MOBILE TOUCH CONTROLS (NEW INPUT SYSTEM) ---
         if (touchCount == 1)
@@ -542,5 +539,45 @@ public class MapCameraPanner : MonoBehaviour
     {
         _panOffset = Vector3.zero;
         _rotationAngle = 0f;
+    }
+
+    /// <summary>
+    /// Only blocks panning when the user touches a REAL interactive UI element (Button, Slider, etc.)
+    /// or when a fullscreen panel is open. Transparent UI backgrounds no longer eat all touches.
+    /// </summary>
+    private bool ShouldBlockPanning(Vector2 screenPosition)
+    {
+        // 1. If any fullscreen panel is open, block ALL panning (can't pan behind a settings menu)
+        if (_cachedUIMgr == null) _cachedUIMgr = Object.FindFirstObjectByType<GameplayUIManager>();
+        if (_cachedUIMgr != null)
+        {
+            if ((_cachedUIMgr.missionPanel != null && _cachedUIMgr.missionPanel.activeSelf) ||
+                (_cachedUIMgr.settingsPanel != null && _cachedUIMgr.settingsPanel.activeSelf) ||
+                (_cachedUIMgr.leaderboardPanel != null && _cachedUIMgr.leaderboardPanel.activeSelf) ||
+                (_cachedUIMgr.profilePanel != null && _cachedUIMgr.profilePanel.activeSelf) ||
+                (_cachedUIMgr.summaryPanel != null && _cachedUIMgr.summaryPanel.activeSelf) ||
+                (_cachedUIMgr.customizerPanel != null && _cachedUIMgr.customizerPanel.activeSelf))
+            {
+                return true;
+            }
+        }
+
+        // 2. If no panel is open, only block for actual interactive elements (buttons, sliders)
+        if (EventSystem.current != null)
+        {
+            PointerEventData pointerData = new PointerEventData(EventSystem.current);
+            pointerData.position = screenPosition;
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, results);
+            
+            foreach (var result in results)
+            {
+                // Check if the hit object or any parent is a Selectable (Button, Slider, Toggle, Dropdown, InputField)
+                Selectable selectable = result.gameObject.GetComponentInParent<Selectable>();
+                if (selectable != null && selectable.interactable) return true;
+            }
+        }
+        
+        return false;
     }
 }

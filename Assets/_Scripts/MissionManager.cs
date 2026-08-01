@@ -101,13 +101,13 @@ public class MissionManager : MonoBehaviour
                      stepManager.currentDailySteps, p.M1_StepsToday, 0);
 
         SpawnMission("Daily Mission 2", $"Walk {p.M2_SingleSessionSteps} steps in a single walking session.", 
-                     stepManager.maxSessionStepsToday, p.M2_SingleSessionSteps, 1);
+                     stepManager.GetLiveMaxSessionSteps(), p.M2_SingleSessionSteps, 1);
 
         SpawnMission("Daily Mission 3", $"Complete {p.M3_NumSessions} walking sessions with at least {p.M3_SessionMinSteps} steps each.", 
-                     GetSessionsOver(p.M3_SessionMinSteps), p.M3_NumSessions, 2);
+                     stepManager.GetLiveSessionsOver(p.M3_SessionMinSteps), p.M3_NumSessions, 2);
 
         SpawnMission("Daily Mission 4", $"Complete a {p.M4_ContinuousWalkMins}-minute continuous walk.", 
-                     (int)stepManager.maxContinuousWalkMinutes, p.M4_ContinuousWalkMins, 3);
+                     (int)stepManager.GetLiveContinuousWalkMinutes(), p.M4_ContinuousWalkMins, 3);
 
         if (p.M5_ARSteps > 0)
             SpawnMission("Daily Mission 5", $"Complete {p.M5_ARSteps} steps while AR Walking Mode is active.", 
@@ -135,7 +135,7 @@ public class MissionManager : MonoBehaviour
 
         if (p.W3_ContinuousWalkMins > 0)
             SpawnMission("Weekly Mission 3", $"Complete one {p.W3_ContinuousWalkMins}-minute continuous walk this week.", 
-                         (int)stepManager.maxContinuousWalkMinutes, p.W3_ContinuousWalkMins, 9); // For simplicity using daily max
+                         (int)stepManager.GetLiveContinuousWalkMinutes(), p.W3_ContinuousWalkMins, 9);
         else
             SpawnMission("Weekly Mission 3", $"Complete {p.W3_ARSteps} total AR Walking Mode steps this week.", 
                          stepManager.totalWeeklyARSteps, p.W3_ARSteps, 9);
@@ -192,18 +192,18 @@ public class MissionManager : MonoBehaviour
         
         MissionParams p = GetMissionParams(bmiCat, rank);
 
-        // Map live progress data to the 10 slots
+        // Map live progress data to the 10 slots — using LIVE getters for real-time tracking!
         int[] currentProgs = new int[10] {
             stepManager.currentDailySteps,
-            stepManager.maxSessionStepsToday,
-            GetSessionsOver(p.M3_SessionMinSteps),
-            (int)stepManager.maxContinuousWalkMinutes,
+            stepManager.GetLiveMaxSessionSteps(),
+            stepManager.GetLiveSessionsOver(p.M3_SessionMinSteps),
+            (int)stepManager.GetLiveContinuousWalkMinutes(),
             p.M5_ARSteps > 0 ? stepManager.arStepsToday : stepManager.currentDailySteps,
             p.M6_BeatYesterdayBy > 0 ? stepManager.currentDailySteps : stepManager.currentDailySteps,
             stepManager.currentDailySteps,
             stepManager.currentWeeklySteps,
             stepManager.daysGoalMetThisWeek,
-            p.W3_ContinuousWalkMins > 0 ? (int)stepManager.maxContinuousWalkMinutes : stepManager.totalWeeklyARSteps
+            p.W3_ContinuousWalkMins > 0 ? (int)stepManager.GetLiveContinuousWalkMinutes() : stepManager.totalWeeklyARSteps
         };
 
         int[] targets = new int[10] {

@@ -222,114 +222,41 @@ public class ARManager : MonoBehaviour
     {
         Debug.Log("[ARManager] ActivateFallbackBackground() called.");
         
-        // 1. Force the camera to clear to a Solid Color so it's never a black void
+        // 1. Force the camera to clear to a Solid Color — this is the GUARANTEED fallback on ALL devices.
+        //    No shader lookup, no quad, no material. Just a camera clear color. Works everywhere.
         if (mainCamera != null)
         {
             mainCamera.clearFlags = CameraClearFlags.SolidColor;
-            mainCamera.backgroundColor = new Color(0.15f, 0.15f, 0.2f, 1f); // Dark blue-grey
-            Debug.Log("[ARManager] Camera clearFlags set to SolidColor.");
+            mainCamera.backgroundColor = new Color(0.12f, 0.14f, 0.22f, 1f); // Dark navy
+            Debug.Log("[ARManager] Camera clearFlags set to SolidColor with dark navy background.");
         }
 
-        // 2. Try the inspector-assigned fallback first
+        // 2. Enable the inspector-assigned fallback WITHOUT reparenting.
+        //    CRITICAL: fallbackBackground is a UI element on a Canvas (BackgroundCanvas).
+        //    Reparenting it to the camera rips it OUT of the Canvas hierarchy, making it invisible!
+        //    Instead, just enable it and let it render on its own Canvas.
         if (fallbackBackground != null)
         {
             fallbackBackground.SetActive(true);
             
-            // Reparent to camera so it follows the view
-            fallbackBackground.transform.SetParent(mainCamera.transform, false);
-            fallbackBackground.transform.localPosition = new Vector3(0, 0, 10f);
-            fallbackBackground.transform.localRotation = Quaternion.identity;
-            fallbackBackground.transform.localScale = new Vector3(50f, 50f, 1f);
-            
-            // Force a renderer material so it's NEVER invisible
-            Renderer rend = fallbackBackground.GetComponent<Renderer>();
-            if (rend != null)
+            // If it has a parent Canvas, make sure that Canvas is active too
+            Canvas parentCanvas = fallbackBackground.GetComponentInParent<Canvas>(true);
+            if (parentCanvas != null)
             {
-                if (rend.sharedMaterial == null)
-                {
-                    Material mat = CreateFallbackMaterial();
-                    if (mat != null) rend.material = mat;
-                }
-                Debug.Log("[ARManager] Fallback BG renderer: enabled=" + rend.enabled + 
-                          ", material=" + (rend.sharedMaterial != null ? rend.sharedMaterial.name : "NULL") +
-                          ", shader=" + (rend.sharedMaterial != null ? rend.sharedMaterial.shader.name : "NULL"));
-            }
-            else
-            {
-                Debug.LogWarning("[ARManager] fallbackBackground has NO Renderer component! Type: " + fallbackBackground.GetType().Name);
+                parentCanvas.gameObject.SetActive(true);
+                // Ensure the Canvas renders BEHIND everything (sort order -1)
+                parentCanvas.sortingOrder = -1;
+                Debug.Log("[ARManager] Parent Canvas '" + parentCanvas.gameObject.name + "' activated with sortOrder -1.");
             }
             
-            Debug.Log("[ARManager] Fallback background activated: " + fallbackBackground.name);
+            Debug.Log("[ARManager] Fallback background UI activated: " + fallbackBackground.name);
         }
         else
         {
-            Debug.LogWarning("[ARManager] fallbackBackground is NULL in Inspector!");
+            Debug.LogWarning("[ARManager] fallbackBackground is NULL in Inspector. Camera SolidColor will be the visual fallback.");
         }
-        
-        // 3. ALWAYS create a guaranteed backup quad in case fallbackBackground is null or invisible
-        if (dynamicBgQuad == null)
-        {
-            dynamicBgQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            dynamicBgQuad.name = "DynamicFallbackBG";
-            
-            // Remove the collider so it doesn't block raycasts
-            Collider col = dynamicBgQuad.GetComponent<Collider>();
-            if (col != null) Destroy(col);
-            
-            // Attach to camera at a REASONABLE distance (not farClipPlane which could be 1000+)
-            float bgDistance = 10f;
-            dynamicBgQuad.transform.SetParent(mainCamera.transform, false);
-            dynamicBgQuad.transform.localPosition = new Vector3(0, 0, bgDistance);
-            dynamicBgQuad.transform.localRotation = Quaternion.identity;
-            
-            // Scale to fill the entire camera frustum at that distance
-            float frustumHeight = 2.0f * bgDistance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
-            float frustumWidth = frustumHeight * mainCamera.aspect;
-            dynamicBgQuad.transform.localScale = new Vector3(frustumWidth * 1.5f, frustumHeight * 1.5f, 1f);
-            
-            // Create a visible material (URP-safe)
-            Renderer quadRend = dynamicBgQuad.GetComponent<Renderer>();
-            Material bgMat = CreateFallbackMaterial();
-            if (bgMat != null)
-            {
-                quadRend.material = bgMat;
-            }
-            
-            Debug.Log("[ARManager] Dynamic BG Quad created. Scale: " + dynamicBgQuad.transform.localScale + 
-                       ", Distance: " + bgDistance + ", Material: " + (quadRend.sharedMaterial != null ? quadRend.sharedMaterial.shader.name : "NONE"));
-        }
-        dynamicBgQuad.SetActive(true);
         
         Debug.Log("[ARManager] Fallback mode fully active.");
-    }
-    
-    /// <summary>
-    /// Creates a fallback material that works on BOTH Built-in RP and URP.
-    /// Shader.Find("Unlit/Color") returns NULL on URP builds!
-    /// </summary>
-    private Material CreateFallbackMaterial()
-    {
-        Color bgColor = new Color(0.12f, 0.14f, 0.22f, 1f); // Dark navy
-        
-        // Try URP unlit shader first (most likely on this project)
-        Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
-        if (shader == null) shader = Shader.Find("Unlit/Color");
-        if (shader == null) shader = Shader.Find("UI/Default");
-        if (shader == null) shader = Shader.Find("Sprites/Default");
-        
-        if (shader != null)
-        {
-            Material mat = new Material(shader);
-            mat.color = bgColor;
-            // URP uses _BaseColor instead of _Color
-            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", bgColor);
-            if (mat.HasProperty("_Color")) mat.SetColor("_Color", bgColor);
-            Debug.Log("[ARManager] Created fallback material with shader: " + shader.name);
-            return mat;
-        }
-        
-        Debug.LogError("[ARManager] CRITICAL: Could not find ANY shader for fallback material!");
-        return null;
     }
 
     private void StopAR()
@@ -350,7 +277,13 @@ public class ARManager : MonoBehaviour
             arCameraManager.enabled = false;
         }
         
-        if (fallbackBackground != null) fallbackBackground.SetActive(false);
+        if (fallbackBackground != null)
+        {
+            fallbackBackground.SetActive(false);
+            // Also disable the parent Canvas so it doesn't overlay the 2D map
+            Canvas parentCanvas = fallbackBackground.GetComponentInParent<Canvas>(true);
+            if (parentCanvas != null) parentCanvas.gameObject.SetActive(false);
+        }
         if (dynamicBgQuad != null) dynamicBgQuad.SetActive(false);
 
         if (mapRoot != null) mapRoot.SetActive(true);

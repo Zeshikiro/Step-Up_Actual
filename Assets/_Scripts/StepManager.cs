@@ -434,6 +434,46 @@ public class StepManager : MonoBehaviour
         autoSessionSteps = 0;
     }
 
+    // ========== LIVE SESSION GETTERS (for real-time mission tracking) ==========
+    
+    /// <summary>
+    /// Returns the max session steps INCLUDING the current in-progress auto-session.
+    /// Allows MissionManager to show live M2 progress instead of waiting for session end.
+    /// </summary>
+    public int GetLiveMaxSessionSteps()
+    {
+        if (inAutoSession)
+            return Mathf.Max(maxSessionStepsToday, autoSessionSteps);
+        return maxSessionStepsToday;
+    }
+
+    /// <summary>
+    /// Returns the max continuous walk minutes INCLUDING the current in-progress session.
+    /// Allows MissionManager to show live M4 progress.
+    /// </summary>
+    public float GetLiveContinuousWalkMinutes()
+    {
+        if (inAutoSession)
+        {
+            float currentSessionMins = (float)(System.DateTime.Now - autoSessionStartTime).TotalMinutes;
+            return Mathf.Max(maxContinuousWalkMinutes, currentSessionMins);
+        }
+        return maxContinuousWalkMinutes;
+    }
+
+    /// <summary>
+    /// Returns completed sessions over targetSteps, INCLUDING the current session if it qualifies.
+    /// Allows MissionManager to show live M3 progress.
+    /// </summary>
+    public int GetLiveSessionsOver(int targetSteps)
+    {
+        int count = 0;
+        foreach (int s in completedSessionsToday) if (s >= targetSteps) count++;
+        // Also count the current in-progress session if it already exceeds the target
+        if (inAutoSession && autoSessionSteps >= targetSteps) count++;
+        return count;
+    }
+
     void OnApplicationPause(bool isPaused)
     {
         if (isPaused)
@@ -519,6 +559,9 @@ public class StepManager : MonoBehaviour
         {
             arStepsToday++;
             totalWeeklyARSteps++;
+            // Save immediately so AR steps survive mode toggles and app pauses
+            PlayerPrefs.SetInt("ARStepsToday", arStepsToday);
+            PlayerPrefs.SetInt("WeeklyARSteps", totalWeeklyARSteps);
         }
 
         if (isSessionActive)

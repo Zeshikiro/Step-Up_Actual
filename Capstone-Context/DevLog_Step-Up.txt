@@ -482,3 +482,11 @@ Date: July 29, 2026
 - Created a `CreateFallbackMaterial()` helper that tries shaders in priority order: `Universal Render Pipeline/Unlit` → `Unlit/Color` → `UI/Default` → `Sprites/Default`.
 - Also fixed a scaling issue: the dynamic quad was placed at `farClipPlane * 0.9` (potentially Z=900), making it invisible due to floating-point precision. Now uses a fixed distance of Z=10.
 - Added extensive diagnostic logging to trace fallback activation on-device.
+
+3. Login Streak Implementation:
+- Implemented the highly requested "consecutive login streak" mechanic in `StepManager.cs` `PerformDateRolloverCheck()`.
+- Calculates exact days passed since `LastLoginDate` using `DateTime` math rather than raw string comparison.
+- If the user logged in exactly yesterday (1 day ago), their streak increments by +1. 
+- If the user missed a day (>1 day ago), their streak resets back to 1.
+- Updated `ActivitySummaryManager.cs` to dynamically pull the tracked streak from `PlayerPrefs` instead of a dead inspector variable, meaning the UI dashboard will now actively reflect their real login streak.
+
