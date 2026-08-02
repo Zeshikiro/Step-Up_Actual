@@ -442,6 +442,17 @@ public class MapCameraPanner : MonoBehaviour
 
     private GameplayUIManager _cachedUIMgr;
 
+    void Start()
+    {
+        // 🚨 CRITICAL FIX: Destroy Mapbox's default camera panning script so it doesn't fight our swipe controls!
+        var mapboxCam = GetComponent("QuadTreeCameraMovement");
+        if (mapboxCam != null)
+        {
+            Destroy(mapboxCam);
+            Debug.Log("[MapCameraPanner] Destroyed default Mapbox QuadTreeCameraMovement script.");
+        }
+    }
+
     void Update()
     {
         bool hasTouch = UnityEngine.InputSystem.Touchscreen.current != null && UnityEngine.InputSystem.Touchscreen.current.touches.Count > 0;

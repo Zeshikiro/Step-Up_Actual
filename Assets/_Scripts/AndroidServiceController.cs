@@ -52,6 +52,37 @@ public class AndroidServiceController : MonoBehaviour
 #endif
     }
 
+    public static int GetAndClearBackgroundSteps()
+    {
+        int backgroundSteps = 0;
+#if UNITY_ANDROID && !UNITY_EDITOR
+        try
+        {
+            using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            {
+                AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                if (activity != null)
+                {
+                    AndroidJavaObject prefs = activity.Call<AndroidJavaObject>("getSharedPreferences", "StepUpPrefs", 0);
+                    backgroundSteps = prefs.Call<int>("getInt", "BackgroundSteps", 0);
+                    
+                    if (backgroundSteps > 0)
+                    {
+                        AndroidJavaObject editor = prefs.Call<AndroidJavaObject>("edit");
+                        editor.Call<AndroidJavaObject>("putInt", "BackgroundSteps", 0);
+                        editor.Call("apply");
+                    }
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Failed to get background steps: " + e.Message);
+        }
+#endif
+        return backgroundSteps;
+    }
+
     private static int GetAndroidSDKVersion()
     {
         try

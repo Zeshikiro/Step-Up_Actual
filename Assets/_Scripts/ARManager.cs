@@ -28,7 +28,7 @@ public class ARManager : MonoBehaviour
     public Sprite icon2D;
     
     [Header("--- AR Settings ---")]
-    public bool forceFallbackMode = true; // Bypass ARCore entirely on phones without AR!
+    public bool forceFallbackMode = false; // Bypass ARCore entirely on phones without AR!
     public Vector3 avatarARPosition = new Vector3(0, -1.5f, 5f); 
     
     [Header("--- Fallback UI ---")]

@@ -101,6 +101,12 @@ public class StepForegroundService extends Service implements SensorEventListene
             int stepsTakenSinceStart = hardwareSteps - initialSteps;
             int displaySteps = currentSteps + stepsTakenSinceStart;
             
+            // Save the background steps to SharedPreferences so Unity can retrieve them on boot!
+            android.content.SharedPreferences prefs = getSharedPreferences("StepUpPrefs", Context.MODE_PRIVATE);
+            android.content.SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt("BackgroundSteps", stepsTakenSinceStart);
+            editor.apply();
+            
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (manager != null) {
                 manager.notify(NOTIFICATION_ID, getNotification("Step-Up is tracking!", "You have taken " + displaySteps + " steps today. Keep going!"));

@@ -137,6 +137,32 @@ public class MissionManager : MonoBehaviour
         else
             SpawnMission("Weekly Mission 3", $"Complete {p.W3_ARSteps} total AR Walking Mode steps this week.", 
                          stepManager.totalWeeklyARSteps, p.W3_ARSteps, 9);
+                         
+        // Default to showing daily missions
+        ShowDailyMissions();
+    }
+    
+    // UI Tab Methods (Link these to your Daily and Weekly buttons in the Inspector)
+    public void ShowDailyMissions()
+    {
+        for (int i = 0; i < spawnedCards.Count; i++)
+        {
+            if (spawnedCards[i] != null)
+            {
+                spawnedCards[i].SetActive(i < 7); // Daily missions are indexes 0 to 6
+            }
+        }
+    }
+
+    public void ShowWeeklyMissions()
+    {
+        for (int i = 0; i < spawnedCards.Count; i++)
+        {
+            if (spawnedCards[i] != null)
+            {
+                spawnedCards[i].SetActive(i >= 7); // Weekly missions are indexes 7 to 9
+            }
+        }
     }
 
     private void SpawnMission(string title, string desc, int currentProgress, int target, int missionIndex)

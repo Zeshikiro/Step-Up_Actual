@@ -35,6 +35,8 @@ public class StepManager : MonoBehaviour
     private int autoSessionSteps = 0;
     private System.DateTime autoSessionStartTime = System.DateTime.Now;
     private bool inAutoSession = false;
+    
+    private System.DateTime _pauseTime;
 
     [Header("Hardware Pedometer")]
     private int baselineHardwareSteps = -1;
@@ -101,6 +103,19 @@ public class StepManager : MonoBehaviour
         });
 
         PerformDateRolloverCheck();
+        
+        // --- BACKGROUND TRACKING FIX ---
+        // Retrieve steps from the Java foreground service (if the app was fully killed)
+        int backgroundSteps = AndroidServiceController.GetAndClearBackgroundSteps();
+        if (backgroundSteps > 0)
+        {
+            currentDailySteps += backgroundSteps;
+            totalLifetimeSteps += backgroundSteps;
+            Debug.Log("[StepManager] Recovered " + backgroundSteps + " steps from background service!");
+        }
+        
+        // Ensure the foreground service is active
+        AndroidServiceController.StartForegroundService(currentDailySteps);
 
         // Render the correct initial value on screen immediately
         UpdateStepUI();
@@ -478,6 +493,9 @@ public class StepManager : MonoBehaviour
     {
         if (isPaused)
         {
+            _pauseTime = System.DateTime.Now;
+            AndroidServiceController.StartForegroundService(currentDailySteps);
+            
             // We no longer call EndAutoSession here! This allows the session to continue while backgrounded!
 #if UNITY_ANDROID
             SendStepNotification();
@@ -487,6 +505,24 @@ public class StepManager : MonoBehaviour
         }
         else
         {
+            // Retrieve background steps while paused
+            int bgSteps = AndroidServiceController.GetAndClearBackgroundSteps();
+            if (bgSteps > 0)
+            {
+                currentDailySteps += bgSteps;
+                totalLifetimeSteps += bgSteps;
+            }
+            
+            // Adapt the session start times so they don't count the time we spent paused in the background
+            if (_pauseTime != default)
+            {
+                System.TimeSpan elapsed = System.DateTime.Now - _pauseTime;
+                if (inAutoSession) autoSessionStartTime = autoSessionStartTime.Add(elapsed);
+                if (isSessionActive) sessionStartTime = sessionStartTime.Add(elapsed);
+            }
+            
+            AndroidServiceController.StartForegroundService(currentDailySteps);
+
 #if UNITY_ANDROID
             AndroidNotificationCenter.CancelNotification(777); 
             AndroidNotificationCenter.CancelScheduledNotification(888); // Cancel short-term reminder
@@ -499,6 +535,7 @@ public class StepManager : MonoBehaviour
     void OnApplicationQuit()
     {
         EndAutoSession();
+        AndroidServiceController.StartForegroundService(currentDailySteps);
         SaveAllProgress();
 #if UNITY_ANDROID
         AndroidNotificationCenter.CancelAllNotifications();
