@@ -536,3 +536,34 @@ Date: July 29, 2026
 - FIXED CS0111 Compile Error in `StepManager.cs`: Removed accidentally duplicated `OnApplicationPause` and `OnApplicationQuit` definitions that conflicted with existing saving logic.
 - REVERTED UI Animation code in `GameplayUIManager.cs`: Removed the custom Coroutine popup animation to prevent overriding and breaking the project's existing native UI transition logic.
 - FIXED CS1061 Compile Error in `GameplayUIManager.cs`: Corrected a typo when checking AR state (`ar.isARModeActive` -> `ar.IsARMode`).
+
+--- Bug Fixes & Refinements (Current Session) ---
+
+1. Accelerometer Strict Mode (FIXED):
+- ROOT CAUSE: Shaking the phone while sitting registered as steps.
+- FIX: Increased accelerometer `stepThreshold` from 1.25f to 1.8f. Added a GPS enforcement lock: `if (_currentSpeedMPS < 0.2f) return;`. The user must physically move space for accelerometer steps to count.
+
+2. Android 13+ Crashing (FIXED):
+- ROOT CAUSE: Android 13 instantly crashes apps that start pedometer Foreground Services without explicit user permission.
+- FIX: Injected Unity `Permission.RequestUserPermission` for `ACTIVITY_RECOGNITION` and `POST_NOTIFICATIONS` on startup.
+
+3. Map Panning Math (FIXED):
+- ROOT CAUSE: The swipe panning logic was incorrectly moving the 3D Avatar (which is instantly snapped back by GPS updates), resulting in no apparent map movement.
+- FIX: Applied the `_panOffset` directly to `Camera.main.transform.localPosition` in `MapAvatarTracker.cs`.
+
+4. Offline UI Overlay (FIXED):
+- ROOT CAUSE: The "No Internet" screen was a `ScreenSpaceOverlay` blocking raycasts, rendering the app unusable without internet.
+- FIX: Changed it to a sleek top-banner with `raycastTarget = false`, allowing full interaction with offline Profile and Mission menus.
+
+5. AR Mode Trail Glitch (FIXED):
+- ROOT CAUSE: The Map's `TrailRenderer` was staying active when switching out of the Map, stretching an orange plane across the AR camera view.
+- FIX: Disabled the `TrailRenderer.emitting` explicitly when entering AR/UI view.
+
+6. Avatar Animator Parameters (FIXED):
+- ROOT CAUSE: `AvatarAnimatorSync.cs` cached parameters for the very first Animator it found (sometimes UI elements) and stopped checking.
+- FIX: Refactored caching to scan all dynamically loaded mesh Animators continuously until `IsWalking` and `Speed` parameters are successfully mapped.
+
+7. QOL Updates:
+- Removed duplicate local push notification (ID 777).
+- Removed 7-day cooldown constraint on username editing.
+- Implemented `PopulateDummyData()` in `LeaderboardManager.cs` to dynamically inject realistic presentation data.
