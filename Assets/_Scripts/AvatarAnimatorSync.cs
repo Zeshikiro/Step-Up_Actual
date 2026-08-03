@@ -78,8 +78,9 @@ public class AvatarAnimatorSync : MonoBehaviour
             if (stepManager == null) return;
         }
 
-        // Grab ALL active animators every frame (AvatarLoader swaps meshes dynamically)
-        Animator[] allAnimators = GetComponentsInChildren<Animator>(false);
+        // AR avatars might be completely separate GameObjects in the scene hierarchy!
+        // FindObjectsByType guarantees we find the AR avatar's Animator even if it's not a child of this script.
+        Animator[] allAnimators = Object.FindObjectsByType<Animator>(FindObjectsSortMode.None);
         if (allAnimators.Length == 0) return;
 
         // 1. Check for Pedometer Steps
@@ -109,6 +110,10 @@ public class AvatarAnimatorSync : MonoBehaviour
         {
             if (anim == null || !anim.isActiveAndEnabled) continue;
             if (anim.runtimeAnimatorController == null) continue;
+            
+            // STRICT FILTER: Only sync parameters to the actual 3D Avatar!
+            // This prevents us from spamming UI animators with "IsWalking" errors
+            if (!anim.runtimeAnimatorController.name.Contains("AvatarBrain") && !anim.name.Contains("Avatar")) continue;
 
             // Re-cache if we haven't found the parameters yet! (Crucial for dynamically loaded avatars)
             if (!_hasIsWalkingParam || !_hasSpeedParam)

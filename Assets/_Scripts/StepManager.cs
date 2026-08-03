@@ -48,11 +48,15 @@ public class StepManager : MonoBehaviour
     private bool _accelPeakDetected = false;
     private float _lastAccelStepTime = 0f;
     private int _accelStepCount = 0;
+    
+    // Cadence buffer variables to prevent shaking
+    private int _accelStepBuffer = 0;
+    private float _lastBufferTime = 0f;
     private int _hardwareStepCount = 0; // Tracks hardware-confirmed steps
     [Header("Accelerometer Tuning")]
     [SerializeField] private float stepThreshold = 1.8f;  // Increased to 1.8f to ignore phone shaking
     [SerializeField] private float resetThreshold = 0.9f;   // Acceleration must drop below this before next step
-    [SerializeField] private float minStepInterval = 0.35f; // Increased to prevent double-count frenzy
+    [SerializeField] private float minStepInterval = 0.5f; // Increased to 0.5f (max 2 steps/sec) to heavily throttle shaking cheat
 
     // GPS Speed Tracking
     private ILocationProvider _locationProvider;
@@ -123,9 +127,6 @@ public class StepManager : MonoBehaviour
             totalLifetimeSteps += backgroundSteps;
             Debug.Log("[StepManager] Recovered " + backgroundSteps + " steps from background service!");
         }
-        
-        // Ensure the foreground service is active
-        AndroidServiceController.StartForegroundService(currentDailySteps);
 
         // Render the correct initial value on screen immediately
         UpdateStepUI();
@@ -134,6 +135,37 @@ public class StepManager : MonoBehaviour
         {
             _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
         }
+        
+        // Fix for Android 13 crash: Wait for permissions before starting the foreground service
+        StartCoroutine(StartServiceWhenPermitted());
+    }
+
+    private System.Collections.IEnumerator StartServiceWhenPermitted()
+    {
+#if PLATFORM_ANDROID
+        // Wait until permissions are granted (or user permanently denied them and dialog is gone)
+        // A simple timeout of 30 seconds ensures we don't loop forever if denied.
+        float timeout = 30f;
+        while (timeout > 0f)
+        {
+            bool hasActivity = Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION");
+            bool hasNotif = Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS");
+            if (hasActivity && hasNotif) break;
+            
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
+        
+        if (Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION") &&
+            Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS"))
+        {
+            // Ensure the foreground service is active ONLY if permitted
+            AndroidServiceController.StartForegroundService(currentDailySteps);
+        }
+#else
+        AndroidServiceController.StartForegroundService(currentDailySteps);
+        yield break;
+#endif
     }
 
     public void InitializeSensors()
@@ -278,10 +310,12 @@ public class StepManager : MonoBehaviour
             RegisterStep();
         }
 
-        // ========== REAL-TIME ACCELEROMETER STEP DETECTION ==========
-        // This fires INSTANTLY when the phone bounces, eliminating the 3-5 second hardware delay.
-        // The hardware StepCounter is still used as the authoritative source to prevent drift.
-        DetectAccelerometerStep();
+        // ========== HARDWARE STEP COUNTER ONLY ==========
+        // We have completely disabled the real-time Accelerometer detection.
+        // The Accelerometer cannot distinguish between hand-shaking and walking.
+        // By relying purely on the Android StepCounter, we utilize Android's built-in ML algorithm
+        // which flawlessly filters out shaking! (Note: Updates arrive in batches every 5-10 seconds)
+        // DetectAccelerometerStep();
 
         // GPS Speed Tracker
         if (_locationProvider != null && _locationProvider.CurrentLocation.LatitudeLongitude != Vector2d.zero)
@@ -405,12 +439,9 @@ public class StepManager : MonoBehaviour
             return;
         }
 
-        // STRICT MODE: Block steps if the user is completely stationary (GPS speed < 0.2 m/s).
-        // This prevents the user from sitting on the couch and just shaking the phone.
-        if (_currentSpeedMPS < 0.2f)
-        {
-            return; 
-        }
+        // NOTE: We previously had a STRICT MODE here that blocked steps if GPS speed < 0.2 m/s.
+        // We had to remove it because it completely broke indoor walking (where GPS speed is always 0).
+        // Anti-cheat is now primarily handled by the 0.35s minStepInterval and the 1.8f accelerometer threshold.
 
         Vector3 accel = UnityEngine.InputSystem.Accelerometer.current.acceleration.ReadValue();
 

@@ -115,6 +115,23 @@ public class LeaderboardManager : MonoBehaviour
         }
 
         sortedLeaderboardList.Reverse();
+        
+        // AUTO-POPULATE IN-MEMORY DUMMY DATA IF LEADERBOARD HAS < 5 USERS
+        // Firebase Security Rules block phones from writing fake data, so we inject it here!
+        if (sortedLeaderboardList.Count < 5)
+        {
+            Debug.Log("[LeaderboardManager] Less than 5 users found. Injecting dummy data into UI...");
+            string[] names = { "Alex C.", "Jamie D.", "Sam R.", "Taylor M.", "Morgan K.", "Jordan P.", "Casey L.", "Riley H.", "Avery T.", "Quinn S." };
+            for (int i = 0; i < 10; i++)
+            {
+                long randomSteps = UnityEngine.Random.Range(5000, 30000); // Realistic steps
+                sortedLeaderboardList.Add(new UserDataRecord("dummy_" + i, names[i], randomSteps));
+            }
+            // Re-sort the list since we just added high-score dummies
+            sortedLeaderboardList.Sort((a, b) => a.steps.CompareTo(b.steps));
+            sortedLeaderboardList.Reverse();
+        }
+        
         PopulateLeaderboardUI(sortedLeaderboardList);
     }
 

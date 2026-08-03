@@ -49,6 +49,7 @@ public class ARManager : MonoBehaviour
     private Transform originalAvatarParent;
     private Vector3 originalAvatarScale;
     private Vector3 originalAvatarLocalPos;
+    private bool _hasCachedOriginalState = false;
     
     private GameObject dynamicBgQuad;
     
@@ -138,9 +139,13 @@ public class ARManager : MonoBehaviour
 
         if (customAvatar != null)
         {
-            originalAvatarParent = customAvatar.transform.parent;
-            originalAvatarScale = customAvatar.transform.localScale;
-            originalAvatarLocalPos = customAvatar.transform.localPosition;
+            if (!_hasCachedOriginalState)
+            {
+                originalAvatarParent = customAvatar.transform.parent;
+                originalAvatarScale = customAvatar.transform.localScale;
+                originalAvatarLocalPos = customAvatar.transform.localPosition;
+                _hasCachedOriginalState = true;
+            }
 
             customAvatar.SetActive(true);
             
@@ -150,7 +155,13 @@ public class ARManager : MonoBehaviour
 
             customAvatar.transform.SetParent(mainCamera.transform, false);
             customAvatar.transform.localPosition = avatarARPosition;
-            // Removed: customAvatar.transform.localScale = Vector3.one; so the prefab keeps its original size!
+            // SAFETY FALLBACK: Guarantee it maintains its exact original scale in case it shrunk
+            customAvatar.transform.localScale = originalAvatarScale;
+            customAvatar.transform.localRotation = Quaternion.identity;
+            
+            // ENSURE it is completely active and on the Default layer so the camera sees it
+            customAvatar.SetActive(true);
+            customAvatar.layer = 0; 
         }
         UpdateAvatarRotation();
 
@@ -236,32 +247,17 @@ public class ARManager : MonoBehaviour
             Debug.Log("[ARManager] Camera clearFlags set to SolidColor with dark navy background.");
         }
 
-        // 2. Enable the inspector-assigned fallback WITHOUT reparenting.
-        //    CRITICAL: fallbackBackground is a UI element on a Canvas (BackgroundCanvas).
-        //    Reparenting it to the camera rips it OUT of the Canvas hierarchy, making it invisible!
-        //    Instead, just enable it and let it render on its own Canvas.
+        // 2. DISABLE the user's inspector-assigned fallback!
+        // The user assigned a 3D Plane/Quad which is physically slicing through the avatar 
+        // or engulfing the camera depending on rotation/scale.
+        // By disabling it, we rely purely on the SolidColor background above, which is flawless.
         if (fallbackBackground != null)
         {
-            fallbackBackground.SetActive(true);
-            
-            // If it has a parent Canvas, make sure that Canvas is active too
-            Canvas parentCanvas = fallbackBackground.GetComponentInParent<Canvas>(true);
-            if (parentCanvas != null)
-            {
-                parentCanvas.gameObject.SetActive(true);
-                // Ensure the Canvas renders BEHIND everything (sort order -1)
-                parentCanvas.sortingOrder = -1;
-                Debug.Log("[ARManager] Parent Canvas '" + parentCanvas.gameObject.name + "' activated with sortOrder -1.");
-            }
-            
-            Debug.Log("[ARManager] Fallback background UI activated: " + fallbackBackground.name);
-        }
-        else
-        {
-            Debug.LogWarning("[ARManager] fallbackBackground is NULL in Inspector. Camera SolidColor will be the visual fallback.");
+            fallbackBackground.SetActive(false);
+            Debug.Log("[ARManager] User's 3D fallbackBackground disabled to prevent avatar slicing.");
         }
         
-        Debug.Log("[ARManager] Fallback mode fully active.");
+        Debug.Log("[ARManager] Fallback mode fully active (SolidColor only).");
     }
 
     private void StopAR()

@@ -455,13 +455,28 @@ public class MapCameraPanner : MonoBehaviour
 
     void Update()
     {
-        bool hasTouch = UnityEngine.InputSystem.Touchscreen.current != null && UnityEngine.InputSystem.Touchscreen.current.touches.Count > 0;
-        int touchCount = hasTouch ? UnityEngine.InputSystem.Touchscreen.current.touches.Count : 0;
+        // 1. Gather ACTIVE touches (New Input System Touchscreen.touches is a fixed array, we must filter by phase!)
+        List<UnityEngine.InputSystem.Controls.TouchControl> activeTouches = new List<UnityEngine.InputSystem.Controls.TouchControl>();
+        if (UnityEngine.InputSystem.Touchscreen.current != null)
+        {
+            foreach (var t in UnityEngine.InputSystem.Touchscreen.current.touches)
+            {
+                var phase = t.phase.ReadValue();
+                if (phase == UnityEngine.InputSystem.TouchPhase.Began || 
+                    phase == UnityEngine.InputSystem.TouchPhase.Moved || 
+                    phase == UnityEngine.InputSystem.TouchPhase.Stationary)
+                {
+                    activeTouches.Add(t);
+                }
+            }
+        }
+        
+        int touchCount = activeTouches.Count;
         
         // Smart UI check: only block panning for REAL interactive elements, not transparent backgrounds
         if (touchCount > 0)
         {
-            var firstTouch = UnityEngine.InputSystem.Touchscreen.current.touches[0];
+            var firstTouch = activeTouches[0];
             if (ShouldBlockPanning(firstTouch.position.ReadValue())) return;
         }
         else if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.isPressed)
@@ -473,7 +488,7 @@ public class MapCameraPanner : MonoBehaviour
         if (touchCount == 1)
         {
             // 1 Finger: Pan the Map
-            var touch = UnityEngine.InputSystem.Touchscreen.current.touches[0];
+            var touch = activeTouches[0];
             if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Moved)
             {
                 Vector2 delta = touch.delta.ReadValue();
@@ -489,9 +504,9 @@ public class MapCameraPanner : MonoBehaviour
         }
         else if (touchCount == 2)
         {
-            // 2 Fingers: Twist to Rotate
-            var t1 = UnityEngine.InputSystem.Touchscreen.current.touches[0];
-            var t2 = UnityEngine.InputSystem.Touchscreen.current.touches[1];
+            // 2 Fingers: Twist to Rotate & Pinch to Zoom
+            var t1 = activeTouches[0];
+            var t2 = activeTouches[1];
 
             if (t1.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Moved || t2.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Moved)
             {
