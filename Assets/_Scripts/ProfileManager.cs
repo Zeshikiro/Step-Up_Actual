@@ -161,20 +161,8 @@ public class ProfileManager : MonoBehaviour
             string cleanName = userNameInput.text;
             if (cleanName.Length > 10) cleanName = cleanName.Substring(0, 10);
 
-            // Cooldown check (7 days)
-            TimeSpan timeSinceLastChange = DateTime.UtcNow - lastUsernameChange;
-            if (timeSinceLastChange.TotalDays < 7 && lastUsernameChange != DateTime.MinValue && cleanName != PlayerPrefs.GetString("UserName", ""))
-            {
-                int daysLeft = 7 - (int)timeSinceLastChange.TotalDays;
-                if (daysLeft < 1) daysLeft = 1;
-                editButtonText.text = $"Wait {daysLeft} Days!";
-                userNameInput.text = PlayerPrefs.GetString("UserName", "Player 1"); // Revert
-                isEditing = false;
-                UpdateEditModeUI();
-                return;
-            }
-
-            editButtonText.text = "EDIT MY PROFILE";
+            // Cooldown check (7 days) REMOVED so users can edit anytime
+            // (Previously blocked if changed within 7 days)            editButtonText.text = "EDIT MY PROFILE";
             
             PlayerPrefs.SetString("UserName", cleanName);
             PlayerPrefs.Save();

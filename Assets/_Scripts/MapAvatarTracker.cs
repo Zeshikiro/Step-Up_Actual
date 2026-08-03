@@ -511,7 +511,7 @@ public class MapCameraPanner : MonoBehaviour
             }
         }
         // --- PC MOUSE FALLBACK FOR TESTING ---
-        else if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.isPressed && touchCount == 0)
+        if (touchCount == 0 && UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.isPressed)
         {
             Vector2 mouseDelta = UnityEngine.InputSystem.Mouse.current.delta.ReadValue();
             if (Mathf.Abs(mouseDelta.x) > 0.01f || Mathf.Abs(mouseDelta.y) > 0.01f)
@@ -533,16 +533,24 @@ public class MapCameraPanner : MonoBehaviour
             _isPanning = false;
         }
 
-        // Apply Panning Position (Removed auto-snap so you can explore infinitely!)
-        Vector3 localPos = transform.localPosition;
-        
-        // Smoothly lerp towards the pan offset for a buttery smooth feel
-        localPos.x = Mathf.Lerp(localPos.x, _panOffset.x, Time.deltaTime * snapSpeed);
-        localPos.z = Mathf.Lerp(localPos.z, _panOffset.z, Time.deltaTime * snapSpeed);
-        transform.localPosition = localPos;
+        // Apply Panning Position to the Main Camera (so the avatar/map pin stays at GPS position!)
+        if (Camera.main != null)
+        {
+            Vector3 camPos = Camera.main.transform.localPosition;
+            
+            // Smoothly lerp towards the pan offset for a buttery smooth feel
+            camPos.x = Mathf.Lerp(camPos.x, _panOffset.x, Time.deltaTime * snapSpeed);
+            camPos.z = Mathf.Lerp(camPos.z, _panOffset.z, Time.deltaTime * snapSpeed);
+            
+            Camera.main.transform.localPosition = camPos;
+        }
 
         // Apply Camera Rotation
-        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, _rotationAngle, transform.localEulerAngles.z);
+        if (Camera.main != null)
+        {
+            // Optional: You can rotate the camera here if you want it to spin based on swiping
+            // Camera.main.transform.localRotation = Quaternion.Euler(60, _rotationAngle, 0); 
+        }
     }
 
     // Call this from a UI Button to instantly snap back to the player!

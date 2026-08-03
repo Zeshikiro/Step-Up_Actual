@@ -50,9 +50,9 @@ public class StepManager : MonoBehaviour
     private int _accelStepCount = 0;
     private int _hardwareStepCount = 0; // Tracks hardware-confirmed steps
     [Header("Accelerometer Tuning")]
-    [SerializeField] private float stepThreshold = 1.25f;  // Peak acceleration to count as a step
+    [SerializeField] private float stepThreshold = 1.8f;  // Increased to 1.8f to ignore phone shaking
     [SerializeField] private float resetThreshold = 0.9f;   // Acceleration must drop below this before next step
-    [SerializeField] private float minStepInterval = 0.25f; // Minimum seconds between steps (prevents double-count)
+    [SerializeField] private float minStepInterval = 0.35f; // Increased to prevent double-count frenzy
 
     // GPS Speed Tracking
     private ILocationProvider _locationProvider;
@@ -78,6 +78,16 @@ public class StepManager : MonoBehaviour
     void Start()
     {
 #if UNITY_ANDROID
+        // Request runtime permissions required for Android 13+
+        if (!Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
+        {
+            Permission.RequestUserPermission("android.permission.ACTIVITY_RECOGNITION");
+        }
+        if (!Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS"))
+        {
+            Permission.RequestUserPermission("android.permission.POST_NOTIFICATIONS");
+        }
+        
         AndroidNotificationCenter.CancelAllNotifications();
         AndroidNotificationCenter.CancelScheduledNotification(888); // Cancel short-term reminder
         AndroidNotificationCenter.CancelScheduledNotification(999); // Cancel long-term reminder
@@ -395,6 +405,13 @@ public class StepManager : MonoBehaviour
             return;
         }
 
+        // STRICT MODE: Block steps if the user is completely stationary (GPS speed < 0.2 m/s).
+        // This prevents the user from sitting on the couch and just shaking the phone.
+        if (_currentSpeedMPS < 0.2f)
+        {
+            return; 
+        }
+
         Vector3 accel = UnityEngine.InputSystem.Accelerometer.current.acceleration.ReadValue();
 
         float magnitude = accel.magnitude;
@@ -524,7 +541,7 @@ public class StepManager : MonoBehaviour
             AndroidServiceController.StartForegroundService(currentDailySteps);
 
 #if UNITY_ANDROID
-            AndroidNotificationCenter.CancelNotification(777); 
+            // Cancel background reminders if we open the app
             AndroidNotificationCenter.CancelScheduledNotification(888); // Cancel short-term reminder
             AndroidNotificationCenter.CancelScheduledNotification(999); // Cancel long-term reminder
 #endif
@@ -560,8 +577,8 @@ public class StepManager : MonoBehaviour
         notification.Text = $"You have taken {currentDailySteps} steps today. Keep going!";
         notification.FireTime = System.DateTime.Now;
         notification.SmallIcon = "icon"; 
-
-        AndroidNotificationCenter.SendNotificationWithExplicitID(notification, "step_tracker_background", 777);
+        // Unity Local Push Notification (Duplicate) removed to prevent double-notifying.
+        // The Java StepForegroundService handles the persistent step notification now.
     }
 
     private void ScheduleReminders()

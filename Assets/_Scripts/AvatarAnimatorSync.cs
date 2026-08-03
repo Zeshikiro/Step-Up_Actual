@@ -110,8 +110,8 @@ public class AvatarAnimatorSync : MonoBehaviour
             if (anim == null || !anim.isActiveAndEnabled) continue;
             if (anim.runtimeAnimatorController == null) continue;
 
-            // Cache parameter existence on first valid animator we find
-            if (!_paramsCached)
+            // Re-cache if we haven't found the parameters yet! (Crucial for dynamically loaded avatars)
+            if (!_hasIsWalkingParam || !_hasSpeedParam)
             {
                 CacheParameterExistence(anim);
             }
@@ -132,20 +132,26 @@ public class AvatarAnimatorSync : MonoBehaviour
 
     private void CacheParameterExistence(Animator anim)
     {
+        // Add fallback parameter names just in case the user named them differently
+        int fallbackWalkingHash1 = Animator.StringToHash("Walk");
+        int fallbackWalkingHash2 = Animator.StringToHash("Walking");
+        int fallbackWalkingHash3 = Animator.StringToHash("isWalking");
+        int fallbackSpeedHash1 = Animator.StringToHash("Blend");
+
         foreach (var p in anim.parameters)
         {
-            if (p.nameHash == _speedHash && p.type == AnimatorControllerParameterType.Float)
+            if ((p.nameHash == _speedHash || p.nameHash == fallbackSpeedHash1) && p.type == AnimatorControllerParameterType.Float)
+            {
                 _hasSpeedParam = true;
-            if (p.nameHash == _isWalkingHash && p.type == AnimatorControllerParameterType.Bool)
+                _speedHash = p.nameHash; // Update to the actual working hash
+            }
+            if ((p.nameHash == _isWalkingHash || p.nameHash == fallbackWalkingHash1 || p.nameHash == fallbackWalkingHash2 || p.nameHash == fallbackWalkingHash3) && p.type == AnimatorControllerParameterType.Bool)
+            {
                 _hasIsWalkingParam = true;
+                _isWalkingHash = p.nameHash; // Update to the actual working hash
+            }
         }
-        _paramsCached = true;
-
-        if (!_hasIsWalkingParam)
-            Debug.LogWarning($"[AvatarAnimatorSync] Animator '{anim.name}' does NOT have '{isWalkingParameter}' bool parameter!");
-        if (!_hasSpeedParam)
-            Debug.LogWarning($"[AvatarAnimatorSync] Animator '{anim.name}' does NOT have '{speedParameter}' float parameter!");
         
-        Debug.Log($"[AvatarAnimatorSync] Cached params on '{anim.name}': HasSpeed={_hasSpeedParam}, HasIsWalking={_hasIsWalkingParam}");
+        Debug.Log($"[AvatarAnimatorSync] Scanning '{anim.name}': HasSpeed={_hasSpeedParam}, HasIsWalking={_hasIsWalkingParam}");
     }
 }

@@ -195,6 +195,24 @@ public class LeaderboardManager : MonoBehaviour
             currentUserRankText.text = "50+";
         }
     }
+
+    [ContextMenu("Populate 10 Dummy Leaderboard Users")]
+    public void PopulateDummyData()
+    {
+        string[] names = { "Alex C.", "Jamie D.", "Sam R.", "Taylor M.", "Morgan K.", "Jordan P.", "Casey L.", "Riley H.", "Avery T.", "Quinn S." };
+        DatabaseReference usersRef = FirebaseDatabase.DefaultInstance.RootReference.Child("users");
+        
+        for (int i = 0; i < 10; i++)
+        {
+            string dummyId = "dummy_user_" + i;
+            long randomSteps = UnityEngine.Random.Range(5000, 30000); // Realistic steps
+            
+            usersRef.Child(dummyId).Child("username").SetValueAsync(names[i]);
+            usersRef.Child(dummyId).Child("TotalLifetimeSteps").SetValueAsync(randomSteps);
+        }
+        
+        Debug.Log("Successfully pushed 10 dummy users to Firebase!");
+    }
 } 
 
 public class UserDataRecord

@@ -109,30 +109,34 @@ public class GameplayUIManager : MonoBehaviour
 
         if (!hasInternet && noInternetPanel == null)
         {
-            // Dynamically create the No Internet UI so the user doesn't have to build it in the editor
+            // Dynamically create a NON-BLOCKING No Internet banner
             noInternetPanel = new GameObject("NoInternetPanel");
             Canvas canvas = noInternetPanel.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 9998; // Just below the Disclosure UI
+            canvas.sortingOrder = 9998; // High order to be visible, but we will disable raycasts so you can still click GUIs!
             noInternetPanel.AddComponent<UnityEngine.UI.CanvasScaler>().uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
 
             GameObject bg = new GameObject("Background");
             bg.transform.SetParent(noInternetPanel.transform, false);
             UnityEngine.UI.Image img = bg.AddComponent<UnityEngine.UI.Image>();
-            img.color = new Color(0.2f, 0.2f, 0.2f, 1f); // Solid Grey
+            img.color = new Color(0.1f, 0.1f, 0.1f, 0.8f); // Semi-transparent dark grey
+            img.raycastTarget = false; // CRITICAL: Allows clicks to pass through to the GUI!
+            
             RectTransform bgRect = bg.GetComponent<RectTransform>();
-            bgRect.anchorMin = Vector2.zero;
-            bgRect.anchorMax = Vector2.one;
+            bgRect.anchorMin = new Vector2(0, 0.85f); // Top 15% of the screen
+            bgRect.anchorMax = new Vector2(1, 1);
             bgRect.sizeDelta = Vector2.zero;
 
             GameObject textObj = new GameObject("Text");
             textObj.transform.SetParent(bg.transform, false);
             TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
-            text.text = "Needs internet to load the map...";
-            text.fontSize = 50;
-            text.color = Color.white;
+            text.text = "OFFLINE MODE\nMap unavailable, but steps & missions still work!";
+            text.fontSize = 35;
+            text.color = new Color(1f, 0.4f, 0.4f); // Reddish warning color
             text.alignment = TextAlignmentOptions.Center;
             text.fontStyle = FontStyles.Bold;
+            text.raycastTarget = false; // Allows clicks to pass through
+            
             RectTransform textRect = textObj.GetComponent<RectTransform>();
             textRect.anchorMin = Vector2.zero;
             textRect.anchorMax = Vector2.one;

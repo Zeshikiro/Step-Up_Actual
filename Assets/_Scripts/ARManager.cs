@@ -143,6 +143,11 @@ public class ARManager : MonoBehaviour
             originalAvatarLocalPos = customAvatar.transform.localPosition;
 
             customAvatar.SetActive(true);
+            
+            // Turn off the trail renderer so it doesn't streak across the screen in AR/UI!
+            TrailRenderer tr = customAvatar.GetComponent<TrailRenderer>();
+            if (tr != null) tr.emitting = false;
+
             customAvatar.transform.SetParent(mainCamera.transform, false);
             customAvatar.transform.localPosition = avatarARPosition;
             // Removed: customAvatar.transform.localScale = Vector3.one; so the prefab keeps its original size!
@@ -298,6 +303,10 @@ public class ARManager : MonoBehaviour
             customAvatar.transform.localPosition = originalAvatarLocalPos;
             customAvatar.SetActive(false);
             customAvatar.transform.rotation = Quaternion.identity;
+            
+            // Turn trail renderer back on for map mode!
+            TrailRenderer tr = customAvatar.GetComponent<TrailRenderer>();
+            if (tr != null) tr.emitting = true;
         }
 
         if (mapGPSNode != null) mainCamera.transform.SetParent(mapGPSNode);
