@@ -144,6 +144,9 @@ public class LeaderboardManager : MonoBehaviour
         if (firstPlacePanel != null) firstPlacePanel.SetActive(false);
         if (secondPlacePanel != null) secondPlacePanel.SetActive(false);
         if (thirdPlacePanel != null) thirdPlacePanel.SetActive(false);
+        
+        Color highlightColor = new Color(0.2f, 1f, 0.2f); // Bright Green
+        Color normalColor = Color.white;
 
         for (int i = 0; i < list.Count; i++)
         {
@@ -154,6 +157,7 @@ public class LeaderboardManager : MonoBehaviour
             {
                 if (firstPlacePanel != null) firstPlacePanel.SetActive(true);
                 firstPlaceName.text = record.username;
+                firstPlaceName.color = (record.uid == localUserUid) ? highlightColor : normalColor;
                 if (firstPlaceSteps.TryGetComponent(out UINumberCounter counter)) counter.CountTo((int)record.steps, 1f);
                 else firstPlaceSteps.text = record.steps.ToString("N0");
             }
@@ -161,6 +165,7 @@ public class LeaderboardManager : MonoBehaviour
             {
                 if (secondPlacePanel != null) secondPlacePanel.SetActive(true);
                 secondPlaceName.text = record.username;
+                secondPlaceName.color = (record.uid == localUserUid) ? highlightColor : normalColor;
                 if (secondPlaceSteps.TryGetComponent(out UINumberCounter counter)) counter.CountTo((int)record.steps, 1f);
                 else secondPlaceSteps.text = record.steps.ToString("N0");
             }
@@ -168,6 +173,7 @@ public class LeaderboardManager : MonoBehaviour
             {
                 if (thirdPlacePanel != null) thirdPlacePanel.SetActive(true);
                 thirdPlaceName.text = record.username;
+                thirdPlaceName.color = (record.uid == localUserUid) ? highlightColor : normalColor;
                 if (thirdPlaceSteps.TryGetComponent(out UINumberCounter counter)) counter.CountTo((int)record.steps, 1f);
                 else thirdPlaceSteps.text = record.steps.ToString("N0");
             }
@@ -190,7 +196,10 @@ public class LeaderboardManager : MonoBehaviour
                         rankText.text = "#" + currentRankPosition;
 
                     if (nameObj != null && nameObj.TryGetComponent(out TMP_Text nameText))
+                    {
                         nameText.text = record.username;
+                        nameText.color = (record.uid == localUserUid) ? highlightColor : normalColor;
+                    }
 
                     if (stepsObj != null && stepsObj.TryGetComponent(out TMP_Text stepsText))
                     {

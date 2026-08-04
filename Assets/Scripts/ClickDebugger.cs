@@ -6,9 +6,10 @@ public class ClickDebugger : MonoBehaviour
 {
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) // Left click or Spacebar
+        // Use New Input System safely
+        if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
         {
-            PointerEventData pointerData = new PointerEventData(EventSystem.current) { position = Input.mousePosition };
+            PointerEventData pointerData = new PointerEventData(EventSystem.current) { position = UnityEngine.InputSystem.Mouse.current.position.ReadValue() };
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
             

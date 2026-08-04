@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class AvatarAnimatorSync : MonoBehaviour
 {
@@ -22,14 +23,13 @@ public class AvatarAnimatorSync : MonoBehaviour
     // Track the MapAvatarTracker parent for position-based movement detection
     private Transform _trackerTransform;
 
-    // Parameter hash caching for safety
+    // Cached parameters
     private int _speedHash;
     private int _isWalkingHash;
 
-    // Cached parameter existence flags (avoids scanning every frame)
-    private bool _hasSpeedParam = false;
-    private bool _hasIsWalkingParam = false;
-    private bool _paramsCached = false;
+    // Track which animators actually belong to avatars!
+    private List<Animator> _validAnimators = new List<Animator>();
+    private float _lastScanTime = 0f;
 
     void Start()
     {
@@ -78,17 +78,18 @@ public class AvatarAnimatorSync : MonoBehaviour
             if (stepManager == null) return;
         }
 
-        // AR avatars might be completely separate GameObjects in the scene hierarchy!
-        // FindObjectsByType guarantees we find the AR avatar's Animator even if it's not a child of this script.
-        Animator[] allAnimators = Object.FindObjectsByType<Animator>(FindObjectsSortMode.None);
-        if (allAnimators.Length == 0) return;
+        // Scan for new animators every 2 seconds in case an avatar was spawned dynamically
+        if (Time.time - _lastScanTime > 2.0f)
+        {
+            _lastScanTime = Time.time;
+            ScanForValidAnimators();
+        }
 
         // 1. Check for Pedometer Steps
         if (stepManager.currentDailySteps > _lastStepCount)
         {
             _lastStepCount = stepManager.currentDailySteps;
             _lastStepTime = Time.time;
-            Debug.Log($"[AvatarAnimatorSync] Step detected! Count: {_lastStepCount}");
         }
 
         // 2. Check for Physical GPS Sliding on the TRACKER transform (not this object!)
@@ -106,57 +107,62 @@ public class AvatarAnimatorSync : MonoBehaviour
 
         bool shouldWalk = isStepping || isSliding;
 
-        foreach (var anim in allAnimators)
+        foreach (var anim in _validAnimators)
         {
             if (anim == null || !anim.isActiveAndEnabled) continue;
-            if (anim.runtimeAnimatorController == null) continue;
             
-            // STRICT FILTER: Only sync parameters to the actual 3D Avatar!
-            // This prevents us from spamming UI animators with "IsWalking" errors
-            if (!anim.runtimeAnimatorController.name.Contains("AvatarBrain") && !anim.name.Contains("Avatar")) continue;
-
-            // Re-cache if we haven't found the parameters yet! (Crucial for dynamically loaded avatars)
-            if (!_hasIsWalkingParam || !_hasSpeedParam)
-            {
-                CacheParameterExistence(anim);
-            }
-
             if (shouldWalk)
             {
                 float targetSpeed = (stepManager.CurrentSpeedMPS > 2.5f) ? 2.0f : 1.0f;
-                if (_hasIsWalkingParam) anim.SetBool(_isWalkingHash, true);
-                if (_hasSpeedParam) anim.SetFloat(_speedHash, targetSpeed);
+                anim.SetBool(_isWalkingHash, true);
+                anim.SetFloat(_speedHash, targetSpeed);
             }
             else
             {
-                if (_hasIsWalkingParam) anim.SetBool(_isWalkingHash, false);
-                if (_hasSpeedParam) anim.SetFloat(_speedHash, 0f);
+                anim.SetBool(_isWalkingHash, false);
+                anim.SetFloat(_speedHash, 0f);
             }
         }
     }
 
-    private void CacheParameterExistence(Animator anim)
+    private void ScanForValidAnimators()
     {
-        // Add fallback parameter names just in case the user named them differently
+        _validAnimators.Clear();
+        Animator[] allAnimators = Object.FindObjectsByType<Animator>(FindObjectsSortMode.None);
+        
+        // Setup fallback hashes just in case
         int fallbackWalkingHash1 = Animator.StringToHash("Walk");
         int fallbackWalkingHash2 = Animator.StringToHash("Walking");
         int fallbackWalkingHash3 = Animator.StringToHash("isWalking");
         int fallbackSpeedHash1 = Animator.StringToHash("Blend");
 
-        foreach (var p in anim.parameters)
+        foreach (var anim in allAnimators)
         {
-            if ((p.nameHash == _speedHash || p.nameHash == fallbackSpeedHash1) && p.type == AnimatorControllerParameterType.Float)
+            if (anim == null || anim.runtimeAnimatorController == null) continue;
+            
+            bool hasWalk = false;
+            bool hasSpeed = false;
+
+            foreach (var p in anim.parameters)
             {
-                _hasSpeedParam = true;
-                _speedHash = p.nameHash; // Update to the actual working hash
+                if ((p.nameHash == _isWalkingHash || p.nameHash == fallbackWalkingHash1 || p.nameHash == fallbackWalkingHash2 || p.nameHash == fallbackWalkingHash3) && p.type == AnimatorControllerParameterType.Bool)
+                {
+                    hasWalk = true;
+                    _isWalkingHash = p.nameHash;
+                }
+                if ((p.nameHash == _speedHash || p.nameHash == fallbackSpeedHash1) && p.type == AnimatorControllerParameterType.Float)
+                {
+                    hasSpeed = true;
+                    _speedHash = p.nameHash;
+                }
             }
-            if ((p.nameHash == _isWalkingHash || p.nameHash == fallbackWalkingHash1 || p.nameHash == fallbackWalkingHash2 || p.nameHash == fallbackWalkingHash3) && p.type == AnimatorControllerParameterType.Bool)
+
+            // Only store animators that actually have AT LEAST ONE of the required parameters!
+            if (hasWalk || hasSpeed)
             {
-                _hasIsWalkingParam = true;
-                _isWalkingHash = p.nameHash; // Update to the actual working hash
+                _validAnimators.Add(anim);
+                Debug.Log($"[AvatarAnimatorSync] Valid Avatar Animator found: '{anim.name}' (HasWalk={hasWalk}, HasSpeed={hasSpeed})");
             }
         }
-        
-        Debug.Log($"[AvatarAnimatorSync] Scanning '{anim.name}': HasSpeed={_hasSpeedParam}, HasIsWalking={_hasIsWalkingParam}");
     }
 }

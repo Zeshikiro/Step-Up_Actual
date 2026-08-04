@@ -239,7 +239,6 @@ public class ARManager : MonoBehaviour
         Debug.Log("[ARManager] ActivateFallbackBackground() called.");
         
         // 1. Force the camera to clear to a Solid Color — this is the GUARANTEED fallback on ALL devices.
-        //    No shader lookup, no quad, no material. Just a camera clear color. Works everywhere.
         if (mainCamera != null)
         {
             mainCamera.clearFlags = CameraClearFlags.SolidColor;
@@ -247,17 +246,78 @@ public class ARManager : MonoBehaviour
             Debug.Log("[ARManager] Camera clearFlags set to SolidColor with dark navy background.");
         }
 
-        // 2. DISABLE the user's inspector-assigned fallback!
-        // The user assigned a 3D Plane/Quad which is physically slicing through the avatar 
-        // or engulfing the camera depending on rotation/scale.
-        // By disabling it, we rely purely on the SolidColor background above, which is flawless.
+        // 2. DYNAMIC UI FALLBACK BACKGROUND
+        // Instead of rotating 3D planes (which causes slicing/depth bugs), we will extract the image
+        // from the user's 3D fallback object and render it flawlessly on a 2D UI Canvas!
         if (fallbackBackground != null)
         {
-            fallbackBackground.SetActive(false);
-            Debug.Log("[ARManager] User's 3D fallbackBackground disabled to prevent avatar slicing.");
+            fallbackBackground.SetActive(false); // Hide the original 3D object to prevent bugs
+            
+            Texture fallbackTexture = null;
+            
+            // 1. Try to grab the texture from a 3D mesh
+            MeshRenderer mr = fallbackBackground.GetComponent<MeshRenderer>();
+            if (mr != null && mr.sharedMaterial != null) fallbackTexture = mr.sharedMaterial.mainTexture;
+            
+            // 2. Try to grab the texture from a UI RawImage
+            if (fallbackTexture == null)
+            {
+                UnityEngine.UI.RawImage rawImg = fallbackBackground.GetComponent<UnityEngine.UI.RawImage>();
+                if (rawImg != null) fallbackTexture = rawImg.texture;
+            }
+
+            // 3. Try to grab the texture from a UI Image
+            if (fallbackTexture == null)
+            {
+                UnityEngine.UI.Image img = fallbackBackground.GetComponent<UnityEngine.UI.Image>();
+                if (img != null && img.sprite != null) fallbackTexture = img.sprite.texture;
+            }
+
+            // 4. Try to grab the texture from a 2D SpriteRenderer
+            if (fallbackTexture == null)
+            {
+                SpriteRenderer sr = fallbackBackground.GetComponent<SpriteRenderer>();
+                if (sr != null && sr.sprite != null) fallbackTexture = sr.sprite.texture;
+            }
+            
+            // If we found a texture anywhere, create a UI Canvas to display it perfectly!
+            if (fallbackTexture != null)
+            {
+                // Create Canvas
+                GameObject canvasObj = new GameObject("DynamicFallbackCanvas");
+                Canvas canvas = canvasObj.AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                canvas.worldCamera = mainCamera;
+                canvas.planeDistance = 50f; // Render far behind the avatar (avatar is at Z=5)
+                canvas.sortingOrder = -100;
+                
+                canvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
+                
+                // Create RawImage
+                GameObject imageObj = new GameObject("FallbackImage");
+                imageObj.transform.SetParent(canvasObj.transform, false);
+                UnityEngine.UI.RawImage rawImage = imageObj.AddComponent<UnityEngine.UI.RawImage>();
+                rawImage.texture = fallbackTexture;
+                
+                // Stretch to fill screen perfectly
+                RectTransform rt = imageObj.GetComponent<RectTransform>();
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.offsetMin = Vector2.zero;
+                rt.offsetMax = Vector2.zero;
+                
+                // Track it so we can destroy it when AR closes
+                dynamicBgQuad = canvasObj;
+                
+                Debug.Log("[ARManager] Dynamic UI Fallback created successfully using texture: " + fallbackTexture.name);
+            }
+            else
+            {
+                Debug.LogWarning("[ARManager] The assigned fallbackBackground has no Texture! Falling back to SolidColor.");
+            }
         }
         
-        Debug.Log("[ARManager] Fallback mode fully active (SolidColor only).");
+        Debug.Log("[ARManager] Fallback mode fully active.");
     }
 
     private void StopAR()

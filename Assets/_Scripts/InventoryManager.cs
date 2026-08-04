@@ -103,6 +103,9 @@ public class InventoryManager : MonoBehaviour
     private void Start()
     {
         // Safely wait for Firebase to be ready before loading the cloud save
+        // NEW: Load the avatar instantly from local storage before waiting for Firebase!
+        LoadAvatarLocal();
+
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
             if (task.Result == DependencyStatus.Available)
             {
@@ -113,6 +116,16 @@ public class InventoryManager : MonoBehaviour
 
     public void SaveAvatarToCloud()
     {
+        // 1. Save locally for instant offline loading
+        PlayerPrefs.SetInt("isMaleAvatar", isMaleAvatar ? 1 : 0);
+        PlayerPrefs.SetString("equippedHeadId", equippedHeadId);
+        PlayerPrefs.SetString("equippedBodyId", equippedBodyId);
+        PlayerPrefs.SetString("equippedLegsId", equippedLegsId);
+        PlayerPrefs.SetString("equippedFeetId", equippedFeetId);
+        PlayerPrefs.SetString("equippedAccessoryId", equippedAccessoryId);
+        PlayerPrefs.Save();
+
+        // 2. Save to Firebase
         FirebaseAuth auth = FirebaseAuth.DefaultInstance;
         if (auth == null || auth.CurrentUser == null) return;
 
@@ -132,6 +145,22 @@ public class InventoryManager : MonoBehaviour
         dbRef.Child("users").Child(uid).Child("avatar").SetValueAsync(avatarData).ContinueWithOnMainThread(task => {
             if (task.IsCompleted) Debug.Log("Avatar cloud save successful!");
         });
+    }
+
+    public void LoadAvatarLocal()
+    {
+        if (PlayerPrefs.HasKey("isMaleAvatar"))
+        {
+            isMaleAvatar = PlayerPrefs.GetInt("isMaleAvatar") == 1;
+            equippedHeadId = PlayerPrefs.GetString("equippedHeadId", "MCasual2_Head");
+            equippedBodyId = PlayerPrefs.GetString("equippedBodyId", "MCasual2_Body");
+            equippedLegsId = PlayerPrefs.GetString("equippedLegsId", "MCasual2_Legs");
+            equippedFeetId = PlayerPrefs.GetString("equippedFeetId", "MCasual2_Feet");
+            equippedAccessoryId = PlayerPrefs.GetString("equippedAccessoryId", "None");
+            
+            Debug.Log("[InventoryManager] Avatar loaded locally from PlayerPrefs instantly!");
+            OnAvatarEquipmentsChanged?.Invoke();
+        }
     }
 
     public void LoadAvatarFromCloud()

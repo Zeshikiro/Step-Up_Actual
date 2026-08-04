@@ -456,17 +456,30 @@ public class StepManager : MonoBehaviour
         {
             _accelPeakDetected = false;
 
-            // Enforce minimum interval to prevent vibration/jitter double-counting
+            // Enforce minimum interval to prevent vibration/jitter double-counting (0.5s = max 2 steps/sec)
             if (Time.time - _lastAccelStepTime > minStepInterval)
             {
                 _lastAccelStepTime = Time.time;
-                _accelStepCount++;
-
-                // Only register if accelerometer is AHEAD of hardware counter
-                // This means the hardware hasn't caught up yet, so we give instant feedback
-                if (_accelStepCount > _hardwareStepCount)
+                _accelStepBuffer++;
+                
+                // If they haven't stepped for 2.0 seconds, reset buffer (they stopped walking/shaking)
+                if (Time.time - _lastBufferTime > 2.0f && _accelStepBuffer < 4)
                 {
-                    RegisterStep();
+                    _accelStepBuffer = 1; // start new buffer
+                }
+                _lastBufferTime = Time.time;
+
+                // Once they reach 4 continuous rhythmic steps, commit them!
+                if (_accelStepBuffer >= 4)
+                {
+                    // If buffer exactly hits 4, commit the past 3 steps we held back
+                    int stepsToCommit = (_accelStepBuffer == 4) ? 4 : 1;
+                    _accelStepCount += stepsToCommit;
+                    
+                    if (_accelStepCount > _hardwareStepCount)
+                    {
+                        for (int i=0; i<stepsToCommit; i++) RegisterStep();
+                    }
                 }
             }
         }
