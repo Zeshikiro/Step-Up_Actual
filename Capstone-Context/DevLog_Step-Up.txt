@@ -12,3 +12,5 @@
 - **Dynamic Fallback Background:** Wrote an extractor script in ARManager.cs to dynamically rip the fallback texture from any component type (MeshRenderer, Image, RawImage, SpriteRenderer) and project it onto a 2D UI Canvas. This completely eliminates the 3D plane clipping/slicing bug.
 - **Local State Persistence:** Configured InventoryManager.cs to save all equipped items to PlayerPrefs, allowing the avatar's custom clothing to load instantly on startup, bypassing the Firebase initialization delay.
 - **Crash Fix:** Updated ClickDebugger.cs to utilize the New Input System to resolve InvalidOperationException crashes on startup.
+
+- **Crash Fix (InventoryManager):** Fixed a critical MissingReferenceException tied to destroyed RectTransforms. The InventoryManager was holding onto 'ghost' UI buttons after returning from the Customize scene. Added a spawnedButtons.RemoveAll(b => b == null); pass to purge destroyed references before refreshing UI labels, completely eliminating the crash when equipping items.

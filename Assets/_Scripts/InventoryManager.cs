@@ -462,9 +462,12 @@ public class InventoryManager : MonoBehaviour
     // 🎨 NEW PLAY: Smart text state refresher loop
     public void RefreshButtonLabels()
     {
+        // CRITICAL FIX: Clean out any lingering destroyed buttons from previous scene visits!
+        spawnedButtons.RemoveAll(b => b == null);
+
         foreach (InventoryItemButton button in spawnedButtons)
         {
-            if (button == null || button.txtEquipStatus == null) continue;
+            if (button.txtEquipStatus == null) continue;
 
             // Delegate UI updates to the button itself so it handles BUY vs EQUIP logic!
             button.RefreshVisibility();
