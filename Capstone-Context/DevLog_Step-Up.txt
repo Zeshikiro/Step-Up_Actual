@@ -582,3 +582,11 @@ Date: July 29, 2026
 - **Local State Persistence:** Configured InventoryManager.cs to save all equipped items to PlayerPrefs, allowing the avatar's custom clothing to load instantly on startup, bypassing the Firebase initialization delay.
 - **Crash Fix:** Updated ClickDebugger.cs to utilize the New Input System to resolve InvalidOperationException crashes on startup.
 - **Crash Fix (InventoryManager):** Fixed a critical MissingReferenceException tied to destroyed RectTransforms. The InventoryManager was holding onto 'ghost' UI buttons after returning from the Customize scene. Added a spawnedButtons.RemoveAll(b => b == null); pass to purge destroyed references before refreshing UI labels, completely eliminating the crash when equipping items.
+
+Date: 2026-08-05
+Tasks Completed:
+- Fixed AR Manager Fallback logic to prevent Gym background flashing during XRCore initialization.
+- Removed debug 'cheat code' in ProfileManager that was resetting TotalLifetimeSteps to 0 and wiping user XP.
+- Overhauled MissionManager and StepManager to securely sync MissionXPEarned and MissionClaimed data directly to Firebase.
+- Implemented a cloud-restore mechanism in StepManager to download and recover Lifetime Steps and XP from Firebase if local PlayerPrefs are wiped during APK updates.
+- Configured Unity Editor setup for 2D Sprite Fallback Background and Animator Controller (IsWalking parameter) for the 3D Avatar.

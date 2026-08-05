@@ -57,12 +57,6 @@ public class ProfileManager : MonoBehaviour
 
     public void RefreshProfileUI()
     {
-        // --- CHEAT CODE: RESET BACK TO 0 ---
-        // (Delete these two lines after you hit Play once!)
-        PlayerPrefs.SetInt("TotalLifetimeSteps", 0);
-        PlayerPrefs.Save();
-        // ----------------------------------------------
-
         // 1. Load Step Tracker and Reward Core Values
         string currentName = PlayerPrefs.GetString("UserName", "Player 1"); 
         int totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);

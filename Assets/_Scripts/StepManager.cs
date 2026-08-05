@@ -112,6 +112,46 @@ public class StepManager : MonoBehaviour
                 {
                     userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
                     dbReference = FirebaseDatabase.DefaultInstance.RootReference;
+                    
+                    // CRITICAL FIX: Restore local data from Firebase if app was updated/reinstalled!
+                    dbReference.Child("users").Child(userId).GetValueAsync().ContinueWithOnMainThread(dbTask => {
+                        if (dbTask.IsCompleted && dbTask.Result.Exists)
+                        {
+                            var snap = dbTask.Result;
+                            int cloudLifetime = 0;
+                            int cloudXP = 0;
+                            
+                            if (snap.Child("TotalLifetimeSteps").Value != null) int.TryParse(snap.Child("TotalLifetimeSteps").Value.ToString(), out cloudLifetime);
+                            if (snap.Child("MissionXPEarned").Value != null) int.TryParse(snap.Child("MissionXPEarned").Value.ToString(), out cloudXP);
+                            
+                            // If cloud has more steps than local, trust the cloud! (Protects against reinstalls)
+                            if (cloudLifetime > totalLifetimeSteps)
+                            {
+                                totalLifetimeSteps = cloudLifetime;
+                                PlayerPrefs.SetInt("TotalLifetimeSteps", totalLifetimeSteps);
+                            }
+                            
+                            // Restore XP
+                            if (cloudXP > PlayerPrefs.GetInt("MissionXPEarned", 0))
+                            {
+                                PlayerPrefs.SetInt("MissionXPEarned", cloudXP);
+                            }
+                            
+                            // Restore Mission Claims
+                            for (int i = 0; i < 10; i++)
+                            {
+                                if (snap.Child("MissionClaimed_" + i).Value != null)
+                                {
+                                    int claimed = 0;
+                                    int.TryParse(snap.Child("MissionClaimed_" + i).Value.ToString(), out claimed);
+                                    if (claimed == 1) PlayerPrefs.SetInt("MissionClaimed_" + i, 1);
+                                }
+                            }
+                            
+                            PlayerPrefs.Save();
+                            UpdateStepUI();
+                        }
+                    });
                 }
             }
         });

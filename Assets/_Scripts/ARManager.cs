@@ -101,7 +101,12 @@ public class ARManager : MonoBehaviour
 
     private IEnumerator StartARCoroutine()
     {
-        if (fallbackBackground != null) fallbackBackground.SetActive(true);
+        // Give a clean dark navy loading screen while we check permissions and ARCore
+        if (mainCamera != null)
+        {
+            mainCamera.clearFlags = CameraClearFlags.SolidColor;
+            mainCamera.backgroundColor = new Color(0.12f, 0.14f, 0.22f, 1f);
+        }
 
 #if PLATFORM_ANDROID
         if (!Permission.HasUserAuthorizedPermission(Permission.Camera))

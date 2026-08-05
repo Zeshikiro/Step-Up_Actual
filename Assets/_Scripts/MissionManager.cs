@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+using Firebase.Database;
+using Firebase.Auth;
 
 [System.Serializable]
 public class MissionCardUI
@@ -314,6 +316,15 @@ public class MissionManager : MonoBehaviour
         int currentXP = PlayerPrefs.GetInt("MissionXPEarned", 0);
         PlayerPrefs.SetInt("MissionXPEarned", currentXP + xpReward);
         PlayerPrefs.Save();
+        
+        // --- NEW: Sync Mission Progress to Firebase Cloud ---
+        FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+        if (auth != null && auth.CurrentUser != null)
+        {
+            DatabaseReference dbRef = FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(auth.CurrentUser.UserId);
+            dbRef.Child("MissionXPEarned").SetValueAsync(currentXP + xpReward);
+            dbRef.Child("MissionClaimed_" + index).SetValueAsync(1);
+        }
         
         // ECONOMY: Give the player coins equal to the XP reward!
         if (InventoryManager.Instance != null)
