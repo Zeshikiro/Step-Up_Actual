@@ -179,11 +179,9 @@ public class AvatarCustomizer : MonoBehaviour
     {
         if (InventoryManager.Instance != null)
         {
-            // The Male/Female button is now strictly a Shop UI Filter!
-            // It does NOT change the physical character on the screen.
-            InventoryManager.Instance.isMaleAvatar = isMale;
+            // Legacy toggle removed. All items are shown dynamically based on unlocked status.
             
-            // Regenerate the Shop UI dynamically so it shows the selected wardrobe!
+            // Regenerate the Shop UI dynamically
             InventoryManager.Instance.GenerateInventoryUI();
         }
     }

@@ -88,6 +88,12 @@ public class BMIManager : MonoBehaviour
                 dbRef.Child("users").Child(userId).Child("bmi").SetValueAsync(bmi);
                 dbRef.Child("users").Child(userId).Child("bmiCategory").SetValueAsync(category);
                 dbRef.Child("users").Child(userId).Child("stepGoal").SetValueAsync(stepGoal);
+                
+                // BACKUP raw demographic data to cloud
+                dbRef.Child("users").Child(userId).Child("SavedAge").SetValueAsync(ageInput.text);
+                dbRef.Child("users").Child(userId).Child("SavedHeight").SetValueAsync(heightInput.text);
+                dbRef.Child("users").Child(userId).Child("SavedWeight").SetValueAsync(weightInput.text);
+                dbRef.Child("users").Child(userId).Child("BMI_Setup_Complete").SetValueAsync(1);
             }
             
             // Display results in a summarized format to fit the box
@@ -121,6 +127,10 @@ public class BMIManager : MonoBehaviour
         {
             string userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
             PlayerPrefs.SetInt("OnboardingComplete_" + userId, 1); 
+            
+            // Push to Firebase
+            DatabaseReference dbRef = FirebaseDatabase.DefaultInstance.RootReference;
+            dbRef.Child("users").Child(userId).Child("OnboardingComplete").SetValueAsync(1);
         }
         PlayerPrefs.Save();
         

@@ -590,3 +590,11 @@ Tasks Completed:
 - Overhauled MissionManager and StepManager to securely sync MissionXPEarned and MissionClaimed data directly to Firebase.
 - Implemented a cloud-restore mechanism in StepManager to download and recover Lifetime Steps and XP from Firebase if local PlayerPrefs are wiped during APK updates.
 - Configured Unity Editor setup for 2D Sprite Fallback Background and Animator Controller (IsWalking parameter) for the 3D Avatar.
+
+Date: 2026-08-06
+Tasks Completed:
+- Completed comprehensive codebase scan to identify all volatile player data stored solely in local PlayerPrefs.
+- Removed legacy 'isMaleAvatar' gender lock to allow players true freedom in dynamically mixing and matching modular male and female avatar pieces.
+- Overhauled InventoryManager to seamlessly sync PlayerCoins and UnlockedItems to Firebase and restore them on new devices.
+- Upgraded StepManager to securely back up CurrentStreak, DaysGoalMetThisWeek, DailySteps, and WeeklySteps to Firebase to prevent loss of mission rewards.
+- Upgraded AuthManager and BMIManager to push and fetch Onboarding tutorial flags and raw BMI metrics to the cloud, allowing veterans to bypass the tutorial on a fresh install.

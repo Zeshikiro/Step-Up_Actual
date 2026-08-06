@@ -130,6 +130,58 @@ public class StepManager : MonoBehaviour
                                 totalLifetimeSteps = cloudLifetime;
                                 PlayerPrefs.SetInt("TotalLifetimeSteps", totalLifetimeSteps);
                             }
+
+                            // Restore Activity Progress (Streak, Weekly, Daily)
+                            if (snap.Child("CurrentStreak").Value != null)
+                            {
+                                int cloudStreak = 0;
+                                int.TryParse(snap.Child("CurrentStreak").Value.ToString(), out cloudStreak);
+                                if (cloudStreak > PlayerPrefs.GetInt("CurrentStreak", 0))
+                                {
+                                    PlayerPrefs.SetInt("CurrentStreak", cloudStreak);
+                                    currentStreak = cloudStreak;
+                                }
+                            }
+                            if (snap.Child("DaysGoalMetThisWeek").Value != null)
+                            {
+                                int cloudDaysMet = 0;
+                                int.TryParse(snap.Child("DaysGoalMetThisWeek").Value.ToString(), out cloudDaysMet);
+                                if (cloudDaysMet > PlayerPrefs.GetInt("DaysGoalMetThisWeek", 0))
+                                {
+                                    PlayerPrefs.SetInt("DaysGoalMetThisWeek", cloudDaysMet);
+                                    daysGoalMetThisWeek = cloudDaysMet;
+                                }
+                            }
+                            if (snap.Child("WeeklySteps").Value != null)
+                            {
+                                int cloudWeekly = 0;
+                                int.TryParse(snap.Child("WeeklySteps").Value.ToString(), out cloudWeekly);
+                                if (cloudWeekly > PlayerPrefs.GetInt("WeeklySteps", 0))
+                                {
+                                    PlayerPrefs.SetInt("WeeklySteps", cloudWeekly);
+                                    currentWeeklySteps = cloudWeekly;
+                                }
+                            }
+                            if (snap.Child("DailySteps").Value != null)
+                            {
+                                int cloudDaily = 0;
+                                int.TryParse(snap.Child("DailySteps").Value.ToString(), out cloudDaily);
+                                if (cloudDaily > PlayerPrefs.GetInt("DailySteps", 0))
+                                {
+                                    PlayerPrefs.SetInt("DailySteps", cloudDaily);
+                                    currentDailySteps = cloudDaily;
+                                }
+                            }
+                            if (snap.Child("YesterdaysSteps").Value != null)
+                            {
+                                int cloudYesterday = 0;
+                                int.TryParse(snap.Child("YesterdaysSteps").Value.ToString(), out cloudYesterday);
+                                if (cloudYesterday > PlayerPrefs.GetInt("YesterdaysSteps", 0))
+                                {
+                                    PlayerPrefs.SetInt("YesterdaysSteps", cloudYesterday);
+                                    yesterdaysSteps = cloudYesterday;
+                                }
+                            }
                             
                             // Restore XP
                             if (cloudXP > PlayerPrefs.GetInt("MissionXPEarned", 0))
@@ -758,6 +810,12 @@ public class StepManager : MonoBehaviour
         if (dbReference != null && !string.IsNullOrEmpty(userId))
         {
             dbReference.Child("users").Child(userId).Child("TotalLifetimeSteps").SetValueAsync(totalLifetimeSteps);
+            dbReference.Child("users").Child(userId).Child("CurrentStreak").SetValueAsync(currentStreak);
+            dbReference.Child("users").Child(userId).Child("DaysGoalMetThisWeek").SetValueAsync(daysGoalMetThisWeek);
+            dbReference.Child("users").Child(userId).Child("WeeklySteps").SetValueAsync(currentWeeklySteps);
+            dbReference.Child("users").Child(userId).Child("DailySteps").SetValueAsync(currentDailySteps);
+            dbReference.Child("users").Child(userId).Child("YesterdaysSteps").SetValueAsync(yesterdaysSteps);
+            
             // Also push username so leaderboard doesn't break
             string localName = PlayerPrefs.GetString("UserName", "Player");
             dbReference.Child("users").Child(userId).Child("username").SetValueAsync(localName);

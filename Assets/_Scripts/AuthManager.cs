@@ -44,19 +44,8 @@ public class AuthManager : MonoBehaviour
                     // Save email to DB to ensure leaderboard visibility
                     FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(auth.CurrentUser.UserId).Child("email").SetValueAsync(auth.CurrentUser.Email);
 
-                    // --- THE NEW ONBOARDING LOCK CHECK ---
-                    if (PlayerPrefs.GetInt("OnboardingComplete_" + auth.CurrentUser.UserId, 0) == 1) 
-                    {
-                        if (eulaPanel != null) eulaPanel.SetActive(false);
-                        if (bmiPanel != null) bmiPanel.SetActive(false);
-                        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
-                    }
-                    else 
-                    {
-                        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
-                        if (bmiPanel != null) bmiPanel.SetActive(false);
-                        if (eulaPanel != null) eulaPanel.SetActive(true);
-                    }
+                    // --- THE NEW ONBOARDING LOCK CHECK WITH CLOUD FALLBACK ---
+                    FetchOnboardingStateAndTransition(auth.CurrentUser);
                 }
 
             } else {
@@ -220,6 +209,45 @@ public class AuthManager : MonoBehaviour
             if (loginButton != null) loginButton.interactable = true;
             loginPanel.SetActive(false);
             
+            FetchOnboardingStateAndTransition(user);
+        });
+    }
+
+    private void FetchOnboardingStateAndTransition(FirebaseUser user)
+    {
+        DatabaseReference dbRef = FirebaseDatabase.DefaultInstance.RootReference;
+        dbRef.Child("users").Child(user.UserId).GetValueAsync().ContinueWithOnMainThread(task => {
+            if (task.IsCompleted && task.Result.Exists)
+            {
+                DataSnapshot snap = task.Result;
+                if (snap.Child("OnboardingComplete").Value != null)
+                {
+                    int cloudComplete = 0;
+                    int.TryParse(snap.Child("OnboardingComplete").Value.ToString(), out cloudComplete);
+                    if (cloudComplete == 1)
+                    {
+                        PlayerPrefs.SetInt("OnboardingComplete_" + user.UserId, 1);
+                    }
+                }
+                if (snap.Child("BMI_Setup_Complete").Value != null)
+                {
+                    int bmiComplete = 0;
+                    int.TryParse(snap.Child("BMI_Setup_Complete").Value.ToString(), out bmiComplete);
+                    if (bmiComplete == 1)
+                    {
+                        PlayerPrefs.SetInt("BMI_Setup_Complete_" + user.UserId, 1);
+                    }
+                }
+                
+                // Fetch saved BMI demographic data
+                if (snap.Child("SavedAge").Value != null) PlayerPrefs.SetString("SavedAge", snap.Child("SavedAge").Value.ToString());
+                if (snap.Child("SavedHeight").Value != null) PlayerPrefs.SetString("SavedHeight", snap.Child("SavedHeight").Value.ToString());
+                if (snap.Child("SavedWeight").Value != null) PlayerPrefs.SetString("SavedWeight", snap.Child("SavedWeight").Value.ToString());
+                
+                PlayerPrefs.Save();
+            }
+
+            // After checking the cloud (or if it failed), perform the local UI panel check
             if (PlayerPrefs.GetInt("OnboardingComplete_" + user.UserId, 0) == 1) 
             {
                 if (eulaPanel != null) eulaPanel.SetActive(false);
@@ -228,7 +256,7 @@ public class AuthManager : MonoBehaviour
             }
             else 
             {
-                if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+                if (mainMenuPanel != null) mainMenuPanel.SetActive(true); // Keep background map active
                 if (bmiPanel != null) bmiPanel.SetActive(false);
                 if (eulaPanel != null) eulaPanel.SetActive(true);
             }

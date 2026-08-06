@@ -66,7 +66,7 @@ public class InventoryManager : MonoBehaviour
     public int coins = 0; // Starting coins balance
 
     [Header("Saved Look (Item IDs)")]
-    public bool isMaleAvatar = true; // Tracks explicit gender choice globally
+    // Gender override removed to allow dynamic mixing!
     public string equippedHeadId = "MCasual2_Head";
     public string equippedBodyId = "MCasual2_Body";
     public string equippedLegsId = "MCasual2_Legs";
@@ -117,7 +117,6 @@ public class InventoryManager : MonoBehaviour
     public void SaveAvatarToCloud()
     {
         // 1. Save locally for instant offline loading
-        PlayerPrefs.SetInt("isMaleAvatar", isMaleAvatar ? 1 : 0);
         PlayerPrefs.SetString("equippedHeadId", equippedHeadId);
         PlayerPrefs.SetString("equippedBodyId", equippedBodyId);
         PlayerPrefs.SetString("equippedLegsId", equippedLegsId);
@@ -132,14 +131,20 @@ public class InventoryManager : MonoBehaviour
         string uid = auth.CurrentUser.UserId;
         DatabaseReference dbRef = FirebaseDatabase.DefaultInstance.RootReference;
 
+        // SYNC INVENTORY DATA (Coins and Unlocked Items)
+        string[] array = new string[unlockedItems.Count];
+        unlockedItems.CopyTo(array);
+        string joinedUnlocked = string.Join(",", array);
+
         Dictionary<string, object> avatarData = new Dictionary<string, object>
         {
-            {"isMaleAvatar", isMaleAvatar},
             {"equippedHeadId", equippedHeadId},
             {"equippedBodyId", equippedBodyId},
             {"equippedLegsId", equippedLegsId},
             {"equippedFeetId", equippedFeetId},
-            {"equippedAccessoryId", equippedAccessoryId}
+            {"equippedAccessoryId", equippedAccessoryId},
+            {"coins", coins},
+            {"unlockedItems", joinedUnlocked}
         };
 
         dbRef.Child("users").Child(uid).Child("avatar").SetValueAsync(avatarData).ContinueWithOnMainThread(task => {
@@ -149,9 +154,8 @@ public class InventoryManager : MonoBehaviour
 
     public void LoadAvatarLocal()
     {
-        if (PlayerPrefs.HasKey("isMaleAvatar"))
+        if (PlayerPrefs.HasKey("equippedHeadId"))
         {
-            isMaleAvatar = PlayerPrefs.GetInt("isMaleAvatar") == 1;
             equippedHeadId = PlayerPrefs.GetString("equippedHeadId", "MCasual2_Head");
             equippedBodyId = PlayerPrefs.GetString("equippedBodyId", "MCasual2_Body");
             equippedLegsId = PlayerPrefs.GetString("equippedLegsId", "MCasual2_Legs");
@@ -177,8 +181,6 @@ public class InventoryManager : MonoBehaviour
 
             if (snapshot.Exists)
             {
-                if (snapshot.Child("isMaleAvatar").Value != null)
-                    isMaleAvatar = (bool)snapshot.Child("isMaleAvatar").Value;
                 if (snapshot.Child("equippedHeadId").Value != null)
                     equippedHeadId = snapshot.Child("equippedHeadId").Value.ToString();
                 if (snapshot.Child("equippedBodyId").Value != null)
@@ -190,6 +192,38 @@ public class InventoryManager : MonoBehaviour
                 if (snapshot.Child("equippedAccessoryId").Value != null)
                     equippedAccessoryId = snapshot.Child("equippedAccessoryId").Value.ToString();
 
+                // RESTORE COINS
+                if (snapshot.Child("coins").Value != null)
+                {
+                    int cloudCoins = 0;
+                    int.TryParse(snapshot.Child("coins").Value.ToString(), out cloudCoins);
+                    if (cloudCoins > coins)
+                    {
+                        coins = cloudCoins;
+                        SaveCoins();
+                    }
+                }
+
+                // RESTORE UNLOCKED ITEMS
+                if (snapshot.Child("unlockedItems").Value != null)
+                {
+                    string cloudItems = snapshot.Child("unlockedItems").Value.ToString();
+                    string[] items = cloudItems.Split(',');
+                    bool changed = false;
+                    foreach (string item in items)
+                    {
+                        if (!string.IsNullOrEmpty(item) && !unlockedItems.Contains(item.Trim()))
+                        {
+                            unlockedItems.Add(item.Trim());
+                            changed = true;
+                        }
+                    }
+                    if (changed)
+                    {
+                        SaveUnlockedItems();
+                    }
+                }
+
                 Debug.Log("Avatar cloud save loaded successfully!");
                 
                 // NEW: Force the AvatarLoader to rebuild the character immediately after we download their saved look!
@@ -199,57 +233,8 @@ public class InventoryManager : MonoBehaviour
         });
     }
 
-    // NEW: Automatically translates clothing between men and women when swapping genders!
-    public void SwapGenderPrefixes(bool toMale)
-    {
-        equippedHeadId = TranslateID(equippedHeadId, toMale);
-        equippedBodyId = TranslateID(equippedBodyId, toMale);
-        equippedLegsId = TranslateID(equippedLegsId, toMale);
-        equippedFeetId = TranslateID(equippedFeetId, toMale);
-        equippedAccessoryId = TranslateID(equippedAccessoryId, toMale);
-        SaveAvatarToCloud();
-    }
-
-    private string TranslateID(string id, bool toMale)
-    {
-        if (string.IsNullOrEmpty(id) || id == "None") return id;
-        
-        string newId = id;
-        if (toMale)
-        {
-            if (id.StartsWith("FCasual")) newId = id.Replace("FCasual", "MCasual2");
-            else if (id.StartsWith("F") && id.Length > 1 && char.IsUpper(id[1])) newId = "M" + id.Substring(1);
-        }
-        else
-        {
-            if (id.StartsWith("MCasual2")) newId = id.Replace("MCasual2", "FCasual");
-            else if (id.StartsWith("M") && id.Length > 1 && char.IsUpper(id[1])) newId = "F" + id.Substring(1);
-        }
-
-        // Verify if the translated ID actually exists in the game database
-        foreach (InventoryItemData item in masterInventoryList)
-        {
-            if (item != null && item.itemId == newId) return newId; // Exists, safe to use!
-        }
-        
-        // If it DOES NOT exist (e.g. Female Farmer), fallback to default clothes to prevent baldness!
-        if (toMale)
-        {
-            if (id.Contains("Head")) return "MCasual2_Head";
-            if (id.Contains("Body") || id.Contains("Torso")) return "MCasual2_Body";
-            if (id.Contains("Legs")) return "MCasual2_Legs";
-            if (id.Contains("Feet")) return "MCasual2_Feet";
-        }
-        else
-        {
-            if (id.Contains("Head")) return "FCasual_Head";
-            if (id.Contains("Body") || id.Contains("Torso")) return "FCasual_Body";
-            if (id.Contains("Legs")) return "FCasual_Legs";
-            if (id.Contains("Feet")) return "FCasual_Feet";
-        }
-
-        return "None";
-    }
+    // [Deprecated] SwapGenderPrefixes and TranslateID removed.
+    // The game no longer attempts to auto-guess or force prefixes for Male/Female.
 
     public bool IsItemUnlocked(string itemId)
     {
@@ -262,19 +247,13 @@ public class InventoryManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(itemId) || itemId == "None") return "None";
 
-        // LEGACY SAVE DATA PATCH:
+        // LEGACY SAVE DATA PATCH (if an old player had 'Casual_Head' saved without a gender prefix, default to Male to prevent missing meshes)
         if (itemId.StartsWith("Casual_"))
         {
-            return isMaleAvatar ? itemId.Replace("Casual_", "MCasual2_") : itemId.Replace("Casual_", "FCasual_");
+            return itemId.Replace("Casual_", "MCasual2_");
         }
 
-        // If the Master Inventory Database uses generic names (e.g. "Adventurer_Legs"), 
-        // we MUST automatically prepend "M" or "F" to find the correct mesh in the hierarchy!
-        if (!itemId.StartsWith("M") && !itemId.StartsWith("F") && !itemId.StartsWith("m") && !itemId.StartsWith("f"))
-        {
-            return (isMaleAvatar ? "M" : "F") + itemId;
-        }
-
+        // We now blindly trust the exact ID given to us by the Master Inventory List!
         return itemId; 
     }
 
@@ -294,6 +273,9 @@ public class InventoryManager : MonoBehaviour
         string joined = string.Join(",", array);
         PlayerPrefs.SetString("UnlockedItems", joined);
         PlayerPrefs.Save();
+
+        // Push update to cloud!
+        SaveAvatarToCloud();
     }
 
     public void LoadUnlockedItems()
@@ -353,7 +335,10 @@ public class InventoryManager : MonoBehaviour
         PlayerPrefs.SetInt("PlayerCoins", coins);
         PlayerPrefs.Save();
         // Force refresh UI so the coin counter instantly updates if we are in CustomizeScene
-        RefreshButtonLabels(); 
+        RefreshButtonLabels();
+        
+        // Push update to cloud!
+        SaveAvatarToCloud();
     }
 
     public void LoadCoins()
