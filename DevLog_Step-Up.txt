@@ -6,3 +6,14 @@ August 7th, 2026 (Evening Session - Bug Fixes)
 - FitnessTracker.cs: Changed the Stop button logic so it retains the final session time on the screen instead of resetting immediately to 00:00. Also added OnApplicationPause logic to accurately track session time even if the app is backgrounded (e.g. phone locked).
 - InventoryManager.cs: Fixed coins reverting to default by adding LoadCoins() inside the initial LoadAvatarLocal() startup sequence, guaranteeing local coins load instantly before Firebase is even contacted!
 
+
+August 7th, 2026 (Late Evening Session - Settings UI Fixes)
+- Fixed Settings Manager UI buttons:
+  - Change Email: Reconfigured to open the user's default email client (mailto:) with a pre-filled support request subject, bypassing the need for a complex Firebase re-authentication UI.
+  - Privacy and Social: Enabled dynamic URL string parameters via the Unity Inspector.
+  - About: Enabled dynamic URL string parameters via the Unity Inspector.
+  - Log Out: Resolved the zooming glitch. Log out now properly clears the Firebase token and reloads the current active scene (SampleScene), ensuring the game resets cleanly and correctly traps the user on the Login Panel.
+- Fixed EULA Manager:
+  - Added safety checks to OnAgreeClicked() so the EULA panel safely closes even if the inspector field is unassigned.
+  - Solved the 'BMI popping up from Settings' bug: The script now checks PlayerPrefs to see if the user previously accepted the EULA. If they open the EULA from the Settings menu (meaning they already accepted it during initial login), clicking Agree simply closes the panel instead of wrongfully triggering the BMI onboarding sequence.
+
