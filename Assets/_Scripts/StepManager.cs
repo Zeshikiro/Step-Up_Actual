@@ -139,7 +139,6 @@ public class StepManager : MonoBehaviour
                                 if (cloudStreak > PlayerPrefs.GetInt("CurrentStreak", 0))
                                 {
                                     PlayerPrefs.SetInt("CurrentStreak", cloudStreak);
-                                    currentStreak = cloudStreak;
                                 }
                             }
                             if (snap.Child("DaysGoalMetThisWeek").Value != null)
@@ -343,6 +342,10 @@ public class StepManager : MonoBehaviour
             for (int i = 0; i <= 6; i++)
             {
                 PlayerPrefs.DeleteKey("MissionClaimed_" + i);
+                if (dbReference != null && !string.IsNullOrEmpty(userId))
+                {
+                    dbReference.Child("users").Child(userId).Child("MissionClaimed_" + i).SetValueAsync(0);
+                }
             }
 
             // Reset Daily Stats
@@ -365,6 +368,10 @@ public class StepManager : MonoBehaviour
                 for (int i = 7; i <= 9; i++)
                 {
                     PlayerPrefs.DeleteKey("MissionClaimed_" + i);
+                    if (dbReference != null && !string.IsNullOrEmpty(userId))
+                    {
+                        dbReference.Child("users").Child(userId).Child("MissionClaimed_" + i).SetValueAsync(0);
+                    }
                 }
             }
 
@@ -810,7 +817,7 @@ public class StepManager : MonoBehaviour
         if (dbReference != null && !string.IsNullOrEmpty(userId))
         {
             dbReference.Child("users").Child(userId).Child("TotalLifetimeSteps").SetValueAsync(totalLifetimeSteps);
-            dbReference.Child("users").Child(userId).Child("CurrentStreak").SetValueAsync(currentStreak);
+            dbReference.Child("users").Child(userId).Child("CurrentStreak").SetValueAsync(PlayerPrefs.GetInt("CurrentStreak", 0));
             dbReference.Child("users").Child(userId).Child("DaysGoalMetThisWeek").SetValueAsync(daysGoalMetThisWeek);
             dbReference.Child("users").Child(userId).Child("WeeklySteps").SetValueAsync(currentWeeklySteps);
             dbReference.Child("users").Child(userId).Child("DailySteps").SetValueAsync(currentDailySteps);

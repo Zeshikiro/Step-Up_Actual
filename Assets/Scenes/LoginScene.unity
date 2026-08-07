@@ -2652,8 +2652,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1518737624}
-        m_TargetAssemblyTypeName: TutorialManager, Assembly-CSharp
-        m_MethodName: OpenTutorialHub
+        m_TargetAssemblyTypeName: HealthTips, Assembly-CSharp
+        m_MethodName: OpenHealthTipsHub
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5861,6 +5861,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1783795981}
     m_Modifications:
+    - target: {fileID: 308260636466903474, guid: db2235b49d41878428d712796585982e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 308260636466903474, guid: db2235b49d41878428d712796585982e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 308260636466903474, guid: db2235b49d41878428d712796585982e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1688402720}
+    - target: {fileID: 308260636466903474, guid: db2235b49d41878428d712796585982e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 308260636466903474, guid: db2235b49d41878428d712796585982e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnUpdateBMIClicked
+      objectReference: {fileID: 0}
+    - target: {fileID: 308260636466903474, guid: db2235b49d41878428d712796585982e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SettingsManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 308260636466903474, guid: db2235b49d41878428d712796585982e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 523349173288396389, guid: db2235b49d41878428d712796585982e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5919,7 +5947,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 776868080003107849, guid: db2235b49d41878428d712796585982e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 900844056028216745, guid: db2235b49d41878428d712796585982e, type: 3}
       propertyPath: m_AnchorMax.y
@@ -6292,6 +6320,17 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &1688402720 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1237137967772144201, guid: db2235b49d41878428d712796585982e, type: 3}
+  m_PrefabInstance: {fileID: 1688402715}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d9b6cd8256069845a0218d353a6085b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Settingsmanager
 --- !u!1 &1689081161
 GameObject:
   m_ObjectHideFlags: 0

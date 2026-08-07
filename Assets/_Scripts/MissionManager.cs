@@ -257,14 +257,35 @@ public class MissionManager : MonoBehaviour
             p.W3_ContinuousWalkMins > 0 ? p.W3_ContinuousWalkMins : p.W3_ARSteps
         };
 
+        string[] titles = new string[10] {
+            "Daily Mission 1", "Daily Mission 2", "Daily Mission 3", "Daily Mission 4", "Daily Mission 5", "Daily Mission 6", "Daily Mission 7",
+            "Weekly Mission 1", "Weekly Mission 2", "Weekly Mission 3"
+        };
+        
+        string[] descs = new string[10] {
+            $"Complete {p.M1_StepsToday} steps today.",
+            $"Walk {p.M2_SingleSessionSteps} steps in a single walking session.",
+            $"Complete {p.M3_NumSessions} walking sessions with at least {p.M3_SessionMinSteps} steps each.",
+            $"Complete a {p.M4_ContinuousWalkMins}-minute continuous walk.",
+            p.M5_ARSteps > 0 ? $"Complete {p.M5_ARSteps} steps while AR Walking Mode is active." : $"Reach {p.M5_PercentGoal}% of your daily step goal.",
+            p.M6_BeatYesterdayBy > 0 ? $"Beat yesterday's step count by at least {p.M6_BeatYesterdayBy} steps." : $"Reach {p.M6_PercentGoal}% of your daily step goal.",
+            $"Complete your daily goal plus {p.M7_BonusSteps} bonus steps.",
+            $"Accumulate {p.W1_WeeklySteps} steps this week.",
+            $"Complete your daily step goal at least {p.W2_GoalDays} days this week.",
+            p.W3_ContinuousWalkMins > 0 ? $"Complete one {p.W3_ContinuousWalkMins}-minute continuous walk this week." : $"Complete {p.W3_ARSteps} total AR Walking Mode steps this week."
+        };
+
         for (int i = 0; i < cardUIs.Count; i++)
         {
-            UpdateSingleCardUI(cardUIs[i], currentProgs[i], targets[i], i, rank);
+            UpdateSingleCardUI(cardUIs[i], currentProgs[i], targets[i], i, rank, titles[i], descs[i]);
         }
     }
 
-    private void UpdateSingleCardUI(MissionCardUI ui, int currentProgress, int target, int missionIndex, string rank)
+    private void UpdateSingleCardUI(MissionCardUI ui, int currentProgress, int target, int missionIndex, string rank, string title = "", string desc = "")
     {
+        if (ui.titleText != null && !string.IsNullOrEmpty(title)) ui.titleText.text = title;
+        if (ui.descText != null && !string.IsNullOrEmpty(desc)) ui.descText.text = desc;
+        
         if (ui.progressBar != null) ui.progressBar.value = Mathf.Clamp01((float)currentProgress / target);
         
         bool isClaimed = PlayerPrefs.GetInt("MissionClaimed_" + missionIndex, 0) == 1;

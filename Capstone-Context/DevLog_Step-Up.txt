@@ -598,3 +598,9 @@ Tasks Completed:
 - Overhauled InventoryManager to seamlessly sync PlayerCoins and UnlockedItems to Firebase and restore them on new devices.
 - Upgraded StepManager to securely back up CurrentStreak, DaysGoalMetThisWeek, DailySteps, and WeeklySteps to Firebase to prevent loss of mission rewards.
 - Upgraded AuthManager and BMIManager to push and fetch Onboarding tutorial flags and raw BMI metrics to the cloud, allowing veterans to bypass the tutorial on a fresh install.
+
+Date: 2026-08-07
+Tasks Completed:
+- Fixed Daily Mission Rollover Bug: Updated StepManager to push a reset command to Firebase at midnight so daily missions unlock properly in the cloud.
+- Fixed Weekly Mission UI Discrepancy (2/5 Target Mismatch): Updated MissionManager to dynamically refresh the Title and Description UI text alongside the progress bar, ensuring the visual text always matches the live target metrics from the active PlayerPrefs data.
+- Fixed 3D Avatar Animations: Guided the setup of the Animator Controller (AvatarBrain) using Generic animation clips (CharacterArmature|Walk). Relocated the Animator component to the root of the FBX prefab (Male_Casual) to fix animation path binding issues, allowing the character to successfully animate.
