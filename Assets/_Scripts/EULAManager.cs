@@ -23,10 +23,18 @@ public class EULAManager : MonoBehaviour
     {
         if (warningText != null) warningText.SetActive(false); // Hide the warning
 
-        // 1. Mark EULA as accepted so they don't see it again
-        string userId = Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.UserId;
-        PlayerPrefs.SetInt("EulaAccepted_" + userId, 1);
+        // Guarantee the panel closes even if eulaPanel field is unassigned in Inspector!
         if (eulaPanel != null) eulaPanel.SetActive(false);
+        gameObject.SetActive(false); 
+
+        // 1. Mark EULA as accepted so they don't see it again
+        string userId = "guest";
+        if (Firebase.Auth.FirebaseAuth.DefaultInstance != null && Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser != null)
+        {
+            userId = Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+        }
+
+        PlayerPrefs.SetInt("EulaAccepted_" + userId, 1);
 
         // 2. If they are just reading this from the Settings menu, stop here!
         if (PlayerPrefs.GetInt("OnboardingComplete_" + userId, 0) == 1)

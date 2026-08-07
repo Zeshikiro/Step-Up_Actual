@@ -87,8 +87,9 @@ public class SettingsManager : MonoBehaviour
             FirebaseAuth.DefaultInstance.SignOut();
         }
 
-        // Route smoothly back to the login environment
-        SceneManager.LoadScene("LoginScene");
+        // Route smoothly back to the login environment by simply reloading the active scene
+        // Since we are signed out, the Login Panel will naturally catch us!
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // --- HELP & DOCUMENTATION ---
@@ -101,16 +102,16 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
-    public void OnChangeEmailClicked()
+    public void OnChangeEmailClicked(string url)
     {
-        Debug.Log("Change Email Clicked! Needs a UI popup to accept new email.");
-        // Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.UpdateEmailAsync("newemail");
+        Debug.Log("Change Email Clicked! Opening URL: " + url);
+        if (!string.IsNullOrEmpty(url)) Application.OpenURL(url);
     }
 
-    public void OnPrivacyAndSocialClicked()
+    public void OnPrivacyAndSocialClicked(string url)
     {
-        Debug.Log("Privacy and Social Clicked! Add your privacy policy link here.");
-        // Application.OpenURL("https://your-privacy-policy-link.com");
+        Debug.Log("Privacy and Social Clicked! Opening URL: " + url);
+        if (!string.IsNullOrEmpty(url)) Application.OpenURL(url);
     }
 
     public void OnContactsAndSupportClicked()
@@ -119,8 +120,9 @@ public class SettingsManager : MonoBehaviour
         Application.OpenURL("mailto:support@stepup.com"); // Automatically opens phone's email app!
     }
 
-    public void OnAboutClicked()
+    public void OnAboutClicked(string url)
     {
-        Debug.Log("About Clicked! Step-Up V1.0");
+        Debug.Log("About Clicked! Opening URL: " + url);
+        if (!string.IsNullOrEmpty(url)) Application.OpenURL(url);
     }
 }
