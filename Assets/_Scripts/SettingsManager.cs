@@ -102,10 +102,10 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
-    public void OnChangeEmailClicked(string url)
+    public void OnChangeEmailClicked()
     {
-        Debug.Log("Change Email Clicked! Opening URL: " + url);
-        if (!string.IsNullOrEmpty(url)) Application.OpenURL(url);
+        Debug.Log("Change Email Clicked! Opening email client...");
+        Application.OpenURL("mailto:support@stepup.com?subject=Request%20to%20Change%20Email%20Address"); 
     }
 
     public void OnPrivacyAndSocialClicked(string url)

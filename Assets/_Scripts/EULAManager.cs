@@ -34,10 +34,13 @@ public class EULAManager : MonoBehaviour
             userId = Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.UserId;
         }
 
+        // Check if they ALREADY accepted it before (meaning they opened this from Settings Menu)
+        bool alreadyAccepted = PlayerPrefs.GetInt("EulaAccepted_" + userId, 0) == 1;
+
         PlayerPrefs.SetInt("EulaAccepted_" + userId, 1);
 
         // 2. If they are just reading this from the Settings menu, stop here!
-        if (PlayerPrefs.GetInt("OnboardingComplete_" + userId, 0) == 1)
+        if (alreadyAccepted || PlayerPrefs.GetInt("OnboardingComplete_" + userId, 0) == 1)
         {
             PlayerPrefs.Save();
             return;
