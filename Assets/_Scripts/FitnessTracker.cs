@@ -21,6 +21,7 @@ public class FitnessTracker : MonoBehaviour
     
     private float activeTime = 0f;
     private TrailRenderer trail;
+    private System.DateTime _pauseTime;
 
     void Start()
     {
@@ -53,6 +54,24 @@ public class FitnessTracker : MonoBehaviour
         }
     }
 
+    void OnApplicationPause(bool isPaused)
+    {
+        if (isPaused)
+        {
+            // App went to background
+            if (isTracking) _pauseTime = System.DateTime.Now;
+        }
+        else
+        {
+            // App came back to foreground
+            if (isTracking && _pauseTime != default)
+            {
+                System.TimeSpan elapsed = System.DateTime.Now - _pauseTime;
+                activeTime += (float)elapsed.TotalSeconds;
+            }
+        }
+    }
+
     void UpdateTimerUI()
     {
         if (timerText != null)
@@ -78,6 +97,13 @@ public class FitnessTracker : MonoBehaviour
 
     public void ToggleTracking()
     {
+        // If we are about to START tracking (it was false), reset the timer NOW!
+        if (!isTracking)
+        {
+            activeTime = 0f;
+            UpdateTimerUI();
+        }
+
         isTracking = !isTracking;
 
         // Swap the button image!
@@ -93,13 +119,10 @@ public class FitnessTracker : MonoBehaviour
             }
         }
 
-        // If they just hit STOP, route them to the Summary Panel and reset the timer!
+        // If they just hit STOP, route them to the Summary Panel (but DO NOT reset the timer!)
         if (!isTracking)
         {
-            // Reset the active time so the next run starts at 00:00
-            activeTime = 0f;
-            UpdateTimerUI();
-
+            // We retain activeTime so the user can see their final score!
             if (uiManager != null)
             {
                 uiManager.OpenSummaryPanel();

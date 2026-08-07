@@ -154,6 +154,9 @@ public class InventoryManager : MonoBehaviour
 
     public void LoadAvatarLocal()
     {
+        // NEW: Load coins locally instantly so they don't default to 0 before the cloud syncs!
+        LoadCoins();
+
         if (PlayerPrefs.HasKey("equippedHeadId"))
         {
             equippedHeadId = PlayerPrefs.GetString("equippedHeadId", "MCasual2_Head");

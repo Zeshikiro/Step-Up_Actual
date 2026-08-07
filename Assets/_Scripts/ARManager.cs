@@ -94,7 +94,14 @@ public class ARManager : MonoBehaviour
         else
         {
             StopAR();
+            StartCoroutine(TransitionCooldown()); // Add a tiny cooldown to prevent spam glitches
         }
+    }
+
+    private IEnumerator TransitionCooldown()
+    {
+        yield return new WaitForSeconds(0.3f);
+        isTransitioning = false;
     }
 
     private GameObject arCameraParent;
@@ -199,7 +206,11 @@ public class ARManager : MonoBehaviour
                 }
             }
 
-            if (!isARMode) yield break; // CRITICAL: Stop if user clicked 2D while we were checking availability!
+            if (!isARMode) 
+            {
+                isTransitioning = false; // CRITICAL FIX: Unlock before exiting!
+                yield break; 
+            }
 
             if (ARSession.state == ARSessionState.Unsupported || ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
             {
@@ -382,7 +393,7 @@ public class ARManager : MonoBehaviour
         if (rotateAvatarButton != null) rotateAvatarButton.SetActive(false);
         if (toggleButtonImage != null && icon3D != null) toggleButtonImage.sprite = icon3D;
         
-        isTransitioning = false;
+        // isTransitioning is cleared by the TransitionCooldown coroutine now
     }
 
     public void ToggleAvatarFacing()

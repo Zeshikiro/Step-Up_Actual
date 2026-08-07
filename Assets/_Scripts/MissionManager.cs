@@ -208,6 +208,14 @@ public class MissionManager : MonoBehaviour
                 if (b.gameObject.name == "ClaimButton") ui.claimButton = b;
             }
             
+            // NEW: Bind the claim button ONCE here during spawning to avoid Unity's event system breaking!
+            int capturedIndex = missionIndex; // local capture
+            if (ui.claimButton != null)
+            {
+                ui.claimButton.onClick.RemoveAllListeners();
+                ui.claimButton.onClick.AddListener(() => ClaimMission(capturedIndex));
+            }
+            
             // Cache for live updates
             spawnedCards.Add(cardObj);
             cardUIs.Add(ui);
@@ -299,21 +307,10 @@ public class MissionManager : MonoBehaviour
         {
             if (currentProgress >= target)
             {
-                // Dynamic Economy: Calculate rewards based on difficulty rank!
-                int baseDailyReward = 20;
-                if (rank == "EXPLORER") baseDailyReward = 30;
-                else if (rank == "TRAILBLAZER") baseDailyReward = 40;
-                else if (rank == "MARATHONER" || rank == "ELITE RUNNER") baseDailyReward = 50;
-                
-                // Weekly missions give 5x the daily reward
-                int xpReward = missionIndex >= 7 ? baseDailyReward * 5 : baseDailyReward;
-
                 if (ui.claimBtnText != null) ui.claimBtnText.text = "CLAIM";
                 if (ui.claimButton != null) 
                 {
                     ui.claimButton.interactable = true;
-                    ui.claimButton.onClick.RemoveAllListeners();
-                    ui.claimButton.onClick.AddListener(() => ClaimMission(missionIndex, xpReward));
                 }
             }
             else
@@ -331,8 +328,19 @@ public class MissionManager : MonoBehaviour
         return count;
     }
 
-    private void ClaimMission(int index, int xpReward)
+    private void ClaimMission(int index)
     {
+        // Calculate dynamic reward exactly when claimed
+        string rank = "STARTER";
+        if (profileManager != null && profileManager.activityLevelText != null) rank = profileManager.activityLevelText.text.ToUpper();
+        
+        int baseDailyReward = 20;
+        if (rank == "EXPLORER") baseDailyReward = 30;
+        else if (rank == "TRAILBLAZER") baseDailyReward = 40;
+        else if (rank == "MARATHONER" || rank == "ELITE RUNNER") baseDailyReward = 50;
+        
+        int xpReward = index >= 7 ? baseDailyReward * 5 : baseDailyReward;
+
         PlayerPrefs.SetInt("MissionClaimed_" + index, 1);
         int currentXP = PlayerPrefs.GetInt("MissionXPEarned", 0);
         PlayerPrefs.SetInt("MissionXPEarned", currentXP + xpReward);

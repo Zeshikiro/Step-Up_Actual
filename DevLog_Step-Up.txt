@@ -1,0 +1,8 @@
+
+August 7th, 2026 (Evening Session - Bug Fixes)
+- Squashed 5 Critical Bugs identified during testing:
+- ARManager.cs: Added isTransitioning debounce and safety unlock to prevent the 3D avatar from permanently disappearing when the AR button is spam-clicked.
+- MissionManager.cs: Resolved an issue where missions were unclaimable by pulling the button listener logic out of the continuous Update UI loop (which was constantly destroying/recreating the Unity event).
+- FitnessTracker.cs: Changed the Stop button logic so it retains the final session time on the screen instead of resetting immediately to 00:00. Also added OnApplicationPause logic to accurately track session time even if the app is backgrounded (e.g. phone locked).
+- InventoryManager.cs: Fixed coins reverting to default by adding LoadCoins() inside the initial LoadAvatarLocal() startup sequence, guaranteeing local coins load instantly before Firebase is even contacted!
+
