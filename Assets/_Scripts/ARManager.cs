@@ -76,8 +76,15 @@ public class ARManager : MonoBehaviour
         // If the user forgot to assign the avatar in the Inspector, find it automatically!
         if (customAvatar == null)
         {
-            customAvatar = GameObject.Find("AvatarContainer");
-            if (customAvatar == null) customAvatar = GameObject.FindGameObjectWithTag("Player");
+            // GameObject.Find cannot find inactive objects. We must use Resources to find it even if it's disabled!
+            foreach (GameObject obj in Resources.FindObjectsOfTypeAll<GameObject>())
+            {
+                if (obj.name == "AvatarContainer" && obj.scene.isLoaded)
+                {
+                    customAvatar = obj;
+                    break;
+                }
+            }
             
             if (customAvatar != null) Debug.Log("[ARManager] Auto-assigned customAvatar successfully!");
             else Debug.LogWarning("[ARManager] customAvatar is missing and could not be found automatically.");

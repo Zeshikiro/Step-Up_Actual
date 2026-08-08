@@ -117,25 +117,29 @@ public class SettingsManager : MonoBehaviour
     // doesn't lose its "UnityEvent" bindings!
     public void OnChangeEmailClicked(string url)
     {
-        Debug.Log("Change Email Clicked! Opening email client...");
-        Application.OpenURL("mailto:support@stepup.com?subject=Request%20to%20Change%20Email%20Address"); 
+        Debug.Log("Change Email Clicked! Opening support portal...");
+        // Fallback in case Inspector string is blank
+        if (string.IsNullOrEmpty(url)) url = "https://stepup.com/support/email-change";
+        Application.OpenURL(url);
     }
 
     public void OnPrivacyAndSocialClicked(string url)
     {
         Debug.Log("Privacy and Social Clicked! Opening URL: " + url);
-        if (!string.IsNullOrEmpty(url)) Application.OpenURL(url);
+        if (string.IsNullOrEmpty(url)) url = "https://stepup.com/privacy";
+        Application.OpenURL(url);
     }
 
     public void OnContactsAndSupportClicked()
     {
-        Debug.Log("Contacts and Support Clicked! Opening email client...");
-        Application.OpenURL("mailto:support@stepup.com"); // Automatically opens phone's email app!
+        Debug.Log("Contacts and Support Clicked! Opening support portal...");
+        Application.OpenURL("https://stepup.com/support"); // mailto: often silently fails on Windows 10/11!
     }
 
     public void OnAboutClicked(string url)
     {
         Debug.Log("About Clicked! Opening URL: " + url);
-        if (!string.IsNullOrEmpty(url)) Application.OpenURL(url);
+        if (string.IsNullOrEmpty(url)) url = "https://stepup.com/about";
+        Application.OpenURL(url);
     }
 }
