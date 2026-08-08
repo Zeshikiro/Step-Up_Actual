@@ -87,9 +87,20 @@ public class SettingsManager : MonoBehaviour
             FirebaseAuth.DefaultInstance.SignOut();
         }
 
-        // Route smoothly back to the login environment by simply reloading the active scene
-        // Since we are signed out, the Login Panel will naturally catch us!
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // Instead of reloading the volatile scene, let's gracefully shut down the UI and pop the Login Panel!
+        GameplayUIManager ui = FindFirstObjectByType<GameplayUIManager>();
+        if (ui != null) ui.HideAllPanels();
+
+        AuthManager authManager = FindFirstObjectByType<AuthManager>();
+        if (authManager != null && authManager.loginPanel != null)
+        {
+            authManager.loginPanel.SetActive(true);
+        }
+        else
+        {
+            // Failsafe
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     // --- HELP & DOCUMENTATION ---
@@ -102,7 +113,9 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
-    public void OnChangeEmailClicked()
+    // RESTORED SIGNATURES: We added the 'string url' back to these methods so the Unity Inspector
+    // doesn't lose its "UnityEvent" bindings!
+    public void OnChangeEmailClicked(string url)
     {
         Debug.Log("Change Email Clicked! Opening email client...");
         Application.OpenURL("mailto:support@stepup.com?subject=Request%20to%20Change%20Email%20Address"); 

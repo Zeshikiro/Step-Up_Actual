@@ -46,8 +46,8 @@ public class EULAManager : MonoBehaviour
             return;
         }
 
-        // 3. Check if this user already completed their BMI setup last time
-        if (PlayerPrefs.GetInt("BMI_Setup_Complete_" + userId, 0) == 1)
+        // 3. Check if this user already completed their BMI setup last time (or if they have legacy saved height)
+        if (PlayerPrefs.GetInt("BMI_Setup_Complete_" + userId, 0) == 1 || PlayerPrefs.HasKey("SavedHeight"))
         {
             Debug.Log("Returning User Detected! Bypassing BMI Panel straight to Main Menu.");
             if (mainMenuPanel != null) mainMenuPanel.SetActive(true);

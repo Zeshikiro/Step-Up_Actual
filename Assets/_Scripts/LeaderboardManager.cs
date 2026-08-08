@@ -48,14 +48,16 @@ public class LeaderboardManager : MonoBehaviour
     private void InitializeRealtimeLeaderboard()
     {
         leaderboardQueryRef = FirebaseDatabase.DefaultInstance.RootReference.Child("users");
-        leaderboardQueryRef.OrderByChild("TotalLifetimeSteps").LimitToLast(50).ValueChanged += OnLeaderboardDataChanged;
+        // FIX: Removed OrderByChild("TotalLifetimeSteps") because it requires backend Firebase Index Rules.
+        // Instead, we just fetch a batch of users and sort them perfectly in local memory!
+        leaderboardQueryRef.LimitToLast(50).ValueChanged += OnLeaderboardDataChanged;
     }
 
     void OnDestroy()
     {
         if (leaderboardQueryRef != null)
         {
-            leaderboardQueryRef.OrderByChild("TotalLifetimeSteps").LimitToLast(50).ValueChanged -= OnLeaderboardDataChanged;
+            leaderboardQueryRef.LimitToLast(50).ValueChanged -= OnLeaderboardDataChanged;
         }
     }
 
@@ -114,6 +116,8 @@ public class LeaderboardManager : MonoBehaviour
             sortedLeaderboardList.Add(new UserDataRecord(uid, username, steps));
         }
 
+        // ALWAYS sort locally since we bypassed the Firebase backend Index requirement
+        sortedLeaderboardList.Sort((a, b) => a.steps.CompareTo(b.steps));
         sortedLeaderboardList.Reverse();
         
         // AUTO-POPULATE IN-MEMORY DUMMY DATA IF LEADERBOARD HAS < 5 USERS

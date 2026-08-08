@@ -72,17 +72,29 @@ public class ARManager : MonoBehaviour
             originalBgColor = mainCamera.backgroundColor;
         }
 
+        // --- NEW DYNAMIC AVATAR FALLBACK ---
+        // If the user forgot to assign the avatar in the Inspector, find it automatically!
+        if (customAvatar == null)
+        {
+            customAvatar = GameObject.Find("AvatarContainer");
+            if (customAvatar == null) customAvatar = GameObject.FindGameObjectWithTag("Player");
+            
+            if (customAvatar != null) Debug.Log("[ARManager] Auto-assigned customAvatar successfully!");
+            else Debug.LogWarning("[ARManager] customAvatar is missing and could not be found automatically.");
+        }
+
         if (customAvatar != null) customAvatar.SetActive(false);
         if (mapPin != null) mapPin.SetActive(true);
     }
 
-    private bool isTransitioning = false;
+    private float nextClickTime = 0f;
     private Coroutine arCoroutine;
 
     public void ToggleARMode()
     {
-        if (isTransitioning) return; // Ignore spam clicks!
-        isTransitioning = true;
+        // Use a robust float cooldown instead of a fragile boolean that can get stuck if a coroutine crashes!
+        if (Time.time < nextClickTime) return; 
+        nextClickTime = Time.time + 1.5f; // Wait 1.5 seconds between clicks
         
         isARMode = !isARMode;
 
@@ -94,14 +106,7 @@ public class ARManager : MonoBehaviour
         else
         {
             StopAR();
-            StartCoroutine(TransitionCooldown()); // Add a tiny cooldown to prevent spam glitches
         }
-    }
-
-    private IEnumerator TransitionCooldown()
-    {
-        yield return new WaitForSeconds(0.3f);
-        isTransitioning = false;
     }
 
     private GameObject arCameraParent;
@@ -208,7 +213,6 @@ public class ARManager : MonoBehaviour
 
             if (!isARMode) 
             {
-                isTransitioning = false; // CRITICAL FIX: Unlock before exiting!
                 yield break; 
             }
 
@@ -246,8 +250,6 @@ public class ARManager : MonoBehaviour
 
         if (rotateAvatarButton != null) rotateAvatarButton.SetActive(true);
         if (toggleButtonImage != null && icon2D != null) toggleButtonImage.sprite = icon2D;
-        
-        isTransitioning = false;
     }
 
     private void ActivateFallbackBackground()
@@ -392,8 +394,6 @@ public class ARManager : MonoBehaviour
 
         if (rotateAvatarButton != null) rotateAvatarButton.SetActive(false);
         if (toggleButtonImage != null && icon3D != null) toggleButtonImage.sprite = icon3D;
-        
-        // isTransitioning is cleared by the TransitionCooldown coroutine now
     }
 
     public void ToggleAvatarFacing()
