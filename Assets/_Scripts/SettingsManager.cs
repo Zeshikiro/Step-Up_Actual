@@ -49,7 +49,6 @@ public class SettingsManager : MonoBehaviour
                 }
             }
         }
-        }
         
         if (volumeSlider != null) SetVolume(volumeSlider.value); // Apply immediately on startup
 
