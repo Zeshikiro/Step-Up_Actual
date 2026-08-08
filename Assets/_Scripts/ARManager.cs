@@ -311,25 +311,29 @@ public class ARManager : MonoBehaviour
                 // Create Canvas
                 GameObject canvasObj = new GameObject("DynamicFallbackCanvas");
                 Canvas canvas = canvasObj.AddComponent<Canvas>();
-                canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                canvas.renderMode = RenderMode.WorldSpace;
                 canvas.worldCamera = mainCamera;
-                canvas.planeDistance = 50f; // Render far behind the avatar (avatar is at Z=5)
-                canvas.sortingOrder = -100;
                 
-                canvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
+                canvasObj.transform.SetParent(mainCamera.transform, false);
+                canvasObj.transform.localPosition = new Vector3(0, 0, 50f);
+                canvasObj.transform.localRotation = Quaternion.identity;
+                canvasObj.transform.localScale = Vector3.one * 0.05f; // Scale it so it fits
+                
+                RectTransform canvasRt = canvasObj.GetComponent<RectTransform>();
+                canvasRt.sizeDelta = new Vector2(2000, 2000);
                 
                 // Create RawImage
                 GameObject imageObj = new GameObject("FallbackImage");
                 imageObj.transform.SetParent(canvasObj.transform, false);
-                UnityEngine.UI.RawImage rawImage = imageObj.AddComponent<UnityEngine.UI.RawImage>();
-                rawImage.texture = fallbackTexture;
                 
-                // Stretch to fill screen perfectly
+                UnityEngine.UI.RawImage rawImg = imageObj.AddComponent<UnityEngine.UI.RawImage>();
+                rawImg.texture = fallbackTexture;
+                
                 RectTransform rt = imageObj.GetComponent<RectTransform>();
                 rt.anchorMin = Vector2.zero;
                 rt.anchorMax = Vector2.one;
-                rt.offsetMin = Vector2.zero;
-                rt.offsetMax = Vector2.zero;
+                rt.sizeDelta = Vector2.zero;
+                rt.anchoredPosition = Vector2.zero;
                 
                 // Track it so we can destroy it when AR closes
                 dynamicBgQuad = canvasObj;

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio; 
 using Firebase.Auth; 
+using TMPro;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -21,8 +22,36 @@ public class SettingsManager : MonoBehaviour
         {
             volumeSlider.value = PlayerPrefs.GetFloat("MasterVolume", 0.75f);
             volumeSlider.onValueChanged.AddListener(SetVolume);
-            SetVolume(volumeSlider.value); // Apply immediately on startup
         }
+
+        // --- FOOLPROOF BUTTON BINDING ---
+        // If the Inspector's UnityEvents got corrupted from changing the method signatures,
+        // we will forcefully bind them here using code!
+        if (settingsPanel != null)
+        {
+            Button[] allButtons = settingsPanel.GetComponentsInChildren<Button>(true);
+            foreach (Button b in allButtons)
+            {
+                TMP_Text t = b.GetComponentInChildren<TMP_Text>();
+                if (t != null)
+                {
+                    string txt = t.text.ToLower();
+                    if (txt.Contains("email"))
+                    {
+                        b.onClick.RemoveAllListeners();
+                        b.onClick.AddListener(() => OnChangeEmailClicked(""));
+                    }
+                    else if (txt.Contains("privacy") || txt.Contains("social"))
+                    {
+                        b.onClick.RemoveAllListeners();
+                        b.onClick.AddListener(() => OnPrivacyAndSocialClicked(""));
+                    }
+                }
+            }
+        }
+        }
+        
+        if (volumeSlider != null) SetVolume(volumeSlider.value); // Apply immediately on startup
 
         // Load notifications, default to ON
         if (notificationsToggle != null)
