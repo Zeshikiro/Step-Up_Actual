@@ -45,7 +45,8 @@ function App() {
     <AuthProvider>
       <div className="app-container" style={{paddingBottom: '80px'}}>
         
-       {activeTab === 'home' && (
+       <div key={activeTab} className="scene-transition">
+        {activeTab === 'home' && (
   <>
     {/* TOP GAME HEADER */}
 <div style={{
@@ -390,6 +391,7 @@ function AuthWrapper() {
 }
 
 export default App
+
 
 
 
