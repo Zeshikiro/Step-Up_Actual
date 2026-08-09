@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="32" height="32">
+  <!-- A very simple pixel art woman running -->
+  <!-- Hair -->
+  <rect x="5" y="1" width="6" height="3" fill="#4b2b18"/>
+  <rect x="4" y="2" width="2" height="7" fill="#4b2b18"/>
+  <!-- Head -->
+  <rect x="6" y="2" width="4" height="4" fill="#ffcc99"/>
+  <rect x="8" y="2" width="1" height="1" fill="#000"/> <!-- eye -->
+  <!-- Body/Shirt (Red/Pink) -->
+  <rect x="5" y="6" width="6" height="5" fill="#e63946"/>
+  <!-- Arm left -->
+  <rect x="3" y="6" width="2" height="4" fill="#ffcc99"/>
+  <!-- Arm right -->
+  <rect x="11" y="6" width="2" height="4" fill="#ffcc99"/>
+  <!-- Legs (Black) -->
+  <!-- Left leg (back) -->
+  <rect x="4" y="11" width="3" height="5" fill="#171717"/>
+  <!-- Right leg (forward) -->
+  <rect x="9" y="11" width="3" height="4" fill="#171717"/>
+  <rect x="10" y="14" width="3" height="2" fill="#171717"/>
+</svg>
