@@ -2,7 +2,6 @@ import { Download, Heart, Home, Info, MessageCircle, Trophy, User } from 'lucide
 import { useState, useEffect } from 'react'
 import './App.css'
 import AboutUs from './components/AboutUs'
-import BackgroundRunners from './components/BackgroundRunners'
 import { AuthProvider, useAuth } from './components/AuthContext'
 import HealthTips from './components/HealthTips'
 import Leaderboard from './components/Leaderboard'
@@ -44,7 +43,6 @@ function App() {
 
   return (
     <AuthProvider>
-      <BackgroundRunners />
       <div className="app-container" style={{paddingBottom: '80px'}}>
         
        <div key={activeTab} className="scene-transition">
@@ -394,7 +392,6 @@ function AuthWrapper() {
 }
 
 export default App
-
 
 
 
