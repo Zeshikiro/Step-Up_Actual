@@ -1,11 +1,21 @@
 import { ArrowLeft, ImageOff } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function HealthTips() {
-  const [activeTipId, setActiveTipId] = useState(() => {
+  const getActiveTipFromUrl = () => {
     const params = new URLSearchParams(window.location.search);
     return params.get('tip');
-  });
+  };
+
+  const [activeTipId, setActiveTipId] = useState(getActiveTipFromUrl);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveTipId(getActiveTipFromUrl());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const handleTipChange = (id) => {
     setActiveTipId(id);
@@ -402,3 +412,4 @@ export default function HealthTips() {
   </div>
 );
 }
+

@@ -1,5 +1,5 @@
 import { Download, Heart, Home, Info, MessageCircle, Trophy, User } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import AboutUs from './components/AboutUs'
 import { AuthProvider, useAuth } from './components/AuthContext'
@@ -10,10 +10,20 @@ import Profile from './components/Profile'
 import SocialFeed from './components/SocialFeed'
 
 function App() {
-  const [activeTab, setActiveTab] = useState(() => {
+  const getActiveTabFromUrl = () => {
     const params = new URLSearchParams(window.location.search);
     return params.get('tab') || 'home';
-  });
+  };
+
+  const [activeTab, setActiveTab] = useState(getActiveTabFromUrl);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveTab(getActiveTabFromUrl());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
     const handleTabChange = (tab, mode = null) => {
     setActiveTab(tab);
@@ -383,4 +393,5 @@ function AuthWrapper() {
 }
 
 export default App
+
 
