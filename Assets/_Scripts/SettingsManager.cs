@@ -15,7 +15,7 @@ public class SettingsManager : MonoBehaviour
     public GameObject settingsPanel; // Drag your overall Settings Panel here
     public GameObject bmiPanel;      // Slot for your BMI Panel!
 
-    private void Start()
+        private void Start()
     {
         // Load volume, default to 75%
         if (volumeSlider != null)
@@ -24,9 +24,14 @@ public class SettingsManager : MonoBehaviour
             volumeSlider.onValueChanged.AddListener(SetVolume);
         }
 
+        // Auto-find panels if they are missing (crucial for prefabs used across multiple scenes)
+        if (bmiPanel == null) bmiPanel = FindInactivePanel("BMI Panel");
+        if (eulaPanel == null) eulaPanel = FindInactivePanel("EULA Panel");
+        if (settingsPanel == null) settingsPanel = gameObject; // Fallback to itself
+
         // --- FOOLPROOF BUTTON BINDING ---
-        // If the Inspector's UnityEvents got corrupted from changing the method signatures,
-        // we will forcefully bind them here using code!
+        // We bind ALL buttons dynamically in code based on their text! 
+        // This ensures the prefab NEVER breaks when spawned in new scenes!
         if (settingsPanel != null)
         {
             Button[] allButtons = settingsPanel.GetComponentsInChildren<Button>(true);
@@ -36,16 +41,17 @@ public class SettingsManager : MonoBehaviour
                 if (t != null)
                 {
                     string txt = t.text.ToLower();
-                    if (txt.Contains("email"))
-                    {
-                        b.onClick.RemoveAllListeners();
-                        b.onClick.AddListener(() => OnChangeEmailClicked(""));
-                    }
-                    else if (txt.Contains("privacy") || txt.Contains("social"))
-                    {
-                        b.onClick.RemoveAllListeners();
-                        b.onClick.AddListener(() => OnPrivacyAndSocialClicked(""));
-                    }
+                    
+                    // Nuke all Inspector bindings so we don't double-fire
+                    b.onClick.RemoveAllListeners();
+
+                    if (txt.Contains("email")) b.onClick.AddListener(() => OnChangeEmailClicked(""));
+                    else if (txt.Contains("privacy") || txt.Contains("social")) b.onClick.AddListener(() => OnPrivacyAndSocialClicked(""));
+                    else if (txt.Contains("bmi")) b.onClick.AddListener(OnUpdateBMIClicked);
+                    else if (txt.Contains("log out")) b.onClick.AddListener(OnLogOutClicked);
+                    else if (txt.Contains("contacts")) b.onClick.AddListener(OnContactsAndSupportClicked);
+                    else if (txt.Contains("legal") || txt.Contains("eula")) b.onClick.AddListener(OnLegalClicked);
+                    else if (txt.Contains("about")) b.onClick.AddListener(() => OnAboutClicked(""));
                 }
             }
         }
@@ -58,6 +64,15 @@ public class SettingsManager : MonoBehaviour
             notificationsToggle.isOn = PlayerPrefs.GetInt("NotificationsEnabled", 1) == 1;
             notificationsToggle.onValueChanged.AddListener(ToggleNotifications);
         }
+    }
+
+    private GameObject FindInactivePanel(string panelName)
+    {
+        foreach (Transform t in Resources.FindObjectsOfTypeAll<Transform>())
+        {
+            if (t.name == panelName && t.gameObject.scene.isLoaded) return t.gameObject;
+        }
+        return null;
     }
 
     // --- FITNESS & PREFERENCES ---
@@ -105,7 +120,7 @@ public class SettingsManager : MonoBehaviour
 
     // --- ACCOUNT SECURITY ---
 
-    public void OnLogOutClicked()
+        public void OnLogOutClicked()
     {
         Debug.Log("Signing out of Firebase...");
         
@@ -126,8 +141,8 @@ public class SettingsManager : MonoBehaviour
         }
         else
         {
-            // Failsafe
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            // If we are in SampleScene or CustomizeScene, force a hard load to LoginScene!
+            UnityEngine.SceneManagement.SceneManager.LoadScene("LoginScene");
         }
     }
 
@@ -171,3 +186,4 @@ public class SettingsManager : MonoBehaviour
         Application.OpenURL(url);
     }
 }
+
