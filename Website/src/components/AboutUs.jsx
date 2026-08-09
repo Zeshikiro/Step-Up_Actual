@@ -62,10 +62,10 @@ export default function AboutUs() {
               <img src="kristina." alt="Kristina Nunag" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
               <div style={{display: 'none'}}><User size={48} color="#6be2ff" /></div>
             </div>
-            <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Christian Dizon</h3>
+            <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Kristina Nunag</h3>
             <p style={{color: '#6be2ff', fontSize: '0.9rem', fontWeight: 'bold'}}>Team Member</p>
             <p style={{fontSize: '0.85rem', color: '#ccc', marginTop: '10px'}}>
-              Pending bio...
+              Specializes in project documentation, academic research, and collaborating on the comprehensive thesis paper for the Capstone requirements.
             </p>
           </div>
 
