@@ -191,7 +191,11 @@ public class ARManager : MonoBehaviour
             
             // ENSURE it is completely active and on the Default layer so the camera sees it
             customAvatar.SetActive(true);
-            customAvatar.layer = 0; 
+            
+            // Recursively set layer to 0 (Default) for all children so we guarantee visibility!
+            foreach (Transform t in customAvatar.GetComponentsInChildren<Transform>(true)) {
+                t.gameObject.layer = 0;
+            } 
             
             string debugStr = "[ULTIMATE_AR_DEBUG] \n";
             debugStr += $"Camera: Pos={mainCamera.transform.position}, Rot={mainCamera.transform.eulerAngles}\n";
