@@ -25,16 +25,13 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-    const handleTabChange = (tab, mode = null) => {
+      const handleTabChange = (tab) => {
     setActiveTab(tab);
     const url = new URL(window.location);
     url.searchParams.set('tab', tab);
     
-    if (mode) {
-      url.searchParams.set('mode', mode);
-    } else {
-      url.searchParams.delete('mode');
-    }
+    // clear mode since we don't use it anymore
+    url.searchParams.delete('mode');
     
     if (tab !== 'health') {
       url.searchParams.delete('tip'); // clear tip if not on health page
@@ -77,7 +74,7 @@ function App() {
         gap: '12px'
       }}>
         <button
-          onClick={() => handleTabChange('auth', 'login')}
+          onClick={() => handleTabChange('login')}
           style={{
             background: '#2f8ed8',
             color: '#ffffff',
@@ -93,7 +90,7 @@ function App() {
         </button>
 
         <button
-          onClick={() => handleTabChange('auth', 'register')}
+          onClick={() => handleTabChange('register')}
           style={{
             background: '#3fd66b',
             color: '#082313',
@@ -115,7 +112,7 @@ function App() {
       <p className="subtitle">
         Gamify your fitness journey. Track every step, customize your 3D avatar, and conquer the leaderboard.
       </p>
-      <button className="cta-button" onClick={() => handleTabChange('auth', 'register')}>
+      <button className="cta-button" onClick={() => handleTabChange('register')}>
         Join Now
       </button>
     </header>
@@ -198,7 +195,7 @@ function App() {
         {activeTab === 'social' && <SocialFeed />}
         {activeTab === 'about' && <AboutUs />}
         {activeTab === 'health' && <HealthTips />}
-        {activeTab === 'auth' && <AuthWrapper />}
+        {(activeTab === 'login' || activeTab === 'register') && <AuthWrapper />}
 
         <footer style={{
   display: 'flex',
@@ -361,11 +358,11 @@ function App() {
   </button>
 
   <button 
-    onClick={() => handleTabChange('auth')} 
+    onClick={() => handleTabChange('login')} 
     style={{
-      background: activeTab === 'auth' ? '#ffd84d' : 'transparent',
-      border: activeTab === 'auth' ? '3px solid #171717' : '3px solid transparent',
-      color: activeTab === 'auth' ? '#171717' : '#ffffff',
+      background: (activeTab === 'login' || activeTab === 'register') ? '#ffd84d' : 'transparent',
+      border: (activeTab === 'login' || activeTab === 'register') ? '3px solid #171717' : '3px solid transparent',
+      color: (activeTab === 'login' || activeTab === 'register') ? '#171717' : '#ffffff',
       cursor: 'pointer',
       display: 'flex',
       flexDirection: 'column',
@@ -393,5 +390,6 @@ function AuthWrapper() {
 }
 
 export default App
+
 
 

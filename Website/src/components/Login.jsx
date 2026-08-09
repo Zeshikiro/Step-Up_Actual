@@ -5,9 +5,9 @@ import { Eye, EyeOff, LogIn, LogOut, UserPlus } from 'lucide-react';
 export default function Login() {
   const { login, register, currentUser, logout, resetPassword } = useAuth();
   
-  const getInitialMode = () => {
+    const getInitialMode = () => {
     const params = new URLSearchParams(window.location.search);
-    return params.get('mode') === 'register';
+    return params.get('tab') === 'register';
   };
 
   const [isRegistering, setIsRegistering] = useState(getInitialMode);
@@ -21,6 +21,15 @@ export default function Login() {
     window.addEventListener('popstate', handleUrlChange);
     return () => window.removeEventListener('popstate', handleUrlChange);
   }, []);
+
+  const toggleMode = () => {
+    const newMode = !isRegistering;
+    setIsRegistering(newMode);
+    
+    const url = new URL(window.location);
+    url.searchParams.set('tab', newMode ? 'register' : 'login');
+    window.history.pushState({}, '', url);
+  };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -287,7 +296,7 @@ export default function Login() {
         </form>
 
         <p
-          onClick={() => setIsRegistering(!isRegistering)}
+          onClick={toggleMode}
           style={{
             textAlign: 'center',
             marginTop: '1.5rem',
@@ -303,3 +312,4 @@ export default function Login() {
     </div>
   );
 }
+
