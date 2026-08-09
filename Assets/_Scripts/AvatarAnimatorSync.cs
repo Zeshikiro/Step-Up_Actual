@@ -13,6 +13,17 @@ public class AvatarAnimatorSync : MonoBehaviour
     [Tooltip("The exact name of your boolean parameter for Walking (e.g. 'IsWalking')")]
     public string isWalkingParameter = "IsWalking";
 
+    [Header("Animation Speeds")]
+    [Tooltip("The animator Speed value for walking")]
+    public float walkAnimValue = 1.0f;
+    [Tooltip("The animator Speed value for running")]
+    public float runAnimValue = 2.0f;
+    [Tooltip("The speed at which the animation smoothly transitions between walking and running (higher = faster snap)")]
+    public float animationLerpSpeed = 5.0f;
+
+    // Smoothly track current animation speed to stop "tweaking/jittering"
+    private float _currentSmoothSpeed = 0f;
+
     private int _lastStepCount;
     private float _lastStepTime;
 
@@ -106,6 +117,15 @@ public class AvatarAnimatorSync : MonoBehaviour
         bool isSliding = (Time.time - _lastMoveTime) < 1.5f;
 
         bool shouldWalk = isStepping || isSliding;
+        
+        // 3. Smooth the target speed so it doesn't instantly snap (causing the 'tweaking/jittering' look)
+        float targetSpeed = 0f;
+        if (shouldWalk)
+        {
+            targetSpeed = (stepManager.CurrentSpeedMPS > 2.5f) ? runAnimValue : walkAnimValue;
+        }
+        
+        _currentSmoothSpeed = Mathf.Lerp(_currentSmoothSpeed, targetSpeed, Time.deltaTime * animationLerpSpeed);
 
         foreach (var anim in _validAnimators)
         {
@@ -113,14 +133,14 @@ public class AvatarAnimatorSync : MonoBehaviour
             
             if (shouldWalk)
             {
-                float targetSpeed = (stepManager.CurrentSpeedMPS > 2.5f) ? 2.0f : 1.0f;
                 anim.SetBool(_isWalkingHash, true);
-                anim.SetFloat(_speedHash, targetSpeed);
+                anim.SetFloat(_speedHash, _currentSmoothSpeed);
             }
             else
             {
                 anim.SetBool(_isWalkingHash, false);
-                anim.SetFloat(_speedHash, 0f);
+                // We let it blend down to 0 smoothly even if IsWalking is false
+                anim.SetFloat(_speedHash, _currentSmoothSpeed);
             }
         }
     }
