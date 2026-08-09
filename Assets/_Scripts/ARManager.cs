@@ -185,9 +185,13 @@ public class ARManager : MonoBehaviour
             
             // FIX: The user accidentally moved the avatar meshes/armature 800 units away from the root in the Editor!
             // We must forcefully snap all children back to the center of the root, or else the camera will never see them!
-            foreach (Transform child in customAvatar.transform)
+            foreach (Transform t in customAvatar.GetComponentsInChildren<Transform>(true))
             {
-                child.localPosition = Vector3.zero;
+                if (t.localPosition.magnitude > 100f)
+                {
+                    Debug.LogWarning($"[OFFSET FIX] Found massive offset on {t.name}! Snapping to zero!");
+                    t.localPosition = Vector3.zero;
+                }
             }
 
             customAvatar.transform.SetParent(mainCamera.transform, false);
