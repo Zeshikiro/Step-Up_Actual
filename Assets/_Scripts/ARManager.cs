@@ -192,6 +192,19 @@ public class ARManager : MonoBehaviour
             // ENSURE it is completely active and on the Default layer so the camera sees it
             customAvatar.SetActive(true);
             customAvatar.layer = 0; 
+            
+            string debugStr = "[ULTIMATE_AR_DEBUG] \n";
+            debugStr += $"Camera: Pos={mainCamera.transform.position}, Rot={mainCamera.transform.eulerAngles}\n";
+            debugStr += $"Avatar Root: Pos={customAvatar.transform.position}, Rot={customAvatar.transform.eulerAngles}, Scale={customAvatar.transform.lossyScale}\n";
+            foreach (Transform t in customAvatar.GetComponentsInChildren<Transform>(false)) {
+                if (t.GetComponent<Renderer>() != null) {
+                    debugStr += $"Mesh [{t.name}]: Pos={t.position}, Rot={t.eulerAngles}, Scale={t.lossyScale}, Active={t.gameObject.activeInHierarchy}, Layer={t.gameObject.layer}\n";
+                }
+            }
+            if (dynamicBgQuad != null) {
+                debugStr += $"Canvas: Pos={dynamicBgQuad.transform.position}, Rot={dynamicBgQuad.transform.eulerAngles}, Scale={dynamicBgQuad.transform.lossyScale}\n";
+            }
+            Debug.LogError(debugStr);
         }
         UpdateAvatarRotation();
 
