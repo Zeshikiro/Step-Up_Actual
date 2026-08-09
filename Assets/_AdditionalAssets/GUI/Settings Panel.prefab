@@ -525,6 +525,8 @@ GameObject:
   - component: {fileID: 6675453747181710025}
   - component: {fileID: 2611346526698749107}
   - component: {fileID: 6843848212904186884}
+  - component: {fileID: 7355071941810520299}
+  - component: {fileID: 5692984269617353056}
   m_Layer: 5
   m_Name: Settings Panel
   m_TagString: Untagged
@@ -622,6 +624,32 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!225 &7355071941810520299
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776868080003107849}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &5692984269617353056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776868080003107849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e84f1f64aaa83841b6cb95b71791aa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelAnimator
+  animationDuration: 0.6
+  slideOffset: -150
 --- !u!1 &1495057008943581511
 GameObject:
   m_ObjectHideFlags: 0
@@ -2177,7 +2205,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 531.5, y: -777.5}
+  m_AnchoredPosition: {x: 516.5, y: -777.5}
   m_SizeDelta: {x: 1033, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3438062032423418191
@@ -3490,7 +3518,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 531.5, y: -57.5}
+  m_AnchoredPosition: {x: 516.5, y: -57.5}
   m_SizeDelta: {x: 1033, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &3504023549333266345

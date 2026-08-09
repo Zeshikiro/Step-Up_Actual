@@ -414,7 +414,7 @@ public class StepManager : MonoBehaviour
         // The Accelerometer cannot distinguish between hand-shaking and walking.
         // By relying purely on the Android StepCounter, we utilize Android's built-in ML algorithm
         // which flawlessly filters out shaking! (Note: Updates arrive in batches every 5-10 seconds)
-        // DetectAccelerometerStep();
+        DetectAccelerometerStep();
 
         // GPS Speed Tracker
         if (_locationProvider != null && _locationProvider.CurrentLocation.LatitudeLongitude != Vector2d.zero)

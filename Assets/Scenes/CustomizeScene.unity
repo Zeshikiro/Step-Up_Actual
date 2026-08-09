@@ -22404,8 +22404,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3961892883323150685}
   m_HandleRect: {fileID: 174809392001564676}
   m_Direction: 0
-  m_Value: 0
-  m_Size: 0.9999999
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -32073,6 +32073,10 @@ PrefabInstance:
     - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
       propertyPath: overrideCoins
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
+      propertyPath: debugCoinAmount
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 7144854683014704392, guid: 4618030f83f52ab4f96d73ae6105e432, type: 3}
       propertyPath: feetContentGrid

@@ -13,7 +13,9 @@ public class AvatarAnimatorSync : MonoBehaviour
     [Tooltip("The exact name of your boolean parameter for Walking (e.g. 'IsWalking')")]
     public string isWalkingParameter = "IsWalking";
 
-    [Header("Animation Speeds")]
+        [Header("Animation Speeds")]
+    [Tooltip("The animator Speed value for idle/standing still")]
+    public float idleAnimValue = 1.0f;
     [Tooltip("The animator Speed value for walking")]
     public float walkAnimValue = 1.0f;
     [Tooltip("The animator Speed value for running")]
@@ -22,7 +24,7 @@ public class AvatarAnimatorSync : MonoBehaviour
     public float animationLerpSpeed = 3.0f;
 
     // Smoothly track current animation speed to stop "tweaking/jittering"
-    private float _currentSmoothSpeed = 0f;
+    private float _currentSmoothSpeed = 1.0f;
 
     private int _lastStepCount;
     private float _lastStepTime;
@@ -101,12 +103,12 @@ public class AvatarAnimatorSync : MonoBehaviour
         {
             _lastStepCount = stepManager.currentDailySteps;
             _lastStepTime = Time.time;
-        }
-
-        // 2. Check for Physical GPS Sliding on the TRACKER transform (not this object!)
+        }        // 2. Check for Physical GPS Sliding on the TRACKER transform (not this object!)
         Transform posSource = _trackerTransform != null ? _trackerTransform : transform;
         float distanceMoved = Vector3.Distance(posSource.position, _lastPosition);
-        if (distanceMoved > 0.02f) // Moved more than 2cm this frame
+        
+        // FIX: Only trigger sliding if we are actively moving fast enough via GPS (ignore GPS drift while phone is on table!)
+        if (distanceMoved > 0.05f && stepManager != null && stepManager.CurrentSpeedMPS > 0.5f) 
         {
             _lastMoveTime = Time.time;
         }
@@ -119,12 +121,12 @@ public class AvatarAnimatorSync : MonoBehaviour
         bool shouldWalk = isStepping || isSliding;
         
         // 3. Smooth the target speed so it doesn't instantly snap (causing the 'tweaking/jittering' look)
-        float targetSpeed = 0f;
+        float targetSpeed = idleAnimValue;
         if (shouldWalk)
         {
-            targetSpeed = (stepManager.CurrentSpeedMPS > 2.5f) ? runAnimValue : walkAnimValue;
+            targetSpeed = (stepManager != null && stepManager.CurrentSpeedMPS > 2.5f) ? runAnimValue : walkAnimValue;
         }
-        
+
         _currentSmoothSpeed = Mathf.Lerp(_currentSmoothSpeed, targetSpeed, Time.deltaTime * animationLerpSpeed);
 
         foreach (var anim in _validAnimators)
@@ -186,3 +188,5 @@ public class AvatarAnimatorSync : MonoBehaviour
         }
     }
 }
+
+
