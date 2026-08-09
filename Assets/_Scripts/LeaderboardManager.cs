@@ -71,6 +71,10 @@ public class LeaderboardManager : MonoBehaviour
 
         foreach (Transform child in contentContainerTarget)
         {
+            if (firstPlacePanel != null && child.gameObject == firstPlacePanel) continue;
+            if (secondPlacePanel != null && child.gameObject == secondPlacePanel) continue;
+            if (thirdPlacePanel != null && child.gameObject == thirdPlacePanel) continue;
+            
             Destroy(child.gameObject);
         }
 

@@ -17,3 +17,19 @@ August 7th, 2026 (Late Evening Session - Settings UI Fixes)
   - Added safety checks to OnAgreeClicked() so the EULA panel safely closes even if the inspector field is unassigned.
   - Solved the 'BMI popping up from Settings' bug: The script now checks PlayerPrefs to see if the user previously accepted the EULA. If they open the EULA from the Settings menu (meaning they already accepted it during initial login), clicking Agree simply closes the panel instead of wrongfully triggering the BMI onboarding sequence.
 
+
+August 8th, 2026 (Night Session - Finalizing Core Bug Fixes)
+- Fixed Settings Manager UI buttons:
+  - Replaced unreliable mailto: links with robust https:// support portal links (e.g., https://stepup.com/support) for Change Email and Support buttons, guaranteeing the user gets visual feedback when the browser opens on Windows 10/11 where default mail clients are often absent.
+  - Implemented a forceful code-driven button binding inside Start() using GetComponentsInChildren. This completely bypasses any broken or corrupted UnityEvents inside the Inspector, making the buttons completely foolproof.
+  - Resolved Log Out issues: Bypassed volatile scene reloading and manually deactivated UI panels while forcing the Login Panel open, ensuring the Firebase auth token is cleared and the UI resets immediately.
+- Fixed EULA/BMI Onboarding Loop:
+  - Upgraded EULAManager to cross-check PlayerPrefs.HasKey("SavedHeight"). This serves as an absolute guarantee that older accounts (created before the BMI_Setup_Complete flag existed) can safely exit the EULA without repeatedly triggering the BMI panel.
+- Fixed AR Avatar Disappearance:
+  - Dynamic Fallback Avatar: Added Resources.FindObjectsOfTypeAll to automatically hunt down the AvatarContainer even if it is completely disabled in the Unity hierarchy and left blank in the Inspector!
+  - Transition Cooldown: Replaced the fragile boolean isTransitioning lock with a robust float-based timestamp cooldown 
+extClickTime. This guarantees the 3D toggle button can never get permanently stuck if a coroutine drops a frame.
+  - Fixed Canvas Depth: Discovered that the AR Fallback Canvas was accidentally set to ScreenSpaceCamera, rendering the dark background directly ON TOP of the 3D avatar. Switched the Canvas to WorldSpace and pushed it back 50 units (Z=50) to perfectly frame the avatar.
+- Fixed Leaderboard Manager:
+  - Bypassed a severe Firebase backend block! Because the cloud database lacked an explicit security index for TotalLifetimeSteps, it was silently rejecting the OrderByChild query and returning an empty list. Removed the cloud sorting requirement and instead dynamically pulled the batch and sorted it locally in memory, instantly restoring the podium!
+

@@ -79,7 +79,8 @@ public class ARManager : MonoBehaviour
             // GameObject.Find cannot find inactive objects. We must use Resources to find it even if it's disabled!
             foreach (GameObject obj in Resources.FindObjectsOfTypeAll<GameObject>())
             {
-                if (obj.name == "AvatarContainer" && obj.scene.isLoaded)
+                // Support both the classic "AvatarContainer" and the new "PlayerAvatar" naming!
+                if ((obj.name == "AvatarContainer" || obj.name == "PlayerAvatar") && obj.scene.isLoaded)
                 {
                     customAvatar = obj;
                     break;
@@ -176,6 +177,11 @@ public class ARManager : MonoBehaviour
             // Turn off the trail renderer so it doesn't streak across the screen in AR/UI!
             TrailRenderer tr = customAvatar.GetComponent<TrailRenderer>();
             if (tr != null) tr.emitting = false;
+            
+            // CRITICAL FIX: The GPS tracker on the avatar will constantly fight the AR camera
+            // and teleport the avatar 10,000 units back to the 2D map! Disable it during AR mode!
+            MapAvatarTracker tracker = customAvatar.GetComponent<MapAvatarTracker>();
+            if (tracker != null) tracker.enabled = false;
 
             customAvatar.transform.SetParent(mainCamera.transform, false);
             customAvatar.transform.localPosition = avatarARPosition;
@@ -384,9 +390,17 @@ public class ARManager : MonoBehaviour
         if (customAvatar != null)
         {
             customAvatar.transform.SetParent(originalAvatarParent, false);
-            customAvatar.transform.localScale = originalAvatarScale;
             customAvatar.transform.localPosition = originalAvatarLocalPos;
-            customAvatar.SetActive(false);
+            customAvatar.transform.localScale = originalAvatarScale;
+            
+            // CRITICAL: Re-enable GPS pedometer tracking when returning to the map!
+            MapAvatarTracker tracker = customAvatar.GetComponent<MapAvatarTracker>();
+            if (tracker != null) tracker.enabled = true;
+            
+            // Only disable if it's a dedicated 3D container. The main Player root must stay alive for the pedometer!
+            if (customAvatar.name != "PlayerAvatar") customAvatar.SetActive(false); 
+            else customAvatar.SetActive(true);
+            
             customAvatar.transform.rotation = Quaternion.identity;
             
             // Turn trail renderer back on for map mode!
