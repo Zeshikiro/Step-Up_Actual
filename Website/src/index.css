@@ -75,12 +75,12 @@ body::before {
     linear-gradient(#ffffff, #ffffff) 69.5% 6% / 45px 16px no-repeat,
     linear-gradient(#ffffff, #ffffff) 71.5% 8% / 65px 16px no-repeat;
     
-  animation: driftClouds 60s linear infinite;
+  animation: driftClouds 35s linear infinite;
 }
 
 @keyframes driftClouds {
   from { transform: translateX(0); }
-  to { transform: translateX(-50vw); }
+  to { transform: translateX(-50%); }
 }
 
 /* Pixel grass and ground */
@@ -110,3 +110,4 @@ input,
 textarea {
   font-family: 'Pixelify Sans', system-ui, Arial, sans-serif;
 }
+

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; min-height: 100vh; background: #7bdcff; }
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; bottom: 0;
+  left: 0; width: 200vw;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    linear-gradient(#ffffff, #ffffff) 4% 16% / 80px 18px no-repeat,
+    linear-gradient(#ffffff, #ffffff) 54% 16% / 80px 18px no-repeat;
+  animation: driftClouds 5s linear infinite;
+}
+@keyframes driftClouds {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50vw); }
+}
+</style>
+</head>
+<body></body>
+</html>
