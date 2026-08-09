@@ -19,7 +19,7 @@ public class AvatarAnimatorSync : MonoBehaviour
     [Tooltip("The animator Speed value for running")]
     public float runAnimValue = 2.0f;
     [Tooltip("The speed at which the animation smoothly transitions between walking and running (higher = faster snap)")]
-    public float animationLerpSpeed = 5.0f;
+    public float animationLerpSpeed = 3.0f;
 
     // Smoothly track current animation speed to stop "tweaking/jittering"
     private float _currentSmoothSpeed = 0f;
