@@ -182,6 +182,13 @@ public class ARManager : MonoBehaviour
             // and teleport the avatar 10,000 units back to the 2D map! Disable it during AR mode!
             MapAvatarTracker tracker = customAvatar.GetComponent<MapAvatarTracker>();
             if (tracker != null) tracker.enabled = false;
+            
+            // FIX: The user accidentally moved the avatar meshes/armature 800 units away from the root in the Editor!
+            // We must forcefully snap all children back to the center of the root, or else the camera will never see them!
+            foreach (Transform child in customAvatar.transform)
+            {
+                child.localPosition = Vector3.zero;
+            }
 
             customAvatar.transform.SetParent(mainCamera.transform, false);
             customAvatar.transform.localPosition = avatarARPosition;
