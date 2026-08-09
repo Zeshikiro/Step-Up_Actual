@@ -3,7 +3,7 @@ import { Info, Users, User } from 'lucide-react';
 
 export default function AboutUs() {
   return (
-    <div className="features-grid" style={{marginTop: '2rem', paddingBottom: '2rem'}}>
+    <div className="about-grid" style={{marginTop: '2rem', paddingBottom: '2rem'}}>
       
       {/* Project Background Section */}
       <div className="glass-card" style={{gridColumn: '1 / -1'}}>
@@ -59,7 +59,7 @@ export default function AboutUs() {
           {/* Member 3: Chris */}
           <div style={{background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '15px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)'}}>
             <div style={{width: '100px', height: '100px', borderRadius: '50%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(107, 226, 255, 0.2)', border: '2px solid rgba(107, 226, 255, 0.5)', overflow: 'hidden'}}>
-              <img src="kristina." alt="Kristina Nunag" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+              <img src="kristina.jpg" alt="Kristina Nunag" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
               <div style={{display: 'none'}}><User size={48} color="#6be2ff" /></div>
             </div>
             <h3 style={{marginTop: '15px', marginBottom: '5px'}}>Kristina Nunag</h3>
@@ -74,3 +74,4 @@ export default function AboutUs() {
     </div>
   );
 }
+

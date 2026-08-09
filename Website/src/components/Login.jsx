@@ -1,10 +1,26 @@
-import { Eye, EyeOff, LogIn, LogOut, UserPlus } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { Eye, EyeOff, LogIn, LogOut, UserPlus } from 'lucide-react';
 
 export default function Login() {
   const { login, register, currentUser, logout, resetPassword } = useAuth();
-  const [isRegistering, setIsRegistering] = useState(false);
+  
+  const getInitialMode = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('mode') === 'register';
+  };
+
+  const [isRegistering, setIsRegistering] = useState(getInitialMode);
+
+  useEffect(() => {
+    const handleUrlChange = () => {
+      setIsRegistering(getInitialMode());
+    };
+    
+    // Listen for custom popstate dispatched by handleTabChange in App.jsx
+    window.addEventListener('popstate', handleUrlChange);
+    return () => window.removeEventListener('popstate', handleUrlChange);
+  }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

@@ -15,14 +15,23 @@ function App() {
     return params.get('tab') || 'home';
   });
 
-  const handleTabChange = (tab) => {
+    const handleTabChange = (tab, mode = null) => {
     setActiveTab(tab);
     const url = new URL(window.location);
     url.searchParams.set('tab', tab);
+    
+    if (mode) {
+      url.searchParams.set('mode', mode);
+    } else {
+      url.searchParams.delete('mode');
+    }
+    
     if (tab !== 'health') {
       url.searchParams.delete('tip'); // clear tip if not on health page
     }
     window.history.pushState({}, '', url);
+    // Dispatch a popstate event to let Login.jsx know the URL changed without full refresh
+    window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
   return (
@@ -58,7 +67,7 @@ function App() {
         gap: '12px'
       }}>
         <button
-          onClick={() => handleTabChange('auth')}
+          onClick={() => handleTabChange('auth', 'login')}
           style={{
             background: '#2f8ed8',
             color: '#ffffff',
@@ -74,7 +83,7 @@ function App() {
         </button>
 
         <button
-          onClick={() => handleTabChange('auth')}
+          onClick={() => handleTabChange('auth', 'register')}
           style={{
             background: '#3fd66b',
             color: '#082313',
@@ -96,7 +105,7 @@ function App() {
       <p className="subtitle">
         Gamify your fitness journey. Track every step, customize your 3D avatar, and conquer the leaderboard.
       </p>
-      <button className="cta-button" onClick={() => handleTabChange('auth')}>
+      <button className="cta-button" onClick={() => handleTabChange('auth', 'register')}>
         Join Now
       </button>
     </header>
@@ -374,3 +383,4 @@ function AuthWrapper() {
 }
 
 export default App
+

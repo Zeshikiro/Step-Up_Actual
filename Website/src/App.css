@@ -346,3 +346,22 @@ a:hover {
     display: none;
   }
 }
+/* About page layout - distinct from features-grid */
+.about-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  max-width: 1000px;
+  margin: 0 auto 1.5rem;
+}
+
+.about-grid > .glass-card {
+  text-align: left;
+}
+
+/* Ensure images fit nicely on small screens */
+@media (max-width: 768px) {
+  .about-grid {
+    padding: 0;
+  }
+}
