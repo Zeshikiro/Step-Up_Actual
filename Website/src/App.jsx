@@ -197,6 +197,7 @@ function App() {
         {activeTab === 'about' && <AboutUs />}
         {activeTab === 'health' && <HealthTips />}
         {(activeTab === 'login' || activeTab === 'register') && <AuthWrapper />}
+        </div>
 
         <footer style={{
   display: 'flex',
@@ -391,6 +392,7 @@ function AuthWrapper() {
 }
 
 export default App
+
 
 
 
