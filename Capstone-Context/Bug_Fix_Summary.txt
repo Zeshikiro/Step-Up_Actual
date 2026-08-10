@@ -1,0 +1,23 @@
+# 5-Bug Fix Sprint Summary
+
+All 5 core gameplay issues have been successfully patched! Here is a breakdown of what was changed under the hood:
+
+### 1. Step Reset Fix (`StepManager.cs`)
+- Added a `Singleton` and `DontDestroyOnLoad` pattern to the step manager.
+- **Why this works:** Previously, whenever you loaded a new scene (like Customize or Main Menu), the step manager died and respawned from scratch (showing 0) until it synced back up with Firebase. Now, it persists flawlessly between scenes!
+
+### 2. Coins Displaying 999999 (`InventoryManager.cs`)
+- Hardcoded default `debugCoinAmount` was changed from `999999` to `2000`.
+- **Why this works:** When Unity automatically spawned the `InventoryManager` prefab from the Resources folder, it was completely ignoring your 2000-coin Inspector override and reverting to the script's raw default 999999. Now the raw script default correctly acts as your 2000 limit.
+
+### 3. EULA Loop Fixed (`AuthManager.cs`)
+- Updated `FetchOnboardingStateAndTransition()` to check for the `EulaAccepted_` flag.
+- **Why this works:** Returning players who accepted the EULA but closed the app before doing the BMI setup are now safely routed to the BMI (or Main Menu) instead of having the EULA panel violently thrown at them again.
+
+### 4. Compass Removed (`CompassUI.cs`)
+- The script now safely deactivates itself in `Start()`. 
+- **Why this works:** By doing it this way, we didn't break any of the UI Inspector references. The compass UI object simply hides itself instantly on boot.
+
+### 5. Avatar Animation Shake Fix (`StepManager.cs`)
+- Forced a hard `return;` at the absolute top of `DetectAccelerometerStep()`.
+- **Why this works:** The accelerometer "shaking" step-detector fallback was still quietly alive in the background and was so incredibly sensitive that just picking up the phone off the table counted as a burst of 4 steps (which forced the Avatar into a "Running" animation state). Now, only the hardware Machine Learning pedometer controls the steps!
