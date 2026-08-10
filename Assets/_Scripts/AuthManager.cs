@@ -254,6 +254,12 @@ public class AuthManager : MonoBehaviour
                 if (bmiPanel != null) bmiPanel.SetActive(false);
                 if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
             }
+            else if (PlayerPrefs.GetInt("EulaAccepted_" + user.UserId, 0) == 1)
+            {
+                if (mainMenuPanel != null) mainMenuPanel.SetActive(true); // Keep background map active
+                if (eulaPanel != null) eulaPanel.SetActive(false);
+                if (bmiPanel != null) bmiPanel.SetActive(true);
+            }
             else 
             {
                 if (mainMenuPanel != null) mainMenuPanel.SetActive(true); // Keep background map active

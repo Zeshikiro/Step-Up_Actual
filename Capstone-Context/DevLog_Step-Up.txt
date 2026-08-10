@@ -604,3 +604,12 @@ Tasks Completed:
 - Fixed Daily Mission Rollover Bug: Updated StepManager to push a reset command to Firebase at midnight so daily missions unlock properly in the cloud.
 - Fixed Weekly Mission UI Discrepancy (2/5 Target Mismatch): Updated MissionManager to dynamically refresh the Title and Description UI text alongside the progress bar, ensuring the visual text always matches the live target metrics from the active PlayerPrefs data.
 - Fixed 3D Avatar Animations: Guided the setup of the Animator Controller (AvatarBrain) using Generic animation clips (CharacterArmature|Walk). Relocated the Animator component to the root of the FBX prefab (Male_Casual) to fix animation path binding issues, allowing the character to successfully animate.
+
+August 10, 2026
+
+? 5-Bug Fix Sprint:
+1. StepManager Persistence: Added Singleton and DontDestroyOnLoad to StepManager to prevent steps from resetting to 0 when switching scenes.
+2. Coin Override Fix: Changed default debugCoinAmount in InventoryManager to 2000 and removed hardcoded values so it strictly respects the Inspector override.
+3. EULA Loop: Updated AuthManager to check the EulaAccepted_ flag, allowing returning users to bypass the EULA.
+4. Compass Removed: Disabled CompassUI from rendering to fix jerky screen rotation issues.
+5. Shake Animation Fix: Permanently disabled DetectAccelerometerStep() in StepManager. Avatar animation now strictly relies on the hardware ML step counter, fixing the issue where picking up the phone triggered a running animation.

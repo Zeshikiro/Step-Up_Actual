@@ -79,6 +79,26 @@ public class StepManager : MonoBehaviour
     private string userId;
     private ARManager arManager;
 
+    private static StepManager _instance;
+    public static StepManager Instance
+    {
+        get { return _instance; }
+    }
+
+    void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            _instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+    }
+
     void Start()
     {
 #if UNITY_ANDROID
@@ -524,6 +544,11 @@ public class StepManager : MonoBehaviour
 
     private void DetectAccelerometerStep()
     {
+        // PERMANENT ANTI-CHEAT ENFORCEMENT
+        // Accelerometer step detection is fully disabled to prevent the "shaking" cheat.
+        // We now rely 100% on the Android OS Hardware Step Counter which uses ML to filter out shaking.
+        return;
+
         // Read the phone's accelerometer (works on ALL Android devices, no permissions needed)
         if (UnityEngine.InputSystem.Accelerometer.current == null) return;
 

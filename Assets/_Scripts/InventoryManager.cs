@@ -329,9 +329,9 @@ public class InventoryManager : MonoBehaviour
 
     [Header("Debug / Cheats")]
     [Tooltip("Check this to override the player's saved coins with the amount below")]
-    public bool overrideCoins = false;
+    public bool overrideCoins;
     [Tooltip("The amount of coins to give the player for testing")]
-    public int debugCoinAmount = 999999;
+    public int debugCoinAmount;
 
     public void SaveCoins()
     {
