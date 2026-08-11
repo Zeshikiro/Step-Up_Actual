@@ -636,3 +636,15 @@ Feature: Editor Crash Fixes & Tracking Optimization
 Status: Verified in Editor.
 ==================================================
 
+==================================================
+Date: 2026-08-11
+Feature: Dynamic Default Usernames
+
+1. Registration Username Generation:
+   - Issue: All new users were defaulting to "Player" or "Player 1", making leaderboards and profiles confusing.
+   - Fix: In AuthManager.cs, when a new user registers, the system now automatically extracts the first part of their email address (before the @ symbol) and saves it as their default username.
+   - Constraint: The generated username is automatically truncated to 10 characters to obey the global username length limit.
+
+Status: Verified.
+==================================================
+

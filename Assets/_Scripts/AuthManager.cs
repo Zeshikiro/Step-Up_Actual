@@ -150,6 +150,17 @@ public class AuthManager : MonoBehaviour
             {
                 // Nuke old GPS trail from a previous account on this phone
                 PlayerPrefs.DeleteKey("SavedGPSTrail");
+                
+                // Set default username based on email (Max 10 chars)
+                string emailStr = emailField.text.Trim();
+                string[] emailParts = emailStr.Split('@');
+                if (emailParts.Length > 0)
+                {
+                    string defaultName = emailParts[0];
+                    if (defaultName.Length > 10) defaultName = defaultName.Substring(0, 10);
+                    PlayerPrefs.SetString("UserName", defaultName);
+                    PlayerPrefs.Save();
+                }
 
                 newUser.SendEmailVerificationAsync().ContinueWithOnMainThread(emailTask => {
                     if (loginButton != null) loginButton.interactable = true;
