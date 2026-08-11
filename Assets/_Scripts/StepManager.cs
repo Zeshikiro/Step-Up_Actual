@@ -54,9 +54,9 @@ public class StepManager : MonoBehaviour
     private float _lastBufferTime = 0f;
     private int _hardwareStepCount = 0; // Tracks hardware-confirmed steps
     [Header("Accelerometer Tuning")]
-    [SerializeField] private float stepThreshold = 1.8f;  // Increased to 1.8f to ignore phone shaking
+    [SerializeField] private float stepThreshold = 2.2f;  // HIGH STRICTNESS: Increased to 2.2f to heavily ignore phantom phone shaking/swinging
     [SerializeField] private float resetThreshold = 0.9f;   // Acceleration must drop below this before next step
-    [SerializeField] private float minStepInterval = 0.5f; // Increased to 0.5f (max 2 steps/sec) to heavily throttle shaking cheat
+    [SerializeField] private float minStepInterval = 0.6f; // HIGH STRICTNESS: 0.6f heavily throttles fast shaking cheats
 
     // GPS Speed Tracking
     private ILocationProvider _locationProvider;
@@ -101,6 +101,8 @@ public class StepManager : MonoBehaviour
 
     void Start()
     {
+        if (_instance != this) return; // 🚨 CRITICAL ANTI-CRASH FIX: Prevent dying clones from running logic!
+
 #if UNITY_ANDROID
         // Request runtime permissions required for Android 13+
         if (!Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
@@ -422,6 +424,8 @@ public class StepManager : MonoBehaviour
 
     void Update()
     {
+        if (_instance != this) return; // 🚨 CRITICAL ANTI-CRASH FIX: Prevent dying clones from running logic!
+
         // Debug: Press Space to simulate a step (New Input System safe)
         if (UnityEngine.InputSystem.Keyboard.current != null && 
             UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame)

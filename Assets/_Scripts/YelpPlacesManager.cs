@@ -161,14 +161,6 @@ public class YelpPlacesManager : MonoBehaviour
         // Float the billboard slightly above the ground
         worldPosition.y += 10f; 
 
-        // [DEBUG] Spawn a massive red sphere to PROVE the Yelp pin is actually placed in the world!
-        GameObject debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        debugSphere.transform.position = worldPosition;
-        debugSphere.transform.localScale = new Vector3(15f, 15f, 15f); // 15 meters wide!
-        debugSphere.transform.SetParent(mapManager.transform, true);
-        debugSphere.GetComponent<Renderer>().material.color = Color.red;
-        debugSphere.name = $"YelpDebugSphere_{biz.name}";
-
         // 2. Spawn the Billboard UI
         GameObject newPin = Instantiate(mapPinBillboardPrefab, worldPosition, Quaternion.identity);
         newPin.transform.SetParent(mapManager.transform, true); // Parent to map so it moves when map moves!

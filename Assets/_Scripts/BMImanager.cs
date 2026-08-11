@@ -58,13 +58,33 @@ public class BMIManager : MonoBehaviour
 
             // WHO Guidelines Logic
             if (bmi < 18.5f) { category = "Underweight"; stepGoal = 8000; } 
-            else if (bmi >= 18.5f && bmi <= 24.9f) { category = "Normal Weight"; stepGoal = 10000; } 
+            else if (bmi >= 18.5f && bmi <= 24.9f) { category = "Normal"; stepGoal = 10000; } 
             else if (bmi >= 25f && bmi <= 29.9f) { category = "Overweight"; stepGoal = 12000; } 
-            else if (bmi >= 30f) { category = "Obese"; stepGoal = 8000; }
+            else if (bmi >= 30f && bmi <= 34.9f) { category = "Obese Class I"; stepGoal = 8000; }
+            else if (bmi >= 35f) { category = "Obese Class II & III"; stepGoal = 8000; }
+
+            string oldCategory = PlayerPrefs.GetString("BMICategory", "");
+            int oldGoal = PlayerPrefs.GetInt("DailyStepGoal", 0);
 
             // Save the calculated goal and category
             PlayerPrefs.SetInt("DailyStepGoal", stepGoal);
             PlayerPrefs.SetString("BMICategory", category);
+
+            // Dynamic Mission Reset
+            if (oldCategory != "" && (oldCategory != category || oldGoal != stepGoal))
+            {
+                for (int i = 0; i <= 9; i++)
+                {
+                    PlayerPrefs.DeleteKey("MissionClaimed_" + i);
+                    if (FirebaseAuth.DefaultInstance.CurrentUser != null)
+                    {
+                        string userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+                        DatabaseReference dbRef = FirebaseDatabase.DefaultInstance.RootReference;
+                        dbRef.Child("users").Child(userId).Child("MissionClaimed_" + i).SetValueAsync(0);
+                    }
+                }
+                Debug.Log("[BMIManager] BMI Changed! Daily and Weekly missions have been reset to match the new goals.");
+            }
 
             // Save the raw inputs so they can be loaded later!
             PlayerPrefs.SetString("SavedAge", ageInput.text);

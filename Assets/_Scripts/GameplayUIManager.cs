@@ -255,8 +255,28 @@ public class GameplayUIManager : MonoBehaviour
         if (closePopupBackground != null) closePopupBackground.SetActive(false);
     }
 
+    private void ShutdownMapboxGracefully()
+    {
+        // 🚨 CRITICAL FIX: Disable Mapbox before leaving the scene to instantly abort 
+        // background tile-download threads. This prevents Unity Editor from freezing!
+        MapAvatarTracker tracker = FindFirstObjectByType<MapAvatarTracker>();
+        if (tracker != null && tracker.mapManager != null)
+        {
+            tracker.mapManager.gameObject.SetActive(false);
+            Debug.Log("[GameplayUIManager] Mapbox gracefully shutdown to prevent Editor crash.");
+        }
+
+        // Release the SQLite database locks before the scene dies!
+        if (Mapbox.Unity.MapboxAccess.Instance != null)
+        {
+            Mapbox.Unity.MapboxAccess.Instance.ClearAllCacheFiles();
+            Debug.Log("[GameplayUIManager] Mapbox SQLite Cache Locks released.");
+        }
+    }
+
     public void ReturnToMainMenu()
     {
+        ShutdownMapboxGracefully();
         if (SceneLoader.Instance == null) 
         {
             SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
@@ -277,6 +297,7 @@ public class GameplayUIManager : MonoBehaviour
 
     public void SwapViewMode()
     {
+        ShutdownMapboxGracefully();
         if (SceneLoader.Instance == null) 
         {
             SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
@@ -289,6 +310,7 @@ public class GameplayUIManager : MonoBehaviour
 
     public void GoToCustomizeScene()
     {
+        ShutdownMapboxGracefully();
         if (SceneLoader.Instance == null) 
         {
             SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);

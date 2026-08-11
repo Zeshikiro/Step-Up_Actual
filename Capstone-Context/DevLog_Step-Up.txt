@@ -613,3 +613,26 @@ August 10, 2026
 3. EULA Loop: Updated AuthManager to check the EulaAccepted_ flag, allowing returning users to bypass the EULA.
 4. Compass Removed: Disabled CompassUI from rendering to fix jerky screen rotation issues.
 5. Shake Animation Fix: Permanently disabled DetectAccelerometerStep() in StepManager. Avatar animation now strictly relies on the hardware ML step counter, fixing the issue where picking up the phone triggered a running animation.
+==================================================
+Date: 2026-08-11
+Feature: Editor Crash Fixes & Tracking Optimization
+
+1. Fixed Unity Editor Freeze/Crash on Scene Transition:
+   - Issue: Returning from CustomizeScene to SampleScene froze the Unity Editor. Mapbox background SQLite database threads were being aborted while holding locks.
+   - Fix: Added ShutdownMapboxGracefully() to GameplayUIManager.cs which explicitly calls MapboxAccess.Instance.ClearAllCacheFiles() before the scene transitions.
+   - Fix 2: Changed a fatal DestroyImmediate to Destroy inside LocationProviderFactory.cs (Mapbox Core) to prevent Unity memory corruption during Awake().
+   - Fix 3: Added 'if (Instance != this) return;' safety checks in StepManager.cs and InventoryManager.cs to prevent newly spawned singletons from executing Start() and Update() while they are in the queue for destruction.
+
+2. Optimized GPS Tracking & Smooth Trails:
+   - Issue: GPS drift was causing jagged, bouncing trails.
+   - Fix: In MapAvatarTracker.cs, increased tr.minVertexDistance to 3.0f to visually smooth out the trail.
+   - Fix: Increased the GPS save threshold to 15 meters (0.00015 degrees) to prevent saving small GPS drifts into the permanent trail.
+
+3. Pedometer Strictness (Anti-Shake/Cheating):
+   - Issue: Accidental arm swings or stops were counting as phantom steps.
+   - Fix: In StepManager.cs, increased stepThreshold to 2.2f (requires more physical force to register a step).
+   - Fix: Increased minStepInterval to 0.6f to prevent rapid shaking cheats.
+
+Status: Verified in Editor.
+==================================================
+

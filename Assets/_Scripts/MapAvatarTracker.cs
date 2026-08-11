@@ -104,7 +104,7 @@ public class MapAvatarTracker : MonoBehaviour
         trailMat.color = new Color(1.0f, 0.35f, 0.0f, 0.9f); // #fc5a03 (Strava Orange)
         tr.material = trailMat;
         
-        tr.minVertexDistance = 0.5f; // Filters out small GPS jitters for a clean line
+        tr.minVertexDistance = 3.0f; // HIGH SMOOTHING: Ignores visual jitter under 3 meters
         tr.transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
 
         // --- DYNAMICALLY ADD LINE RENDERER FOR SAVED TRAIL HISTORY ---
@@ -311,7 +311,8 @@ public class MapAvatarTracker : MonoBehaviour
                 PlayerPrefs.DeleteKey("SavedGPSTrail");
             }
 
-            if (_savedGPSPoints.Count == 0 || Vector2d.Distance(currentLocation, _savedGPSPoints[_savedGPSPoints.Count - 1]) > 0.00005) // ~5 meters
+            // HIGH SMOOTHING: Only save a GPS point if the user actually walked ~15 meters. Prevents saving jagged drift!
+            if (_savedGPSPoints.Count == 0 || Vector2d.Distance(currentLocation, _savedGPSPoints[_savedGPSPoints.Count - 1]) > 0.00015) // ~15 meters
             {
                 _savedGPSPoints.Add(currentLocation);
                 if (_savedGPSPoints.Count > 500) _savedGPSPoints.RemoveAt(0); // Keep last 500 to prevent RAM crashes

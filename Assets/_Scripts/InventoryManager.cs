@@ -102,6 +102,8 @@ public class InventoryManager : MonoBehaviour
 
     private void Start()
     {
+        if (Instance != this) return; // 🚨 CRITICAL ANTI-CRASH FIX: Prevent dying clones from running logic!
+
         // Safely wait for Firebase to be ready before loading the cloud save
         // NEW: Load the avatar instantly from local storage before waiting for Firebase!
         LoadAvatarLocal();
