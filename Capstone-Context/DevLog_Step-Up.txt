@@ -648,3 +648,17 @@ Feature: Dynamic Default Usernames
 Status: Verified.
 ==================================================
 
+==================================================
+Date: 2026-08-12
+Feature: AR Compatibility Fallback Display Fix
+
+1. Fixed Unity Grey Background on Non-AR Devices:
+   - Issue: When the app detected that a device was not AR compatible, it was attempting to extract the texture from the Cloud Background Canvas and rebuild it into a 3D Quad in world space. This completely broke the rendering, hiding the clouds and exposing the raw Unity grey/navy camera clear color.
+   - Fix: Deleted the over-complicated texture extraction logic in ARManager.cs. Now, when a non-AR device is detected, it simply enables the user's assigned 2D Cloud Background Canvas directly.
+   - Result: 
+     AR Compatible Devices = Show AR Mode.
+     Non-AR Compatible Devices = Show Cloud Background perfectly.
+
+Status: Verified.
+==================================================
+

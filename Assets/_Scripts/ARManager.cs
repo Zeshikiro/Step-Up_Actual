@@ -282,89 +282,19 @@ public class ARManager : MonoBehaviour
 
     private void ActivateFallbackBackground()
     {
-        Debug.Log("[ARManager] ActivateFallbackBackground() called.");
+        Debug.Log("[ARManager] ActivateFallbackBackground() called. Enabling Cloud BG.");
         
-        // 1. Force the camera to clear to a Solid Color — this is the GUARANTEED fallback on ALL devices.
+        // 1. Force the camera to clear to a Solid Color as a safety net
         if (mainCamera != null)
         {
             mainCamera.clearFlags = CameraClearFlags.SolidColor;
             mainCamera.backgroundColor = new Color(0.12f, 0.14f, 0.22f, 1f); // Dark navy
-            Debug.Log("[ARManager] Camera clearFlags set to SolidColor with dark navy background.");
         }
 
-        // 2. DYNAMIC UI FALLBACK BACKGROUND
-        // Instead of rotating 3D planes (which causes slicing/depth bugs), we will extract the image
-        // from the user's 3D fallback object and render it flawlessly on a 2D UI Canvas!
+        // 2. Simply enable the assigned background object (Cloud BG)
         if (fallbackBackground != null)
         {
-            fallbackBackground.SetActive(false); // Hide the original 3D object to prevent bugs
-            
-            Texture fallbackTexture = null;
-            
-            // 1. Try to grab the texture from a 3D mesh
-            MeshRenderer mr = fallbackBackground.GetComponent<MeshRenderer>();
-            if (mr != null && mr.sharedMaterial != null) fallbackTexture = mr.sharedMaterial.mainTexture;
-            
-            // 2. Try to grab the texture from a UI RawImage
-            if (fallbackTexture == null)
-            {
-                UnityEngine.UI.RawImage rawImg = fallbackBackground.GetComponent<UnityEngine.UI.RawImage>();
-                if (rawImg != null) fallbackTexture = rawImg.texture;
-            }
-
-            // 3. Try to grab the texture from a UI Image
-            if (fallbackTexture == null)
-            {
-                UnityEngine.UI.Image img = fallbackBackground.GetComponent<UnityEngine.UI.Image>();
-                if (img != null && img.sprite != null) fallbackTexture = img.sprite.texture;
-            }
-
-            // 4. Try to grab the texture from a 2D SpriteRenderer
-            if (fallbackTexture == null)
-            {
-                SpriteRenderer sr = fallbackBackground.GetComponent<SpriteRenderer>();
-                if (sr != null && sr.sprite != null) fallbackTexture = sr.sprite.texture;
-            }
-            
-            // If we found a texture anywhere, create a UI Canvas to display it perfectly!
-            if (fallbackTexture != null)
-            {
-                // Create Canvas
-                GameObject canvasObj = new GameObject("DynamicFallbackCanvas");
-                Canvas canvas = canvasObj.AddComponent<Canvas>();
-                canvas.renderMode = RenderMode.WorldSpace;
-                canvas.worldCamera = mainCamera;
-                
-                canvasObj.transform.SetParent(mainCamera.transform, false);
-                canvasObj.transform.localPosition = new Vector3(0, 0, 50f);
-                canvasObj.transform.localRotation = Quaternion.identity;
-                canvasObj.transform.localScale = Vector3.one * 0.05f; // Scale it so it fits
-                
-                RectTransform canvasRt = canvasObj.GetComponent<RectTransform>();
-                canvasRt.sizeDelta = new Vector2(2000, 2000);
-                
-                // Create RawImage
-                GameObject imageObj = new GameObject("FallbackImage");
-                imageObj.transform.SetParent(canvasObj.transform, false);
-                
-                UnityEngine.UI.RawImage rawImg = imageObj.AddComponent<UnityEngine.UI.RawImage>();
-                rawImg.texture = fallbackTexture;
-                
-                RectTransform rt = imageObj.GetComponent<RectTransform>();
-                rt.anchorMin = Vector2.zero;
-                rt.anchorMax = Vector2.one;
-                rt.sizeDelta = Vector2.zero;
-                rt.anchoredPosition = Vector2.zero;
-                
-                // Track it so we can destroy it when AR closes
-                dynamicBgQuad = canvasObj;
-                
-                Debug.Log("[ARManager] Dynamic UI Fallback created successfully using texture: " + fallbackTexture.name);
-            }
-            else
-            {
-                Debug.LogWarning("[ARManager] The assigned fallbackBackground has no Texture! Falling back to SolidColor.");
-            }
+            fallbackBackground.SetActive(true);
         }
         
         Debug.Log("[ARManager] Fallback mode fully active.");
