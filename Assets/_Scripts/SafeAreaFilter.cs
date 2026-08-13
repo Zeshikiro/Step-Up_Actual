@@ -33,6 +33,12 @@ public class SafeAreaFilter : MonoBehaviour
         Vector2 anchorMin = safeArea.position;
         Vector2 anchorMax = safeArea.position + safeArea.size;
 
+        // Apply a small manual padding (30 pixels) to the left and right edges 
+        // to prevent accidental palm presses when taking screenshots
+        float sidePadding = 30f;
+        anchorMin.x += sidePadding;
+        anchorMax.x -= sidePadding;
+
         anchorMin.x /= Screen.width;
         anchorMin.y /= Screen.height;
         anchorMax.x /= Screen.width;

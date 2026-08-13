@@ -662,3 +662,29 @@ Feature: AR Compatibility Fallback Display Fix
 Status: Verified.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: Assorted Bug Fixes and Optimizations
+
+1. Offline Steps & Trail Midnight Reset:
+   - Issue: Steps and GPS trail were not resetting at midnight if the app was left suspended or offline.
+   - Fix: Added a forced wipe of the SavedGPSTrail and improved the PerformDateRolloverCheck logic in StepManager to ensure the new day starts cleanly.
+
+2. Disconnected Yelp:
+   - Fix: Completely unhooked Yelp API calls from MapAvatarTracker.cs. It will no longer attempt to fetch or display nearby places.
+
+3. Accidental Screen Edge Touches (Screenshot Bug):
+   - Issue: When squeezing the phone to take a screenshot, the palm would trigger edge buttons like "Missions" or "Rotate Avatar".
+   - Fix: Added a 30-pixel horizontal safety margin to SafeAreaFilter.cs. All core UI is now pulled slightly inwards away from the absolute screen edges.
+
+4. Avatar Walk/Run Animation Jitter:
+   - Issue: Avatar was constantly switching between running and idling instead of a continuous walk.
+   - Fix: Adjusted AvatarAnimatorSync.cs. Increased the step timeout to 5 seconds to smooth out Android hardware pedometer batching. Raised the run threshold to 4.0 m/s to prevent normal GPS drift from triggering a sprint animation.
+
+5. AR Fallback Screen Rendering (Blue Skybox issue):
+   - Issue: On non-AR devices, the cloud background was showing up as a thin line or exposing the Unity Skybox.
+   - Fix: The allbackBackground object in the Canvas had an accidental 90-degree local rotation applied to it in the Unity scene. Modified ARManager.cs to programmatically reset the rotation and Z-depth of the fallback UI Image to flat (0,0,0) when activated so it perfectly covers the camera view.
+
+Status: Verified.
+==================================================
+

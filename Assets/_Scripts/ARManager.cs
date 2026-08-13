@@ -295,6 +295,15 @@ public class ARManager : MonoBehaviour
         if (fallbackBackground != null)
         {
             fallbackBackground.SetActive(true);
+            
+            // CRITICAL FIX: The UI Image in the scene was accidentally rotated 90 degrees!
+            // We force it back to flat so it actually faces the camera instead of being a thin invisible line.
+            RectTransform rt = fallbackBackground.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.localRotation = Quaternion.identity;
+                rt.anchoredPosition3D = new Vector3(rt.anchoredPosition.x, rt.anchoredPosition.y, 0f);
+            }
         }
         
         Debug.Log("[ARManager] Fallback mode fully active.");

@@ -115,8 +115,8 @@ public class AvatarAnimatorSync : MonoBehaviour
         _lastPosition = posSource.position;
 
         // If we stepped recently OR moved physically recently, we are walking!
-        bool isStepping = (Time.time - _lastStepTime) < 3.0f;  // Extended to 3s for smoother animation
-        bool isSliding = (Time.time - _lastMoveTime) < 1.5f;
+        bool isStepping = (Time.time - _lastStepTime) < 5.0f;  // Extended to 5s to cover Android step batching
+        bool isSliding = (Time.time - _lastMoveTime) < 2.0f;
 
         bool shouldWalk = isStepping || isSliding;
         
@@ -124,7 +124,8 @@ public class AvatarAnimatorSync : MonoBehaviour
         float targetSpeed = idleAnimValue;
         if (shouldWalk)
         {
-            targetSpeed = (stepManager != null && stepManager.CurrentSpeedMPS > 2.5f) ? runAnimValue : walkAnimValue;
+            // Raised run threshold to 4.0 m/s (14 km/h) to prevent GPS drift from causing fake running
+            targetSpeed = (stepManager != null && stepManager.CurrentSpeedMPS > 4.0f) ? runAnimValue : walkAnimValue;
         }
 
         _currentSmoothSpeed = Mathf.Lerp(_currentSmoothSpeed, targetSpeed, Time.deltaTime * animationLerpSpeed);

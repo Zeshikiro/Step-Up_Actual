@@ -352,6 +352,9 @@ public class StepManager : MonoBehaviour
             yesterdaysSteps = currentDailySteps;
             PlayerPrefs.SetInt("YesterdaysSteps", yesterdaysSteps);
             
+            // Clear GPS Trail on a new day!
+            PlayerPrefs.DeleteKey("SavedGPSTrail");
+            
             // Check if they met yesterday's goal before resetting
             int dailyGoal = PlayerPrefs.GetInt("DailyStepGoal", 10000);
             if (currentDailySteps >= dailyGoal) 

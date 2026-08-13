@@ -205,11 +205,7 @@ public class MapAvatarTracker : MonoBehaviour
                     }
                     Debug.Log($"[MapAvatarTracker] Loaded IP Fallback Location: {data.lat}, {data.lon}");
 
-                    // Fetch Yelp places instantly so the map isn't empty while waiting for GPS!
-                    if (YelpPlacesManager.Instance != null)
-                    {
-                        YelpPlacesManager.Instance.FetchNearbyPlaces(_fallbackLatLon);
-                    }
+                    // Yelp has been disconnected per user request.
                 }
             }
         }
@@ -288,11 +284,7 @@ public class MapAvatarTracker : MonoBehaviour
                 catch { mapManager.UpdateMap(currentLocation, mapManager.AbsoluteZoom); }
                 _useFallbackLocation = false;
 
-                // Also refresh Yelp places for the accurate GPS location
-                if (YelpPlacesManager.Instance != null)
-                {
-                    YelpPlacesManager.Instance.FetchNearbyPlaces(currentLocation);
-                }
+                // Yelp disconnected per user request.
             }
         }
 
