@@ -767,3 +767,12 @@ Feature: Retroactive Username Fix
 - Added an automatic interceptor in StepManager.cs and ProfileManager.cs. Now, if the game ever detects that the user is logged into Firebase but their local username or Firebase username is still exactly "Player" or "Player 1", it will automatically pull their registered Firebase Email, extract the prefix, update it locally, and permanently overwrite the bad "Player" name in the database.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: Shaking Phone Anti-Cheat
+
+- Added violent shake detection to the Accelerometer Step Detector. If the G-force exceeds 4.5 Gs (human walking rarely exceeds 2.5-3.0 Gs), the step detector completely disables itself for 3 seconds and clears the rhythm buffer, destroying attempts to shake the phone.
+- Capped Accelerometer Lead Buffer: The accelerometer can no longer get more than 20 steps ahead of the hardware pedometer. This means shaking the phone will max out at 20 fake steps, after which the accelerometer will freeze until the player actually walks to let the hardware pedometer catch up. This completely shuts down couch-shaking cheats while preserving instant UI feedback for legitimate walkers.
+- Vehicle Anti-Cheat verified working: _currentSpeedMPS > 6.0f (13 mph) correctly disables both accelerometer and hardware pedometer updates.
+==================================================
+

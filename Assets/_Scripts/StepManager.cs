@@ -551,7 +551,7 @@ public class StepManager : MonoBehaviour
                 EndAutoSession();
             }
         }
-    }
+       private float _shakeBlockEndTime = 0f;
 
     private void DetectAccelerometerStep()
     {
@@ -572,13 +572,22 @@ public class StepManager : MonoBehaviour
             return;
         }
 
-        // NOTE: We previously had a STRICT MODE here that blocked steps if GPS speed < 0.2 m/s.
-        // We had to remove it because it completely broke indoor walking (where GPS speed is always 0).
-        // Anti-cheat is now primarily handled by the 0.35s minStepInterval and the 1.8f accelerometer threshold.
-
         Vector3 accel = UnityEngine.InputSystem.Accelerometer.current.acceleration.ReadValue();
-
         float magnitude = accel.magnitude;
+
+        // ANTI-CHEAT: Violent shaking detection. Human walking rarely exceeds 3.0 Gs. Shaking easily hits 5.0+.
+        if (magnitude > 4.5f)
+        {
+            _shakeBlockEndTime = Time.time + 3.0f; // Block steps for 3 seconds after violent shake
+            _accelStepBuffer = 0; // Destroy their rhythm buffer
+        }
+
+        // If we are currently blocked because of shaking, ignore all acceleration!
+        if (Time.time < _shakeBlockEndTime)
+        {
+            _accelPeakDetected = false;
+            return;
+        }
 
         // Peak detection: acceleration goes UP past the threshold, then DOWN past reset
         if (!_accelPeakDetected && magnitude > stepThreshold)
@@ -611,7 +620,20 @@ public class StepManager : MonoBehaviour
                     
                     if (_accelStepCount > _hardwareStepCount)
                     {
-                        for (int i=0; i<stepsToCommit; i++) RegisterStep();
+                        // ANTI-CHEAT: If a hardware pedometer exists, DO NOT let the accelerometer get more than 20 steps ahead!
+                        // This prevents endless rhythmic couch shaking while still giving instant UI feedback for legitimate walkers.
+                        bool hasHardware = (StepCounter.current != null && StepCounter.current.enabled);
+                        int maxLead = hasHardware ? 20 : 999999; 
+                        
+                        if (_accelStepCount - _hardwareStepCount <= maxLead)
+                        {
+                            for (int i=0; i<stepsToCommit; i++) RegisterStep();
+                        }
+                        else
+                        {
+                            // Throttle them. They must walk for real to let the hardware counter catch up!
+                            _accelStepCount = _hardwareStepCount + maxLead; 
+                        }
                     }
                 }
             }
