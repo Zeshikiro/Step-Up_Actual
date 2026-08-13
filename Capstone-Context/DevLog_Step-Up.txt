@@ -735,3 +735,11 @@ Feature: Crash & AR Fallback Fixes
 Status: Verified.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: UI Interaction Crash Fix (Bag -> Map)
+
+- Fixed Uninteractable Map Bug: Discovered that SampleScene.unity had **two** duplicate InputSystemUIInputModule components attached to the same EventSystem GameObject. When returning to the Map scene asynchronously, this caused the Unity EventSystem to crash internally, completely disabling all UI Raycasts and touch inputs (making the screen feel frozen, even though the app was running). Removed the duplicate component from the scene file.
+- SceneLoader Timeout Failsafe: Added an 8-second automatic timeout to SceneLoader.cs. If the loading screen ever fails to detect a touch input (or if the input system fails), it will now automatically transition to the next scene so you are never permanently stuck on a loading screen.
+==================================================
+

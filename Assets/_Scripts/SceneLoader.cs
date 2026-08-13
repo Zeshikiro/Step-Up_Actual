@@ -130,7 +130,7 @@ public class SceneLoader : MonoBehaviour
                     }
                 }
 
-                if (hasInput)
+                if (hasInput || timeElapsed > minimumLoadingTime + 8f) // Auto-skip after 8 seconds of waiting!
                 {
                     if (tapToContinuePrompt != null) tapToContinuePrompt.SetActive(true); // Force on before leaving
                     operation.allowSceneActivation = true;
