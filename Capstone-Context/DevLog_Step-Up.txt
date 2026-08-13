@@ -776,3 +776,11 @@ Feature: Shaking Phone Anti-Cheat
 - Vehicle Anti-Cheat verified working: _currentSpeedMPS > 6.0f (13 mph) correctly disables both accelerometer and hardware pedometer updates.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: Website Firebase Session Persistence
+
+- Fixed an issue where the React website (step-up-actual.vercel.app) was dropping the Firebase session on tab close or refresh, forcing the user to log in repeatedly.
+- Explicitly set rowserLocalPersistence in irebaseConfig.js to force the browser to aggressively cache the session token in IndexedDB, meaning users only ever need to log in once.
+==================================================
+
