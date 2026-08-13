@@ -714,3 +714,13 @@ Feature: Weekly Missions Reset & Hardware Button UI Fix
 Status: Verified.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: Pedometer Accelerometer Fallback Restored
+
+- Issue: The step counter completely stopped working for devices that do not have a dedicated hardware pedometer, or indoors where the hardware pedometer delays its batches. This was caused by the accelerometer pedometer being fully disabled via a hard-coded eturn block.
+- Fix: Restored DetectAccelerometerStep() functionality in StepManager.cs. The strict accelerometer tuning from Aug 11 (2.2f threshold) will handle the anti-shaking cheat, while allowing genuine indoor walking to register steps real-time!
+
+Status: Verified.
+==================================================
+

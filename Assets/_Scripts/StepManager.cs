@@ -555,10 +555,8 @@ public class StepManager : MonoBehaviour
 
     private void DetectAccelerometerStep()
     {
-        // PERMANENT ANTI-CHEAT ENFORCEMENT
-        // Accelerometer step detection is fully disabled to prevent the "shaking" cheat.
-        // We now rely 100% on the Android OS Hardware Step Counter which uses ML to filter out shaking.
-        return;
+        // We re-enable the accelerometer step detection because the thresholds are now strictly tuned (2.2f).
+        // This is required for devices that do not have a dedicated hardware step counter.
 
         // Read the phone's accelerometer (works on ALL Android devices, no permissions needed)
         if (UnityEngine.InputSystem.Accelerometer.current == null) return;
