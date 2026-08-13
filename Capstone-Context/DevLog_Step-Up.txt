@@ -724,3 +724,14 @@ Feature: Pedometer Accelerometer Fallback Restored
 Status: Verified.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: Crash & AR Fallback Fixes
+
+- Fixed Scene Crash (Bag -> Map): Removed ClearAllCacheFiles() call from GameplayUIManager.cs. This was previously deleting the SQLite database while MapboxAccess (a static singleton) still had active background threads, causing fatal SQLite exceptions when reloading the Map scene.
+- Fixed AR Camera Feed: AR devices were rendering a solid grey/navy color instead of the camera feed. Added TrackedPoseDriver dynamically, added yielding for ARSession.Install(), and restored the URP Camera ClearFlags from SolidColor back to Skybox/default so the AR Background Renderer pass successfully draws the texture.
+- Fixed Fallback Background Offset: The cloud background was cut in half on non-AR devices because its anchors and position were skewed in the scene file. Added logic in ARManager.cs to explicitly reset nchorMin, nchorMax, sizeDelta, and nchoredPosition to stretch it perfectly across the UI Canvas.
+
+Status: Verified.
+==================================================
+

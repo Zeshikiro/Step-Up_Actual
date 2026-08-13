@@ -244,6 +244,11 @@ public class ARManager : MonoBehaviour
                 yield break; 
             }
 
+            if (ARSession.state == ARSessionState.NeedsInstall)
+            {
+                yield return ARSession.Install();
+            }
+
             if (ARSession.state == ARSessionState.Unsupported || ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
             {
                 Debug.LogWarning("[ARManager] XRGOOGLE Unsupported or Timed out. Using fallback.");
@@ -266,8 +271,19 @@ public class ARManager : MonoBehaviour
                     arCameraManager = mainCamera.gameObject.AddComponent<ARCameraManager>();
                     arCameraBackground = mainCamera.gameObject.AddComponent<ARCameraBackground>();
                 }
-                    arCameraManager.enabled = true;
-                    arCameraBackground.enabled = true;
+                
+                // Add Pose Driver so the device gyroscope tracks the camera!
+                if (mainCamera.gameObject.GetComponent<UnityEngine.SpatialTracking.TrackedPoseDriver>() == null)
+                {
+                    mainCamera.gameObject.AddComponent<UnityEngine.SpatialTracking.TrackedPoseDriver>();
+                }
+
+                arCameraManager.enabled = true;
+                arCameraBackground.enabled = true;
+                
+                // Restore camera clear flags to allow the URP AR Background pass to render!
+                mainCamera.clearFlags = originalClearFlags;
+                mainCamera.backgroundColor = originalBgColor;
                 }
             }
         }
@@ -292,17 +308,19 @@ public class ARManager : MonoBehaviour
         }
 
         // 2. Simply enable the assigned background object (Cloud BG)
-        if (fallbackBackground != null)
+        if (fallbackBackground != null) 
         {
             fallbackBackground.SetActive(true);
             
-            // CRITICAL FIX: The UI Image in the scene was accidentally rotated 90 degrees!
-            // We force it back to flat so it actually faces the camera instead of being a thin invisible line.
+            // Fix the background being cut in half (offset to the right)
             RectTransform rt = fallbackBackground.GetComponent<RectTransform>();
             if (rt != null)
             {
                 rt.localRotation = Quaternion.identity;
-                rt.anchoredPosition3D = new Vector3(rt.anchoredPosition.x, rt.anchoredPosition.y, 0f);
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.anchoredPosition = Vector2.zero;
+                rt.sizeDelta = Vector2.zero;
             }
         }
         

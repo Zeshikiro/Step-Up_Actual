@@ -274,13 +274,6 @@ public class GameplayUIManager : MonoBehaviour
             tracker.mapManager.gameObject.SetActive(false);
             Debug.Log("[GameplayUIManager] Mapbox gracefully shutdown to prevent Editor crash.");
         }
-
-        // Release the SQLite database locks before the scene dies!
-        if (Mapbox.Unity.MapboxAccess.Instance != null)
-        {
-            Mapbox.Unity.MapboxAccess.Instance.ClearAllCacheFiles();
-            Debug.Log("[GameplayUIManager] Mapbox SQLite Cache Locks released.");
-        }
     }
 
     public void ReturnToMainMenu()
