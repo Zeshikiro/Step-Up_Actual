@@ -551,7 +551,9 @@ public class StepManager : MonoBehaviour
                 EndAutoSession();
             }
         }
-       private float _shakeBlockEndTime = 0f;
+    }
+
+    private float _shakeBlockEndTime = 0f;
 
     private void DetectAccelerometerStep()
     {
