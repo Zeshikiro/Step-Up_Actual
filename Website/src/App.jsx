@@ -9,7 +9,8 @@ import Login from './components/Login'
 import Profile from './components/Profile'
 import SocialFeed from './components/SocialFeed'
 
-function App() {
+function AppContent() {
+  const { currentUser } = useAuth();
   const getActiveTabFromUrl = () => {
     const params = new URLSearchParams(window.location.search);
     return params.get('tab') || 'home';
@@ -42,7 +43,6 @@ function App() {
   };
 
   return (
-    <AuthProvider>
       <div className="app-container" style={{paddingBottom: '80px'}}>
         
        <div key={activeTab} className="scene-transition">
@@ -74,37 +74,61 @@ function App() {
         display: 'flex',
         gap: '12px'
       }}>
-        <button
-          onClick={() => handleTabChange('login')}
-          style={{
-            background: '#2f8ed8',
-            color: '#ffffff',
-            border: '4px solid #171717',
-            borderRadius: '10px',
-            padding: '12px 18px',
-            fontWeight: '900',
-            cursor: 'pointer',
-            boxShadow: '0 5px 0 #174b75'
-          }}
-        >
-          Sign In
-        </button>
+        {currentUser ? (
+          <button
+            onClick={() => handleTabChange('login')}
+            style={{
+              background: '#2f8ed8',
+              color: '#ffffff',
+              border: '4px solid #171717',
+              borderRadius: '10px',
+              padding: '12px 18px',
+              fontWeight: '900',
+              cursor: 'pointer',
+              boxShadow: '0 5px 0 #174b75',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <User size={18} />
+            My Profile
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={() => handleTabChange('login')}
+              style={{
+                background: '#2f8ed8',
+                color: '#ffffff',
+                border: '4px solid #171717',
+                borderRadius: '10px',
+                padding: '12px 18px',
+                fontWeight: '900',
+                cursor: 'pointer',
+                boxShadow: '0 5px 0 #174b75'
+              }}
+            >
+              Sign In
+            </button>
 
-        <button
-          onClick={() => handleTabChange('register')}
-          style={{
-            background: '#3fd66b',
-            color: '#082313',
-            border: '4px solid #171717',
-            borderRadius: '10px',
-            padding: '12px 18px',
-            fontWeight: '900',
-            cursor: 'pointer',
-            boxShadow: '0 5px 0 #137333'
-          }}
-        >
-          Join Now
-        </button>
+            <button
+              onClick={() => handleTabChange('register')}
+              style={{
+                background: '#3fd66b',
+                color: '#082313',
+                border: '4px solid #171717',
+                borderRadius: '10px',
+                padding: '12px 18px',
+                fontWeight: '900',
+                cursor: 'pointer',
+                boxShadow: '0 5px 0 #137333'
+              }}
+            >
+              Join Now
+            </button>
+          </>
+        )}
       </div>
     </div>
 
@@ -113,9 +137,11 @@ function App() {
       <p className="subtitle">
         Gamify your fitness journey. Track every step, customize your 3D avatar, and conquer the leaderboard.
       </p>
-      <button className="cta-button" onClick={() => handleTabChange('register')}>
-        Join Now
-      </button>
+      {!currentUser && (
+        <button className="cta-button" onClick={() => handleTabChange('register')}>
+          Join Now
+        </button>
+      )}
     </header>
 
     <section className="features-grid">
@@ -381,8 +407,15 @@ function App() {
 </nav>
 
       </div>
-    </AuthProvider>
   )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
 }
 
 // A simple wrapper to decide whether to show the Login screen or the Profile Dashboard
