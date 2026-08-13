@@ -688,3 +688,14 @@ Feature: Assorted Bug Fixes and Optimizations
 Status: Verified.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: Settings Menu EULA Bug Fix
+
+1. EULA to BMI Flow Fix:
+   - Issue: When a user clicked "Legal / EULA" from the in-game Settings menu, clicking "Accept" on the EULA would incorrectly spawn the BMI setup panel on top of the game.
+   - Fix: Added a hidden openedFromSettings flag to EULAManager.cs. When the EULA is opened specifically via the SettingsManager.cs, this flag is enabled. When the user clicks "Accept", the EULA panel now securely checks this flag and forces the panel to close without ever launching the BMI setup screen, bypassing any corrupted or missing PlayerPrefs.
+
+Status: Verified.
+==================================================
+
