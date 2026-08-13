@@ -153,6 +153,8 @@ public class SettingsManager : MonoBehaviour
         if (eulaPanel != null)
         {
             eulaPanel.SetActive(true);
+            EULAManager eulaManager = eulaPanel.GetComponent<EULAManager>();
+            if (eulaManager != null) eulaManager.openedFromSettings = true;
         }
     }
 

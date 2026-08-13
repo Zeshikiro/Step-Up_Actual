@@ -9,6 +9,9 @@ public class EULAManager : MonoBehaviour
 
     [Header("Validation")]
     public GameObject warningText; // The red warning text
+    
+    [HideInInspector]
+    public bool openedFromSettings = false;
 
     void Start()
     {
@@ -40,8 +43,9 @@ public class EULAManager : MonoBehaviour
         PlayerPrefs.SetInt("EulaAccepted_" + userId, 1);
 
         // 2. If they are just reading this from the Settings menu, stop here!
-        if (alreadyAccepted || PlayerPrefs.GetInt("OnboardingComplete_" + userId, 0) == 1)
+        if (alreadyAccepted || PlayerPrefs.GetInt("OnboardingComplete_" + userId, 0) == 1 || openedFromSettings)
         {
+            openedFromSettings = false; // reset for next time
             PlayerPrefs.Save();
             return;
         }
