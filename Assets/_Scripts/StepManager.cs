@@ -858,7 +858,29 @@ public class StepManager : MonoBehaviour
             dbReference.Child("users").Child(userId).Child("YesterdaysSteps").SetValueAsync(yesterdaysSteps);
             
             // Also push username so leaderboard doesn't break
-            string localName = PlayerPrefs.GetString("UserName", "Player");
+            string localName = PlayerPrefs.GetString("UserName", "");
+            
+            // Retroactive fix for old accounts stuck as "Player" or "Player 1"
+            if (string.IsNullOrEmpty(localName) || localName.Trim().ToLower() == "player" || localName.Trim().ToLower() == "player 1")
+            {
+                FirebaseAuth auth = FirebaseAuth.DefaultInstance;
+                if (auth != null && auth.CurrentUser != null && !string.IsNullOrEmpty(auth.CurrentUser.Email))
+                {
+                    string[] emailParts = auth.CurrentUser.Email.Split('@');
+                    if (emailParts.Length > 0)
+                    {
+                        localName = emailParts[0];
+                        if (localName.Length > 10) localName = localName.Substring(0, 10);
+                        PlayerPrefs.SetString("UserName", localName);
+                        PlayerPrefs.Save();
+                    }
+                }
+                else
+                {
+                    localName = "Player"; // Absolute fallback
+                }
+            }
+            
             dbReference.Child("users").Child(userId).Child("username").SetValueAsync(localName);
         }
     }

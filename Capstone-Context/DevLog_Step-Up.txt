@@ -759,3 +759,11 @@ Feature: Avatar Animation Sync Adjustments
 - GPS Drift Run Fix: Sometimes standing still or walking slowly causes GPS points to jump around randomly (GPS drift). The instantaneous speed calculation saw these jumps as high-speed sprints (>4 m/s). Raised the sprint threshold to >6.0 m/s (21.6 km/h) so the avatar will strictly only run if the player is physically running fast or in a vehicle.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: Retroactive Username Fix
+
+- Fixed "Player" username bug for existing accounts: The previous update successfully extracted the email prefix for NEW registrations, but older accounts or accounts that bypassed the login screen (because Firebase saved their session) were completely skipping the registration code and remaining stuck as "Player". 
+- Added an automatic interceptor in StepManager.cs and ProfileManager.cs. Now, if the game ever detects that the user is logged into Firebase but their local username or Firebase username is still exactly "Player" or "Player 1", it will automatically pull their registered Firebase Email, extract the prefix, update it locally, and permanently overwrite the bad "Player" name in the database.
+==================================================
+

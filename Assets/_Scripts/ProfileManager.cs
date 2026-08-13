@@ -73,6 +73,23 @@ public class ProfileManager : MonoBehaviour
                         if (snapshot.Child("username").Value != null)
                         {
                             currentName = snapshot.Child("username").Value.ToString();
+                            
+                            // Retroactive fix for old accounts stuck as "Player"
+                            if (string.IsNullOrEmpty(currentName) || currentName.Trim().ToLower() == "player" || currentName.Trim().ToLower() == "player 1")
+                            {
+                                if (auth.CurrentUser != null && !string.IsNullOrEmpty(auth.CurrentUser.Email))
+                                {
+                                    string[] emailParts = auth.CurrentUser.Email.Split('@');
+                                    if (emailParts.Length > 0)
+                                    {
+                                        currentName = emailParts[0];
+                                        if (currentName.Length > 10) currentName = currentName.Substring(0, 10);
+                                        // Force overwrite the bad name in DB
+                                        FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(auth.CurrentUser.UserId).Child("username").SetValueAsync(currentName);
+                                    }
+                                }
+                            }
+                            
                             userNameInput.text = currentName;
                             PlayerPrefs.SetString("UserName", currentName);
                         }
