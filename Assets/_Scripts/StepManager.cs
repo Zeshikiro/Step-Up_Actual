@@ -380,8 +380,12 @@ public class StepManager : MonoBehaviour
             maxContinuousWalkMinutes = 0f;
             PlayerPrefs.SetString("CompletedSessions", ""); // Clear sessions
             
-            // Weekly check (if it's Monday)
-            if (System.DateTime.Today.DayOfWeek == DayOfWeek.Monday)
+            // Weekly check: Calculate the most recent Monday. 
+            // If the last login was BEFORE the most recent Monday, a new week has started!
+            int diff = (7 + (System.DateTime.Today.DayOfWeek - System.DayOfWeek.Monday)) % 7;
+            System.DateTime mostRecentMonday = System.DateTime.Today.AddDays(-diff).Date;
+            
+            if (lastLoginDateObj.Date < mostRecentMonday)
             {
                 currentWeeklySteps = 0;
                 totalWeeklyARSteps = 0;

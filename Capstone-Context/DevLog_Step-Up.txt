@@ -699,3 +699,18 @@ Feature: Settings Menu EULA Bug Fix
 Status: Verified.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: Weekly Missions Reset & Hardware Button UI Fix
+
+1. Hardware Button UI Collision Fix:
+   - Issue: When pressing Volume Down + Power to take a screenshot, the Android OS sometimes sends a generic "Submit/Joystick" event to Unity. If a UI button was previously tapped (like "Missions"), it remained highlighted in Unity's EventSystem, causing the screenshot buttons to accidentally click it again.
+   - Fix: Added a global override in GameplayUIManager.cs Awake() that sets EventSystem.current.sendNavigationEvents = false;. This strictly blocks Unity from interpreting hardware/volume buttons as UI clicks!
+
+2. Weekly Missions Bulletproof Reset:
+   - Issue: The previous code only reset weekly missions if the user opened the app *exactly* on Monday. If they skipped Monday and opened it on Tuesday, the weekly missions would carry over.
+   - Fix: Overhauled StepManager.cs. It now mathematically calculates the date of the "most recent Monday". If your last login date is older than that Monday, it guarantees a complete wipe of the weekly missions and weekly steps, no matter what day of the week you open the app!
+
+Status: Verified.
+==================================================
+

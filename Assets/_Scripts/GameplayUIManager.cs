@@ -6,6 +6,15 @@ using Mapbox.Unity.Location;
 
 public class GameplayUIManager : MonoBehaviour
 {
+    void Awake()
+    {
+        // Fix for Android hardware buttons (Volume Down / Power) triggering UI clicks during screenshots!
+        if (UnityEngine.EventSystems.EventSystem.current != null)
+        {
+            UnityEngine.EventSystems.EventSystem.current.sendNavigationEvents = false;
+        }
+    }
+
     [Header("UI Panels (Drag your panels here!)")]
     public GameObject tipPopupPanel;
     public GameObject missionPanel;      
