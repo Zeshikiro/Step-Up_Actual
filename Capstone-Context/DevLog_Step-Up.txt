@@ -751,3 +751,11 @@ Feature: 2D Cone Rotation & Fallback Background Fixes
 - Fixed Fallback Background Borders: Discovered that whoever designed the UI in the Unity Editor had set the cloud background's Scale to 46.5% (0.465) and compensated by stretching its boundaries 700 pixels off-screen vertically. When the app ran, it resulted in a stretched image with navy blue borders on the left and right. Updated ARManager.cs to forcefully reset the localScale back to 100% (1, 1, 1) alongside the anchors so it perfectly stretches to fill the entire phone screen.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: Avatar Animation Sync Adjustments
+
+- Android Step Batching Fix: Android pedometers often batch their hardware steps together and deliver them in chunks every 10 seconds to save battery. The avatar animation script had a 5-second timeout, which meant it would start idling before the next batch of steps arrived. Increased the step timeout window to 12 seconds so the avatar continuously walks between step batches.
+- GPS Drift Run Fix: Sometimes standing still or walking slowly causes GPS points to jump around randomly (GPS drift). The instantaneous speed calculation saw these jumps as high-speed sprints (>4 m/s). Raised the sprint threshold to >6.0 m/s (21.6 km/h) so the avatar will strictly only run if the player is physically running fast or in a vehicle.
+==================================================
+
