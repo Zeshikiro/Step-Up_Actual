@@ -1,9 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
-// TODO: Replace these with your actual Firebase Web config keys!
-// You can find these in the Firebase Console -> Project Settings -> Web App
 const firebaseConfig = {
   apiKey: "AIzaSyCKhxDsFH6rV0pwsBytRDrciu-cI8tpyI8",
   authDomain: "step-up-72811.firebaseapp.com",
@@ -16,4 +14,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+// Force local persistence so users stay logged in across sessions
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.error("Auth persistence error:", error);
+});
 export const db = getDatabase(app);
