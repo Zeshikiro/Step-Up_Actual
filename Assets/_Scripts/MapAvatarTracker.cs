@@ -392,12 +392,8 @@ public class MapAvatarTracker : MonoBehaviour
             float currentAngle = transform.eulerAngles.y;
             float smoothAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * 5f);
             
-            // Rotate the actual 3D Avatar child object to face the compass direction!
-            Transform custom3DAvatar = transform.Find("Custom 3D Avatar");
-            if (custom3DAvatar != null)
-            {
-                custom3DAvatar.eulerAngles = new Vector3(0, smoothAngle, 0);
-            }
+            // Rotate the entire PlayerAvatar transform so both the 2D Cone and 3D Avatar face the right way!
+            transform.eulerAngles = new Vector3(0, smoothAngle, 0);
         }
         catch (System.Exception) { /* Compass unavailable on New Input System */ }
     }

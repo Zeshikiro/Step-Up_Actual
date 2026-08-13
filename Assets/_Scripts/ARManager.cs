@@ -317,6 +317,7 @@ public class ARManager : MonoBehaviour
             if (rt != null)
             {
                 rt.localRotation = Quaternion.identity;
+                rt.localScale = Vector3.one; // FIX: Ensure scale is 1 so it fills the screen perfectly!
                 rt.anchorMin = Vector2.zero;
                 rt.anchorMax = Vector2.one;
                 rt.anchoredPosition = Vector2.zero;

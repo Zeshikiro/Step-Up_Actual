@@ -743,3 +743,11 @@ Feature: UI Interaction Crash Fix (Bag -> Map)
 - SceneLoader Timeout Failsafe: Added an 8-second automatic timeout to SceneLoader.cs. If the loading screen ever fails to detect a touch input (or if the input system fails), it will now automatically transition to the next scene so you are never permanently stuck on a loading screen.
 ==================================================
 
+==================================================
+Date: 2026-08-13
+Feature: 2D Cone Rotation & Fallback Background Fixes
+
+- Fixed 2D Map Cone Not Rotating: In MapAvatarTracker.cs, the script was manually grabbing only the "Custom 3D Avatar" child to rotate to the compass heading. It completely ignored the "Cylinder" (2D cone). The code was also calculating the rotation interpolation based on a parent object that never rotated, causing the 2D cone to permanently face North (0 degrees). Fixed by rotating the entire PlayerAvatar parent transform so both the 3D Avatar and 2D Cone perfectly track the physical device compass.
+- Fixed Fallback Background Borders: Discovered that whoever designed the UI in the Unity Editor had set the cloud background's Scale to 46.5% (0.465) and compensated by stretching its boundaries 700 pixels off-screen vertically. When the app ran, it resulted in a stretched image with navy blue borders on the left and right. Updated ARManager.cs to forcefully reset the localScale back to 100% (1, 1, 1) alongside the anchors so it perfectly stretches to fill the entire phone screen.
+==================================================
+
