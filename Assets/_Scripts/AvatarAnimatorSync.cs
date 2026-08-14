@@ -130,15 +130,15 @@ public class AvatarAnimatorSync : MonoBehaviour
         catch (System.Exception) { /* Ignored if unavailable */ }
         
         // When human walks, the phone bobs up and down, changing G-force.
-        // We track this to keep the animation instantly alive while waiting for the pedometer to batch send steps!
-        if (Mathf.Abs(accelMagnitude - 1.0f) > 0.15f)
+        // Increased threshold to 0.35G so tiny hand movements don't trigger the walk animation
+        if (Mathf.Abs(accelMagnitude - 1.0f) > 0.35f)
         {
             _lastMoveTime = Time.time; 
         }
 
-        // If we stepped recently OR moved physically recently OR accelerometer is bouncing, we are walking!
-        bool isStepping = (Time.time - _lastStepTime) < 12.0f;  // Android pedometers often batch steps every 10 seconds! Raised to 12s.
-        bool isSliding = (Time.time - _lastMoveTime) < 2.0f;
+        // Reduced pedometer timeout to 2 seconds so the avatar instantly stops walking when you stop!
+        bool isStepping = (Time.time - _lastStepTime) < 2.0f;  
+        bool isSliding = (Time.time - _lastMoveTime) < 1.0f;
 
         bool shouldWalk = isStepping || isSliding;
         
@@ -146,8 +146,8 @@ public class AvatarAnimatorSync : MonoBehaviour
         float targetSpeed = idleAnimValue;
         if (shouldWalk)
         {
-            // Raised run threshold to 6.0 m/s (21 km/h) to prevent GPS drift from causing fake running!
-            targetSpeed = (stepManager != null && stepManager.CurrentSpeedMPS > 6.0f) ? runAnimValue : walkAnimValue;
+            // Lowered run threshold to 2.2 m/s (approx 8 km/h or a light jog) so running indoors actually triggers the run animation!
+            targetSpeed = (stepManager != null && stepManager.CurrentSpeedMPS > 2.2f) ? runAnimValue : walkAnimValue;
         }
 
         _currentSmoothSpeed = Mathf.Lerp(_currentSmoothSpeed, targetSpeed, Time.deltaTime * animationLerpSpeed);
