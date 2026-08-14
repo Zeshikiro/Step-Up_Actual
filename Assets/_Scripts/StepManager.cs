@@ -623,10 +623,10 @@ public class StepManager : MonoBehaviour
                     
                     if (_accelStepCount > _hardwareStepCount)
                     {
-                        // ANTI-CHEAT: If a hardware pedometer exists, DO NOT let the accelerometer get more than 20 steps ahead!
-                        // This prevents endless rhythmic couch shaking while still giving instant UI feedback for legitimate walkers.
+                        // ANTI-CHEAT: If a hardware pedometer exists, strictly lock the accelerometer from adding points ahead of it!
+                        // This prevents table-thumping and jitter from adding steps, making the game rely 100% on the hardware pedometer.
                         bool hasHardware = (StepCounter.current != null && StepCounter.current.enabled);
-                        int maxLead = hasHardware ? 20 : 999999; 
+                        int maxLead = hasHardware ? 0 : 999999; 
                         
                         if (_accelStepCount - _hardwareStepCount <= maxLead)
                         {
