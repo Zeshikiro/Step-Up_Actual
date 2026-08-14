@@ -5914,7 +5914,6 @@ MonoBehaviour:
   tipBodyText: {fileID: 3820027814788281169}
   mainMenuSceneName: LoginScene
   alternateViewSceneName: Your3DSceneName
-  compassUI: {fileID: 0}
   tipPopupInterval: 1800
   closePopupBackground: {fileID: 1149652781}
 --- !u!4 &542225138
@@ -23880,12 +23879,11 @@ MonoBehaviour:
   mapPin: {fileID: 860128459}
   customAvatar: {fileID: 111747214}
   rotateAvatarButton: {fileID: 482347013}
-  compassUI: {fileID: 0}
   recenterButton: {fileID: 1652898353}
   toggleButtonImage: {fileID: 5552235636293186696}
   icon3D: {fileID: 21300000, guid: 3e4735ddc478d2443af741ee0266a7b8, type: 3}
   icon2D: {fileID: 21300000, guid: ae986036f32ec3e45a6f2ee54c1a2f6f, type: 3}
-  forceFallbackMode: 1
+  forceFallbackMode: 0
   avatarARPosition: {x: 0, y: -1, z: 3}
   fallbackBackground: {fileID: 1813520987}
 --- !u!4 &2134100778

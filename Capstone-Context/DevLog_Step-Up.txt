@@ -784,3 +784,13 @@ Feature: Website Firebase Session Persistence
 - Explicitly set rowserLocalPersistence in irebaseConfig.js to force the browser to aggressively cache the session token in IndexedDB, meaning users only ever need to log in once.
 ==================================================
 
+==================================================
+Date: 2026-08-14
+Feature: Compass Removal and UAT Stabilization
+
+- Completely removed all references and logic tied to the deprecated UI Compass to fix missing reference errors.
+- Ripped out the inaccurate hardware compass rotation logic from MapAvatarTracker.cs.
+- Replaced avatar map rotation with a new Velocity-Based Rotation system (the avatar now dynamically points in the direction of your GPS movement), vastly improving 2D map navigation stability.
+- UAT Release Candidate is now fully prepared.
+==================================================
+
