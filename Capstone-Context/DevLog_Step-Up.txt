@@ -804,3 +804,7 @@ Feature: UAT Final Polish & Anti-Cheat
 ==================================================
 
 - Further Hardened Anti-Cheat: Eliminated the table-pounding pedometer loophole. The app no longer allows the accelerometer to spoof steps ahead of the hardware pedometer. Sharp, high-frequency shockwaves (like hitting a desk) will trigger the visual walking animation but will yield strictly 0 steps, forcing players to rely entirely on the official ML-filtered Android OS pedometer for actual points.
+Feature: Singleton & Animation Smoothing Fixes
+- Fixed Main HUD Step Reset Bug: The StepManager persistent singleton now intercepts the active Canvas text reference when reloading the MainGameplayScene from the Home menu, ensuring the step text accurately populates instead of remaining stuck at 0.
+- Fixed Summary Panel Missing Data: The ActivitySummaryManager now dynamically queries the surviving StepManager.Instance upon opening, ensuring that the tracked steps correctly load into the summary card even after a scene change.
+- Smoothed Avatar Animation Transitions: Lowered the accelerometer animation threshold to 0.15G to allow casual indoor walking to maintain the Walk state. Halved the animation interpolation lerp speed from 3.0 to 1.5, allowing the avatar to smoothly blend between Walk, Run, and Idle animations without visually twitching or snapping.
