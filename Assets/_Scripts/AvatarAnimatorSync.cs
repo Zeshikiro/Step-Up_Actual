@@ -114,7 +114,29 @@ public class AvatarAnimatorSync : MonoBehaviour
         }
         _lastPosition = posSource.position;
 
-        // If we stepped recently OR moved physically recently, we are walking!
+        // 3. Accelerometer Visual Hack (Instant Responsiveness!)
+        // Check if the phone is physically bouncing (magnitude != 1G gravity).
+        // If the magnitude deviates by 0.15G, the user is walking/bobbing the phone!
+        float accelMagnitude = 1.0f;
+        try 
+        {
+#if ENABLE_INPUT_SYSTEM
+            if (UnityEngine.InputSystem.Accelerometer.current != null)
+                accelMagnitude = UnityEngine.InputSystem.Accelerometer.current.acceleration.ReadValue().magnitude;
+            else
+#endif
+                accelMagnitude = Input.acceleration.magnitude;
+        }
+        catch (System.Exception) { /* Ignored if unavailable */ }
+        
+        // When human walks, the phone bobs up and down, changing G-force.
+        // We track this to keep the animation instantly alive while waiting for the pedometer to batch send steps!
+        if (Mathf.Abs(accelMagnitude - 1.0f) > 0.15f)
+        {
+            _lastMoveTime = Time.time; 
+        }
+
+        // If we stepped recently OR moved physically recently OR accelerometer is bouncing, we are walking!
         bool isStepping = (Time.time - _lastStepTime) < 12.0f;  // Android pedometers often batch steps every 10 seconds! Raised to 12s.
         bool isSliding = (Time.time - _lastMoveTime) < 2.0f;
 
