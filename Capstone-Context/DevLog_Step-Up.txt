@@ -776,22 +776,31 @@ Feature: Shaking Phone Anti-Cheat
 - Vehicle Anti-Cheat verified working: _currentSpeedMPS > 6.0f (13 mph) correctly disables both accelerometer and hardware pedometer updates.
 ==================================================
 
-
+==================================================
+Date: 2026-08-13
 Feature: Website Firebase Session Persistence
 
 - Fixed an issue where the React website (step-up-actual.vercel.app) was dropping the Firebase session on tab close or refresh, forcing the user to log in repeatedly.
-- Explicitly set  rowserLocalPersistence in irebaseConfig.js to force the browser to aggressively cache the session token in IndexedDB, meaning users only ever need to log in once.
+- Explicitly set rowserLocalPersistence in irebaseConfig.js to force the browser to aggressively cache the session token in IndexedDB, meaning users only ever need to log in once.
+==================================================
 
+==================================================
+Date: 2026-08-14
 Feature: Compass Removal and UAT Stabilization
 
 - Completely removed all references and logic tied to the deprecated UI Compass to fix missing reference errors.
 - Ripped out the inaccurate hardware compass rotation logic from MapAvatarTracker.cs.
 - Replaced avatar map rotation with a new Velocity-Based Rotation system (the avatar now dynamically points in the direction of your GPS movement), vastly improving 2D map navigation stability.
 - UAT Release Candidate is now fully prepared.
+==================================================
 
+==================================================
+Date: 2026-08-14
 Feature: UAT Final Polish & Anti-Cheat
 
 - Configured ARCore Requirement to "Optional" in ARCoreSettings.asset so non-AR devices seamlessly load the fallback background instead of triggering Google Play Store errors.
 - Hardened the StepManager Anti-Cheat: Violently shaking the phone now triggers an extreme 15-second penalty box. The app will actively intercept and silently delete any batched hardware steps the Android OS attempts to deliver during this penalty window, making couch-shaking impossible.
 - Fixed Avatar Idle/Walk animations freezing by enabling "Loop Time" and "Loop Pose" in the underlying Adventurer FBX meta files.
+==================================================
+
 - Further Hardened Anti-Cheat: Eliminated the table-pounding pedometer loophole. The app no longer allows the accelerometer to spoof steps ahead of the hardware pedometer. Sharp, high-frequency shockwaves (like hitting a desk) will trigger the visual walking animation but will yield strictly 0 steps, forcing players to rely entirely on the official ML-filtered Android OS pedometer for actual points.
