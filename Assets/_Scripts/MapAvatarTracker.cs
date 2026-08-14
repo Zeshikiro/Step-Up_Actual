@@ -55,9 +55,7 @@ public class MapAvatarTracker : MonoBehaviour
             Permission.RequestUserPermission(Permission.FineLocation);
         }
 #endif
-        // 2. Turn on the hardware compass (wrapped for New Input System compatibility)
-        try { Input.compass.enabled = true; }
-        catch (System.Exception) { Debug.LogWarning("[MapAvatarTracker] Legacy Input.compass unavailable."); }
+
 
         // Setup the cinematic "Strava" zoom-in animation
         if (Camera.main != null)
@@ -385,17 +383,18 @@ public class MapAvatarTracker : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 5f);
         }
 
-        // 4. Sync Avatar Rotation to Real-World Compass Heading!
-        try
+        // 4. Sync Avatar Rotation to Movement Direction! (Replaces inaccurate compass)
+        Vector3 moveDirection = targetPosition - transform.position;
+        // Only rotate if we are actually moving a noticeable amount to prevent jitter
+        if (moveDirection.magnitude > 0.1f)
         {
-            float targetAngle = Input.compass.trueHeading;
+            float targetAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
             float currentAngle = transform.eulerAngles.y;
             float smoothAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * 5f);
             
             // Rotate the entire PlayerAvatar transform so both the 2D Cone and 3D Avatar face the right way!
             transform.eulerAngles = new Vector3(0, smoothAngle, 0);
         }
-        catch (System.Exception) { /* Compass unavailable on New Input System */ }
     }
 
     private IEnumerator SnapAndClear(Vector3 targetPosition)

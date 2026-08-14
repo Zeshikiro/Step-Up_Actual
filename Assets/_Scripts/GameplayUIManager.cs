@@ -32,8 +32,7 @@ public class GameplayUIManager : MonoBehaviour
     public string mainMenuSceneName = "LoginScene"; 
     public string alternateViewSceneName = "Your3DSceneName"; 
 
-    [Header("Compass Settings")]
-    public RectTransform compassUI; // Drag your Compass UI Image here
+
 
     [Header("Tip Settings")]
     [Tooltip("How many seconds before a new tip pops up?")]
@@ -75,22 +74,11 @@ public class GameplayUIManager : MonoBehaviour
             _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
         }
 
-        // Force the compass pivot to be exactly in the center to fix rotation swings
-        if (compassUI != null)
-        {
-            compassUI.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
-        }
+
     }
 
     void Update()
     {
-        // Rotate the compass UI to match real-world magnetic north
-        if (Camera.main != null && compassUI != null)
-        {
-            // If camera twists to the right (positive Y), map North goes left on screen (positive Z)
-            float cameraYRotation = Camera.main.transform.eulerAngles.y;
-            compassUI.localRotation = Quaternion.Euler(0, 0, cameraYRotation);
-        }
     }
 
     private GameObject noInternetPanel;

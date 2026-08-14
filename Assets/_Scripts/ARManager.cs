@@ -19,7 +19,6 @@ public class ARManager : MonoBehaviour
     
     [Header("--- UI Elements to Toggle ---")]
     public GameObject rotateAvatarButton;
-    public GameObject compassUI;
     public GameObject recenterButton;
     
     [Header("--- Icon Swapping ---")]
@@ -147,7 +146,6 @@ public class ARManager : MonoBehaviour
 
         if (mapRoot != null) mapRoot.SetActive(false);
         if (mapPin != null) mapPin.SetActive(false);
-        if (compassUI != null) compassUI.SetActive(false);
         if (recenterButton != null) recenterButton.SetActive(false);
 
         if (arCameraParent == null)
@@ -357,7 +355,6 @@ public class ARManager : MonoBehaviour
 
         if (mapRoot != null) mapRoot.SetActive(true);
         if (mapPin != null) mapPin.SetActive(true);
-        if (compassUI != null) compassUI.SetActive(true);
         if (recenterButton != null) recenterButton.SetActive(true);
 
         if (customAvatar != null)

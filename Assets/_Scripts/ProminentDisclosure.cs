@@ -190,12 +190,11 @@ public class ProminentDisclosure : MonoBehaviour
         // if Active Input Handling is set to "Input System Package (New)" exclusively.
         try
         {
-            Input.compass.enabled = true;
             Input.location.Start(0.1f, 0.1f);
         }
         catch (System.Exception e)
         {
-            Debug.LogWarning("[ProminentDisclosure] Legacy Input compass/location unavailable (New Input System mode): " + e.Message);
+            Debug.LogWarning("[ProminentDisclosure] Legacy Input location unavailable: " + e.Message);
         }
 
         // 2. Tell StepManager to initialize its sensor
