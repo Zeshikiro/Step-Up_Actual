@@ -803,3 +803,4 @@ Feature: UAT Final Polish & Anti-Cheat
 - Fixed Avatar Idle/Walk animations freezing by enabling "Loop Time" and "Loop Pose" in the underlying Adventurer FBX meta files.
 ==================================================
 
+- Further Hardened Anti-Cheat: Eliminated the table-pounding pedometer loophole. The app no longer allows the accelerometer to spoof steps ahead of the hardware pedometer. Sharp, high-frequency shockwaves (like hitting a desk) will trigger the visual walking animation but will yield strictly 0 steps, forcing players to rely entirely on the official ML-filtered Android OS pedometer for actual points.
