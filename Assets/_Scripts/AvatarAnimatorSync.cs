@@ -130,15 +130,17 @@ public class AvatarAnimatorSync : MonoBehaviour
         catch (System.Exception) { /* Ignored if unavailable */ }
         
         // When human walks, the phone bobs up and down, changing G-force.
-        // Increased threshold to 0.35G so tiny hand movements don't trigger the walk animation
-        if (Mathf.Abs(accelMagnitude - 1.0f) > 0.35f)
+        // Lowered threshold to 0.15G so normal smooth walking triggers it without needing to violently bounce the phone!
+        if (Mathf.Abs(accelMagnitude - 1.0f) > 0.15f)
         {
             _lastMoveTime = Time.time; 
         }
 
         // Reduced pedometer timeout to 2 seconds so the avatar instantly stops walking when you stop!
+        // But since the pedometer only batches every 10 seconds, this was causing stuttering.
+        // The bounce detection (_lastMoveTime) is now the primary driver for smooth animation!
         bool isStepping = (Time.time - _lastStepTime) < 2.0f;  
-        bool isSliding = (Time.time - _lastMoveTime) < 1.0f;
+        bool isSliding = (Time.time - _lastMoveTime) < 1.0f; // Maintains walk state for 1s after last bounce
 
         bool shouldWalk = isStepping || isSliding;
         
@@ -150,7 +152,8 @@ public class AvatarAnimatorSync : MonoBehaviour
             targetSpeed = (stepManager != null && stepManager.CurrentSpeedMPS > 2.2f) ? runAnimValue : walkAnimValue;
         }
 
-        _currentSmoothSpeed = Mathf.Lerp(_currentSmoothSpeed, targetSpeed, Time.deltaTime * animationLerpSpeed);
+        // Halved the lerp speed from 3.0 to 1.5 so it smoothly blends between walk/run/idle instead of snapping!
+        _currentSmoothSpeed = Mathf.Lerp(_currentSmoothSpeed, targetSpeed, Time.deltaTime * 1.5f);
 
         foreach (var anim in _validAnimators)
         {

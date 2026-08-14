@@ -89,6 +89,14 @@ public class StepManager : MonoBehaviour
     {
         if (_instance != null && _instance != this)
         {
+            // NEW FIX: Steal the fresh UI reference from the new scene before destroying the duplicate!
+            // This prevents the HUD step text from getting stuck at "0" when the user goes Home and back to the Map!
+            if (this.stepTextDisplay != null) 
+            {
+                _instance.stepTextDisplay = this.stepTextDisplay;
+                _instance.UpdateStepUI(); // Refresh the text immediately!
+            }
+            
             Destroy(this.gameObject);
             return;
         }

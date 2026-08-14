@@ -49,6 +49,8 @@ public class ActivitySummaryManager : MonoBehaviour
         int lifetimeSteps = 0;
         int actualStreak = 0;
 
+        if (stepManager == null) stepManager = FindFirstObjectByType<StepManager>();
+
         if (stepManager != null)
         {
             currentSteps = Mathf.RoundToInt(stepManager.currentDailySteps);
