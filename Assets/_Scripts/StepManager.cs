@@ -488,10 +488,10 @@ public class StepManager : MonoBehaviour
         {
             int currentHardwareSteps = StepCounter.current.stepCounter.ReadValue();
             
-            // ANTI-CHEAT: If moving faster than 6 meters/second (13 mph), you are in a car! Ignore steps!
-            if (_currentSpeedMPS > 6.0f && lastHardwareStepCount != -1)
+            // ANTI-CHEAT: If moving faster than 6 m/s (13 mph) OR actively in the shaking penalty box, ignore steps!
+            if ((_currentSpeedMPS > 6.0f || Time.time < _shakeBlockEndTime) && lastHardwareStepCount != -1)
             {
-                // Constantly update the baseline so we don't accidentally award these "car steps" when they slow down
+                // Constantly update the baseline so we absorb these fake steps without awarding points
                 lastHardwareStepCount = currentHardwareSteps;
                 PlayerPrefs.SetInt("LastHardwareStepCount", lastHardwareStepCount);
             }
@@ -580,7 +580,8 @@ public class StepManager : MonoBehaviour
         // ANTI-CHEAT: Violent shaking detection. Human walking rarely exceeds 3.0 Gs. Shaking easily hits 5.0+.
         if (magnitude > 4.5f)
         {
-            _shakeBlockEndTime = Time.time + 3.0f; // Block steps for 3 seconds after violent shake
+            // Set an extreme 15-second penalty box to ensure Android's delayed batched steps arrive and get swallowed!
+            _shakeBlockEndTime = Time.time + 15.0f; 
             _accelStepBuffer = 0; // Destroy their rhythm buffer
         }
 
