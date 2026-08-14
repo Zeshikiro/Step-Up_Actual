@@ -794,3 +794,12 @@ Feature: Compass Removal and UAT Stabilization
 - UAT Release Candidate is now fully prepared.
 ==================================================
 
+==================================================
+Date: 2026-08-14
+Feature: UAT Final Polish & Anti-Cheat
+
+- Configured ARCore Requirement to "Optional" in ARCoreSettings.asset so non-AR devices seamlessly load the fallback background instead of triggering Google Play Store errors.
+- Hardened the StepManager Anti-Cheat: Violently shaking the phone now triggers an extreme 15-second penalty box. The app will actively intercept and silently delete any batched hardware steps the Android OS attempts to deliver during this penalty window, making couch-shaking impossible.
+- Fixed Avatar Idle/Walk animations freezing by enabling "Loop Time" and "Loop Pose" in the underlying Adventurer FBX meta files.
+==================================================
+
