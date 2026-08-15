@@ -13,6 +13,12 @@ public class GameplayUIManager : MonoBehaviour
         {
             UnityEngine.EventSystems.EventSystem.current.sendNavigationEvents = false;
         }
+
+        // CRITICAL FIX: The ClosePopUp is somehow starting active and blocking Mapbox & UI raycasts.
+        // Nuke it from orbit the exact frame the UI manager wakes up!
+        if (closePopupBackground != null) closePopupBackground.SetActive(false);
+        Transform bruteForceClosePopup = transform.Find("ClosePopUp");
+        if (bruteForceClosePopup != null) bruteForceClosePopup.gameObject.SetActive(false);
     }
 
     [Header("UI Panels (Drag your panels here!)")]
@@ -51,6 +57,17 @@ public class GameplayUIManager : MonoBehaviour
 
     void Start()
     {
+        // Unity 6 Bug Fix: Flush corrupt hardware device states from asynchronous scene unloading
+        if (UnityEngine.InputSystem.Mouse.current != null)
+        {
+            UnityEngine.InputSystem.InputSystem.ResetDevice(UnityEngine.InputSystem.Mouse.current);
+        }
+        if (UnityEngine.InputSystem.Touchscreen.current != null)
+        {
+            UnityEngine.InputSystem.InputSystem.ResetDevice(UnityEngine.InputSystem.Touchscreen.current);
+        }
+        Debug.Log("[GameplayUIManager] Forcefully Flushed InputSystem Devices to fix Mapbox & UI pointer freeze.");
+
         // FPS is now dynamically managed by SetOptimalFPS() instead of hardcoded to 30.
         SetOptimalFPS();
 
@@ -259,10 +276,6 @@ public class GameplayUIManager : MonoBehaviour
         MapAvatarTracker tracker = FindFirstObjectByType<MapAvatarTracker>();
         if (tracker != null && tracker.mapManager != null)
         {
-            if (Mapbox.Unity.MapboxAccess.Instance != null)
-            {
-                Mapbox.Unity.MapboxAccess.Instance.ClearAllCacheFiles();
-            }
             tracker.mapManager.gameObject.SetActive(false);
             Debug.Log("[GameplayUIManager] Mapbox gracefully shutdown to prevent Editor crash.");
         }

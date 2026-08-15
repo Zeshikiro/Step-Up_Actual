@@ -580,6 +580,8 @@ public class MapCameraPanner : MonoBehaviour
                 (_cachedUIMgr.summaryPanel != null && _cachedUIMgr.summaryPanel.activeSelf) ||
                 (_cachedUIMgr.customizerPanel != null && _cachedUIMgr.customizerPanel.activeSelf))
             {
+                // Commenting this out to avoid spam, but this could be it!
+                // Debug.Log("[MapCameraPanner] Panning blocked by an active UI panel.");
                 return true;
             }
         }
@@ -596,7 +598,11 @@ public class MapCameraPanner : MonoBehaviour
             {
                 // Check if the hit object or any parent is a Selectable (Button, Slider, Toggle, Dropdown, InputField)
                 Selectable selectable = result.gameObject.GetComponentInParent<Selectable>();
-                if (selectable != null && selectable.interactable) return true;
+                if (selectable != null && selectable.interactable) 
+                {
+                    Debug.Log($"[MapCameraPanner] Panning blocked by UI Element: {result.gameObject.name} (Parent: {result.gameObject.transform.parent?.name})");
+                    return true;
+                }
             }
         }
         

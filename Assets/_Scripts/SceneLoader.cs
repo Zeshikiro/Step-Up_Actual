@@ -48,6 +48,25 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += ForceCleanupCanvas;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= ForceCleanupCanvas;
+    }
+
+    private void ForceCleanupCanvas(Scene scene, LoadSceneMode mode)
+    {
+        if (loadingScreenCanvas != null) 
+        {
+            loadingScreenCanvas.SetActive(false);
+            Debug.Log("[SceneLoader] Forcefully shut down Loading Canvas on Scene Loaded!");
+        }
+    }
+
     public void LoadScene(string sceneName)
     {
         Debug.Log("SCENELOADER TRACE: LoadScene called for " + sceneName);
@@ -113,7 +132,7 @@ public class SceneLoader : MonoBehaviour
                 // 4. Wait for user input (Upgraded to New Input System!)
                 bool hasInput = false;
 
-                if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
+                if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasReleasedThisFrame)
                 {
                     hasInput = true;
                 }
@@ -122,7 +141,7 @@ public class SceneLoader : MonoBehaviour
                 {
                     foreach (var touch in UnityEngine.InputSystem.Touchscreen.current.touches)
                     {
-                        if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+                        if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Ended || touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Canceled)
                         {
                             hasInput = true;
                             break;
