@@ -55,6 +55,27 @@ public class ProfileManager : MonoBehaviour
         LoadCustomAvatar();
     }
 
+    void Update()
+    {
+        // Live XP Updates while the profile panel is open!
+        if (StepManager.Instance != null)
+        {
+            int totalLifetimeSteps = StepManager.Instance.totalLifetimeSteps;
+            int missionXPEarned = PlayerPrefs.GetInt("MissionXPEarned", 0);
+            
+            int totalXP = totalLifetimeSteps + missionXPEarned;
+            currentLevel = (totalXP / xpPerLevel) + 1; 
+            int currentXPInLevel = totalXP % xpPerLevel;
+            float progressPercentage = (float)currentXPInLevel / xpPerLevel;
+            
+            if (xpProgressBar != null) 
+                xpProgressBar.value = progressPercentage;
+                
+            if (xpProgressText != null)
+                xpProgressText.text = $"{currentXPInLevel} / {xpPerLevel}";
+        }
+    }
+
     public void RefreshProfileUI()
     {
         // 1. Load Step Tracker and Reward Core Values

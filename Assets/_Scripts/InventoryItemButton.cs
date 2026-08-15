@@ -9,11 +9,14 @@ public class InventoryItemButton : MonoBehaviour
     public string category;                // "Head", "Torso", "Legs", or "Feet"
     public GameObject itemPrefab;          // The 3D mesh model reference
     public int unlockCost;                 // Cost to purchase this item
+    public int levelRequired;              // Level required to equip this item
+    private bool isLevelLocked = false;    // Tracks if this item is locked by level
 
     [Header("UI Visual Components")]
     public TextMeshProUGUI txtOutfitName;  // Displays pretty display name
     public Image imgCharacterIcon;         // Slot for your NOBG UI Sprites
     public TextMeshProUGUI txtEquipStatus; // Tracks "EQUIP" vs "EQUIPPED" labels
+    public GameObject lockIcon;            // Optional: A lock icon to show it's level locked
 
     private void Start()
     {
@@ -26,12 +29,15 @@ public class InventoryItemButton : MonoBehaviour
     }
 
     // Fed by your inventory manager generation loop to initialize values
-    public void SetupButtonDetails(string id, string cat, GameObject prefab, Sprite uniqueIcon, int cost)
+    public void SetupButtonDetails(string id, string cat, GameObject prefab, Sprite uniqueIcon, int cost, int reqLevel, int playerLevel)
     {
         itemId = id;
         category = cat;
         itemPrefab = prefab;
         unlockCost = cost;
+        levelRequired = reqLevel;
+
+        isLevelLocked = playerLevel < levelRequired;
 
         if (txtOutfitName != null)
         {
@@ -42,7 +48,12 @@ public class InventoryItemButton : MonoBehaviour
         if (imgCharacterIcon != null && uniqueIcon != null)
         {
             imgCharacterIcon.sprite = uniqueIcon;
-            imgCharacterIcon.color = Color.white; // Ensures full image visibility
+            imgCharacterIcon.color = isLevelLocked ? new Color(0.3f, 0.3f, 0.3f, 1f) : Color.white; // Darken if locked
+        }
+        
+        if (lockIcon != null)
+        {
+            lockIcon.SetActive(isLevelLocked);
         }
 
         // Dynamically assign Rarity Color to the background image!
@@ -98,6 +109,16 @@ public class InventoryItemButton : MonoBehaviour
     // Runs instantly when the student taps anywhere on this item card frame
     public void EquipThisItem()
     {
+        if (isLevelLocked)
+        {
+            if (txtEquipStatus != null)
+            {
+                txtEquipStatus.text = "LOCKED";
+                txtEquipStatus.color = Color.red;
+            }
+            return;
+        }
+
         AvatarCustomizer customizer = FindAnyObjectByType<AvatarCustomizer>();
         if (customizer == null || InventoryManager.Instance == null) return;
 

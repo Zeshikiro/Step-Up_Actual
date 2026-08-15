@@ -46,6 +46,7 @@ public class InventoryManager : MonoBehaviour
         public GameObject itemMeshPrefab;   // The specific 3D model piece to equip
         public Sprite itemIcon;             // UI icon for this individual piece (Your NOBG Sprites!)
         public int unlockCost = 500;        // Cost in coins to buy this item
+        public int levelRequirement = 1;    // Level required to equip this item
     }
 
     [Header("Master Inventory Database")]
@@ -197,6 +198,14 @@ public class InventoryManager : MonoBehaviour
                 if (snapshot.Child("equippedAccessoryId").Value != null)
                     equippedAccessoryId = snapshot.Child("equippedAccessoryId").Value.ToString();
 
+                // SAVE TO PLAYER PREFS SO IT PERSISTS OFFLINE ON NEW DEVICES!
+                PlayerPrefs.SetString("equippedHeadId", equippedHeadId);
+                PlayerPrefs.SetString("equippedBodyId", equippedBodyId);
+                PlayerPrefs.SetString("equippedLegsId", equippedLegsId);
+                PlayerPrefs.SetString("equippedFeetId", equippedFeetId);
+                PlayerPrefs.SetString("equippedAccessoryId", equippedAccessoryId);
+                PlayerPrefs.Save();
+
                 // RESTORE COINS
                 if (snapshot.Child("coins").Value != null)
                 {
@@ -312,6 +321,15 @@ public class InventoryManager : MonoBehaviour
         UnlockItem(strippedName + "_Accessory");
     }
 
+    // Helper to calculate the player's current level using the same logic as ProfileManager
+    public int GetCurrentLevel()
+    {
+        int totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
+        int missionXPEarned = PlayerPrefs.GetInt("MissionXPEarned", 0);
+        int totalXP = totalLifetimeSteps + missionXPEarned;
+        return (totalXP / 5000) + 1; // Level up every 5000 XP
+    }
+
     public bool SpendCoins(int amount)
     {
         if (coins >= amount)
@@ -366,6 +384,8 @@ public class InventoryManager : MonoBehaviour
         ClearGrid(accessoryContentGrid);
         spawnedButtons.Clear();
 
+        int playerLevel = GetCurrentLevel(); // Fetch player level once before loop
+
         // 2. Loop through our master item slice database
         foreach (InventoryItemData item in masterInventoryList)
         {
@@ -387,7 +407,7 @@ public class InventoryManager : MonoBehaviour
                         int actualCost = GetDynamicCostForOutfit(item.associatedOutfitName);
 
                         // 👗 Directs the exact database ID, categories, prefabs, and 2D textures safely
-                        buttonScript.SetupButtonDetails(item.itemId, item.category, item.itemMeshPrefab, item.itemIcon, actualCost);
+                        buttonScript.SetupButtonDetails(item.itemId, item.category, item.itemMeshPrefab, item.itemIcon, actualCost, item.levelRequirement, playerLevel);
                         
                         // 🏷️ Overwrite the display label text using the clean, pretty outfit name
                         if (buttonScript.txtOutfitName != null)
@@ -409,6 +429,20 @@ public class InventoryManager : MonoBehaviour
 
         // 🎯 Initial text synchronization pass once generation loops complete
         RefreshButtonLabels();
+
+        // 🚀 Add a "Coming Soon!" placeholder to the Accessory Tab if it's empty
+        if (accessoryContentGrid != null && accessoryContentGrid.childCount == 0 && inventoryButtonPrefab != null)
+        {
+            GameObject newButton = Instantiate(inventoryButtonPrefab, accessoryContentGrid);
+            InventoryItemButton buttonScript = newButton.GetComponent<InventoryItemButton>();
+            if (buttonScript != null)
+            {
+                // Give it impossible reqLevel so they can't equip it, or just let it fail gracefully
+                buttonScript.SetupButtonDetails("Coming Soon!", "Accessory", null, null, 0, 999, playerLevel);
+                if (buttonScript.txtOutfitName != null) buttonScript.txtOutfitName.text = "COMING SOON";
+                if (buttonScript.txtEquipStatus != null) buttonScript.txtEquipStatus.text = "WIP";
+            }
+        }
     }
 
     // ⚡ NEW PLAY: The structural execution engine for equipping clothing assets

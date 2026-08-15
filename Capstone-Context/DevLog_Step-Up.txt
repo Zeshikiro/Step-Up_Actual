@@ -808,3 +808,13 @@ Feature: Singleton & Animation Smoothing Fixes
 - Fixed Main HUD Step Reset Bug: The StepManager persistent singleton now intercepts the active Canvas text reference when reloading the MainGameplayScene from the Home menu, ensuring the step text accurately populates instead of remaining stuck at 0.
 - Fixed Summary Panel Missing Data: The ActivitySummaryManager now dynamically queries the surviving StepManager.Instance upon opening, ensuring that the tracked steps correctly load into the summary card even after a scene change.
 - Smoothed Avatar Animation Transitions: Lowered the accelerometer animation threshold to 0.15G to allow casual indoor walking to maintain the Walk state. Halved the animation interpolation lerp speed from 3.0 to 1.5, allowing the avatar to smoothly blend between Walk, Run, and Idle animations without visually twitching or snapping.
+==================================================
+Date: 2026-08-15
+Feature: QA Checklist Resolutions & Final Polish
+
+- Level-Locked Wardrobe: Configured InventoryItemData to support levelRequirement. InventoryManager and InventoryItemButton now dynamically query ProfileManager's XP level. Items beyond the player's level are darkened and display a red "LOCKED" equip label.
+- Outfit Cloud Syncing: Upgraded InventoryManager's Firebase loader to instantly cache equippedHeadId, equippedBodyId, etc., into local PlayerPrefs upon login, ensuring avatar meshes build perfectly on fresh devices.
+- Live XP Progress Bar: Hooked ProfileManager's XPProgressBar directly into StepManager.Instance inside an Update() loop, allowing the progress bar and XP text to fill dynamically in real-time as the player walks while the profile panel is open.
+- Leaderboard Scaling: Injected dynamic ContentSizeFitter instantiation into LeaderboardManager.cs to ensure the Top 50 scroll view perfectly fits its content without clipping.
+- Accessory Fallback: Added logic to GenerateInventoryUI() that automatically spawns a locked "COMING SOON" dummy slot if the accessories tab is empty.
+- Interactive UI Polish: Implemented a global ButtonPressFeedback.cs script that can be assigned to UI buttons to create a satisfying shrink/bounce visual effect on tap.

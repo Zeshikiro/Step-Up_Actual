@@ -36,6 +36,16 @@ public class LeaderboardManager : MonoBehaviour
 
     void Start()
     {
+        // Enforce scrolling UI structure dynamically to prevent layout bugs
+        if (contentContainerTarget != null)
+        {
+            if (contentContainerTarget.GetComponent<ContentSizeFitter>() == null)
+            {
+                var fitter = contentContainerTarget.gameObject.AddComponent<ContentSizeFitter>();
+                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            }
+        }
+
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
             if (task.Result == Firebase.DependencyStatus.Available)
             {
