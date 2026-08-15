@@ -259,6 +259,10 @@ public class GameplayUIManager : MonoBehaviour
         MapAvatarTracker tracker = FindFirstObjectByType<MapAvatarTracker>();
         if (tracker != null && tracker.mapManager != null)
         {
+            if (Mapbox.Unity.MapboxAccess.Instance != null)
+            {
+                Mapbox.Unity.MapboxAccess.Instance.ClearAllCacheFiles();
+            }
             tracker.mapManager.gameObject.SetActive(false);
             Debug.Log("[GameplayUIManager] Mapbox gracefully shutdown to prevent Editor crash.");
         }

@@ -339,6 +339,8 @@ public class StepManager : MonoBehaviour
             // First ever login
             currentStreak = 1;
             PlayerPrefs.SetInt("CurrentStreak", currentStreak);
+            PlayerPrefs.SetString("LastLoginDate", todayDate);
+            PlayerPrefs.Save();
         }
         else if (lastDate != todayDate)
         {
@@ -355,11 +357,11 @@ public class StepManager : MonoBehaviour
                 currentStreak = 1; // Fallback
             }
             PlayerPrefs.SetInt("CurrentStreak", currentStreak);
-
-            // Rollover!
-            yesterdaysSteps = currentDailySteps;
-            PlayerPrefs.SetInt("YesterdaysSteps", yesterdaysSteps);
             
+            // --- CRITICAL FIX: Save yesterday's steps and reset! ---
+            yesterdaysSteps = currentDailySteps; 
+            PlayerPrefs.SetInt("YesterdaysSteps", yesterdaysSteps);
+
             // Clear GPS Trail on a new day!
             PlayerPrefs.DeleteKey("SavedGPSTrail");
             
@@ -383,9 +385,15 @@ public class StepManager : MonoBehaviour
 
             // Reset Daily Stats
             currentDailySteps = 0;
+            PlayerPrefs.SetInt("DailySteps", 0);
             arStepsToday = 0;
+            PlayerPrefs.SetInt("ARStepsToday", 0);
             maxSessionStepsToday = 0;
+            PlayerPrefs.SetInt("MaxSessionStepsToday", 0);
             maxContinuousWalkMinutes = 0f;
+            PlayerPrefs.SetFloat("MaxContinuousWalkMinutes", 0f);
+            
+            completedSessionsToday.Clear();
             PlayerPrefs.SetString("CompletedSessions", ""); // Clear sessions
             
             // Weekly check: Calculate the most recent Monday. 
