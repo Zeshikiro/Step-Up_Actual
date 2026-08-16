@@ -33,3 +33,20 @@ extClickTime. This guarantees the 3D toggle button can never get permanently stu
 - Fixed Leaderboard Manager:
   - Bypassed a severe Firebase backend block! Because the cloud database lacked an explicit security index for TotalLifetimeSteps, it was silently rejecting the OrderByChild query and returning an empty list. Removed the cloud sorting requirement and instead dynamically pulled the batch and sorted it locally in memory, instantly restoring the podium!
 
+
+August 16th, 2026 (Major Scene Stability & GPS Anti-Cheat Fixes)
+- Fixed Scene Return Freeze (Map -> Bag -> Map):
+  - Investigated an issue where returning to the Map scene completely blocked UI raycasts and Mapbox panning.
+  - Discovered that the ClosePopUp background panel was somehow initializing in an active state and blocking all raycasts. Added a forceful SetActive(false) in GameplayUIManager.Awake() to nuke it on spawn.
+- Fixed Missing OnClick Events (Map -> Bag -> Home -> Start):
+  - Addressed a severe bug where the main HUD buttons lost their OnClick targets (GameplayUIManager) upon re-entering the Map scene from the Login Scene.
+  - Discovered StepManager and GameplayUIManager were attached to the exact same GameObject in the Inspector. Because StepManager is a singleton (DontDestroyOnLoad), when the scene reloaded, the new duplicate StepManager called Destroy(this.gameObject), obliterating the shared GameObject and the GameplayUIManager with it!
+  - Fix: Changed StepManager's duplicate destruction logic to Destroy(this), safely removing only the duplicate script component while preserving the shared GameObject and UI Manager.
+- Fixed GPS Trail Glitch (10,000km Bouncing Line):
+  - The LineRenderer was saving (0,0) (Null Island) coordinates during brief GPS drops or hardware glitches, causing the trail to bounce thousands of miles.
+  - Fix: Updated MapAvatarTracker.cs to strictly validate all incoming points. Points jumping > 1km instantly or reading exactly (0,0) are now safely rejected, and the trail is cleanly wiped if a massive teleport occurs so it doesn't get stuck rendering across the map.
+- Fixed Step Counter Freezing (Anti-Cheat Lockout):
+  - Discovered the GPS bounce bug was directly causing the step counter freeze! When the GPS glitched 10,000km in a second, StepManager.cs calculated an impossible movement speed (> 10,000 m/s), which instantly tripped the Vehicle Anti-Cheat and permanently blocked all step counting.
+  - Fix: Added a dynamic fallback to StepManager to reconnect to the AbstractLocationProvider after scene loads.
+  - Fix: Added an Anti-Cheat safeguard that ignores impossible speeds (> 50 m/s) so a GPS glitch doesn't flag the player as driving.
+  - Fix: Implemented an active speed decay so if the GPS signal drops entirely, the player's recorded speed decays back to 0, ensuring they are never permanently locked out by the anti-cheat.

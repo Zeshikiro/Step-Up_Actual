@@ -290,26 +290,38 @@ public class MapAvatarTracker : MonoBehaviour
         if (currentLocation == Vector2d.zero) return;
 
         // --- SAVE GPS POINTS PERIODICALLY ---
-        if (Time.time - _lastSaveTime > 5f && currentLocation != _fallbackLatLon)
+        if (Time.time - _lastSaveTime > 5f && currentLocation != _fallbackLatLon && currentLocation.x != 0 && currentLocation.y != 0)
         {
             _lastSaveTime = Time.time;
             
-            // ANTI-TELEPORT: If the GPS jumps by more than ~2 kilometers instantly (like Editor spawning at 0,0), wipe the trail!
-            if (_savedGPSPoints.Count > 0 && Vector2d.Distance(currentLocation, _savedGPSPoints[_savedGPSPoints.Count - 1]) > 0.02)
+            bool isTeleport = false;
+            if (_savedGPSPoints.Count > 0)
             {
-                _savedGPSPoints.Clear();
-                PlayerPrefs.DeleteKey("SavedGPSTrail");
+                double jumpDistance = Vector2d.Distance(currentLocation, _savedGPSPoints[_savedGPSPoints.Count - 1]);
+                
+                // ANTI-TELEPORT / GPS GLITCH: If the GPS jumps by more than ~1 kilometer instantly, it's a glitch.
+                // Do NOT add this point. If it really is a teleport, we wipe the trail so it starts fresh on the next valid update.
+                if (jumpDistance > 0.01)
+                {
+                    isTeleport = true;
+                    _savedGPSPoints.Clear();
+                    PlayerPrefs.DeleteKey("SavedGPSTrail");
+                }
             }
 
             // HIGH SMOOTHING: Only save a GPS point if the user actually walked ~15 meters. Prevents saving jagged drift!
-            if (_savedGPSPoints.Count == 0 || Vector2d.Distance(currentLocation, _savedGPSPoints[_savedGPSPoints.Count - 1]) > 0.00015) // ~15 meters
+            // Do NOT save if we just wiped the trail due to a massive teleport glitch!
+            if (!isTeleport)
             {
-                _savedGPSPoints.Add(currentLocation);
-                if (_savedGPSPoints.Count > 500) _savedGPSPoints.RemoveAt(0); // Keep last 500 to prevent RAM crashes
-                
-                string saveString = "";
-                foreach(var pt in _savedGPSPoints) saveString += pt.x + "," + pt.y + "|";
-                PlayerPrefs.SetString("SavedGPSTrail", saveString);
+                if (_savedGPSPoints.Count == 0 || Vector2d.Distance(currentLocation, _savedGPSPoints[_savedGPSPoints.Count - 1]) > 0.00015) // ~15 meters
+                {
+                    _savedGPSPoints.Add(currentLocation);
+                    if (_savedGPSPoints.Count > 500) _savedGPSPoints.RemoveAt(0); // Keep last 500 to prevent RAM crashes
+                    
+                    string saveString = "";
+                    foreach(var pt in _savedGPSPoints) saveString += pt.x + "," + pt.y + "|";
+                    PlayerPrefs.SetString("SavedGPSTrail", saveString);
+                }
             }
         }
 

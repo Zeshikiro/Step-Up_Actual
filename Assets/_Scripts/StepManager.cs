@@ -97,7 +97,7 @@ public class StepManager : MonoBehaviour
                 _instance.UpdateStepUI(); // Refresh the text immediately!
             }
             
-            Destroy(this.gameObject);
+            Destroy(this); // CRITICAL FIX: Only destroy the component, not the GameObject! GameplayUIManager is on the same object!
             return;
         }
         else
@@ -463,6 +463,12 @@ public class StepManager : MonoBehaviour
         // which flawlessly filters out shaking! (Note: Updates arrive in batches every 5-10 seconds)
         DetectAccelerometerStep();
 
+        // If we lost the location provider (e.g. Map -> Bag scene transition), try to find it again!
+        if (_locationProvider == null || _locationProvider.Equals(null))
+        {
+            _locationProvider = UnityEngine.Object.FindFirstObjectByType<AbstractLocationProvider>();
+        }
+
         // GPS Speed Tracker
         if (_locationProvider != null && _locationProvider.CurrentLocation.LatitudeLongitude != Vector2d.zero)
         {
@@ -476,11 +482,22 @@ public class StepManager : MonoBehaviour
                     Vector2d posBMeters = Conversions.LatLonToMeters(currentGPS.x, currentGPS.y);
                     double distanceMeters = Vector2d.Distance(posAMeters, posBMeters);
                     
-                    if (isSessionActive) sessionDistanceMeters += (float)distanceMeters;
+                    // ANTI-CHEAT SAFEGUARD: Ignore impossible human speeds (e.g. GPS jumps of 10km in 1s)
+                    // Fastest human sprint is ~12 m/s. If > 50 m/s, it's definitely a GPS teleport glitch.
+                    if (distanceMeters / timeDelta > 50.0)
+                    {
+                        // Update anchor point to stop measuring from the glitch, but ignore the speed calculation
+                        _lastGPSPos = currentGPS;
+                        _lastGPSTime = Time.time;
+                    }
+                    else
+                    {
+                        if (isSessionActive) sessionDistanceMeters += (float)distanceMeters;
 
-                    _currentSpeedMPS = (float)(distanceMeters / timeDelta);
-                    _lastGPSPos = currentGPS;
-                    _lastGPSTime = Time.time;
+                        _currentSpeedMPS = (float)(distanceMeters / timeDelta);
+                        _lastGPSPos = currentGPS;
+                        _lastGPSTime = Time.time;
+                    }
                 }
             }
             else
@@ -488,6 +505,12 @@ public class StepManager : MonoBehaviour
                 _lastGPSPos = currentGPS;
                 _lastGPSTime = Time.time;
             }
+        }
+        else
+        {
+            // SPEED DECAY: If we are offline or have no GPS, gradually decay speed back to 0
+            // so we don't stay permanently locked out by the anti-cheat.
+            _currentSpeedMPS = Mathf.Max(0, _currentSpeedMPS - (Time.deltaTime * 2f));
         }
 
 #if UNITY_ANDROID
