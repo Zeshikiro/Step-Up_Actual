@@ -1,0 +1,75 @@
+STEP-UP: Capstone Manuscript vs. Application Cross-Reference Report
+
+This document serves as a detailed cross-reference between your final paper (manuscript-stepup.pdf) and the current state of the STEP-UP Unity Project. It identifies exactly what has been implemented, what should be added, and what should be modified to ensure 100% alignment for your final defense.
+
+----------------------------------------------------------------------
+Part 1: Fully Implemented Features (No Changes Needed)
+----------------------------------------------------------------------
+The following features from the manuscript (Pages 45-49) are fully implemented in the game's code. You do not need to add or remove anything here.
+
+1. User Registration and Login: Complete (Handled by AuthManager.cs using Firebase Authentication)
+2. Local Data Storage System: Complete (Handled by Unity's PlayerPrefs throughout the system)
+3. Offline Mode with Online Sync: Complete (Handled by StepManager.ForceCloudSync connecting to Firebase)
+4. Automatic Step Tracking: Complete (Handled by StepManager.cs and the Android StepForegroundService.java)
+5. Activity Summary & Progress: Complete (Handled by the UI Panels showing daily/weekly steps and session logs)
+6. Gamification & Rewards: Complete (Handled by InventoryManager.cs and MissionManager.cs)
+7. Campus-Based Map Visualization: Complete (Handled by MapAvatarTracker.cs and the Mapbox SDK)
+8. Avatar Customization: Complete (Handled by AvatarCustomizer.cs in the CustomizeScene)
+9. BMI Calculation & Assignment: Complete (Handled by BMIManager.cs and utilized heavily in MissionManager.cs)
+10. Anti-Cheat Mechanism: Complete (Handled by StepManager.cs GPS > 6.0m/s speed penalty box)
+
+----------------------------------------------------------------------
+Part 2: Missing or Incomplete Details (What Needs to be Added/Fixed)
+----------------------------------------------------------------------
+Based on a strict reading of the manuscript, the following specific details are currently missing or mismatched in the application. To ensure you pass the defense without questions, here are the exact details on what to add/fix and where to put it.
+
+WARNING: NO CODE HAS BEEN CHANGED. You must manually perform these updates in the Unity Editor or Scripts to perfectly match your paper.
+
+--- 1. Missing: Posture, Warm-up, and Cooldown Tips ---
+According to the Paper (Page 48, Item 12): "The application provides general health guidance such as posture reminders, warm-up and cooldown tips, and basic fitness information."
+Current Status in App: The app only provides fun facts about calories, bones, and music.
+What to Add: You need to add specific text for posture, warm-ups, and cooldowns.
+Where to put it:
+* Open Assets/_Scripts/GameplayUIManager.cs
+* Find the funFacts array (around line 47).
+* Add these lines to the array:
+  - "Posture Reminder: Keep your head up, back straight, and shoulders relaxed while walking!"
+  - "Warm-up Tip: Spend 5 minutes doing light stretches before a long walk to prevent injuries."
+  - "Cooldown Tip: Gradually slow down your pace during the last 5 minutes of your walk to cool down."
+
+--- 2. Missing: AR Safety Reminder ---
+According to the Paper (Page 49, Item 15): "STEP-UP provides safety reminders to encourage users to remain aware of their surroundings... especially during augmented reality interactions."
+Current Status in App: There is no safety warning visible when the user opens the AR Camera mode.
+What to Add: A visual safety warning text.
+Where to put it:
+* Open SampleScene in the Unity Editor.
+* Find your AR UI Canvas (the canvas that contains the "Exit AR" button).
+* Add a new UI -> Text (TextMeshPro) element.
+* Set the text to: "WARNING: Stay aware of your surroundings!"
+* Position it at the top or bottom of the screen. No coding is required; it just needs to be visible in AR mode.
+
+--- 3. Incomplete: Forgot Password Flow ---
+According to the Paper (Page 45, Item 1): "User Registration and Login System - The application allows users to create an account and securely log in..."
+Current Status in App: The code for sending a password reset email (SendPasswordResetEmail) exists inside AuthManager.cs, but it is not connected to your UI button.
+What to Add: Wire the existing script to the UI button.
+Where to put it:
+* Open LoginScene in the Unity Editor.
+* Select your "Forgot Password" button in the Hierarchy.
+* In the Inspector, scroll down to the Button component and find On Click ().
+* Drag your AuthManager GameObject into the slot.
+* Click the dropdown and select AuthManager -> SendPasswordResetEmail().
+
+--- 4. Mismatched: UI Stretching on Mobile Phones ---
+Current Status in App: As noted earlier, the Tutorial UI looks perfectly stretched on a PC (16:9 ratio), but looks squished or leaves huge gaps on modern Android phones (20:9 ratio).
+What to Fix: You need to balance the Canvas Scaler so it stretches correctly on taller screens.
+Where to put it:
+* Open SampleScene in the Unity Editor.
+* Click on the main Canvas (or tutorialcanvas).
+* In the Inspector, look at the Canvas Scaler component.
+* Change "Match Width Or Height" from 0 to 0.5.
+* Repeat this exact same process for the Canvas in CustomizeScene.
+
+----------------------------------------------------------------------
+Conclusion
+----------------------------------------------------------------------
+If you manually apply the 4 fixes listed in Part 2, your Unity project will be 100% compliant with your capstone manuscript, and you will be completely ready for the final defense!

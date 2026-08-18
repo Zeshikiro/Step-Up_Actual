@@ -208,6 +208,15 @@ public class AuthManager : MonoBehaviour
             
             FirebaseUser user = auth.CurrentUser;
 
+            // NEW: Enforce Email Verification Lock!
+            if (user != null && !user.IsEmailVerified)
+            {
+                if (statusText != null) statusText.text = "Please check your inbox and verify your email before logging in!";
+                auth.SignOut();
+                if (loginButton != null) loginButton.interactable = true;
+                return;
+            }
+
             failedAttempts = 0; 
             if(statusText != null) statusText.text = "Login Successful!";
 

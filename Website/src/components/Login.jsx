@@ -44,12 +44,31 @@ export default function Login() {
       setLoading(true);
       if (isRegistering) {
         await register(email, password);
+        setError("Registration successful! Please check your email to verify your account.");
       } else {
-        await login(email, password);
+        const userCred = await login(email, password);
+        if (!userCred.user.emailVerified) {
+          await logout();
+          setError("Please verify your email address before logging in!");
+        }
       }
     } catch (err) {
       console.error(err);
-      setError(isRegistering ? "Registration failed: " + err.message : "Failed to sign in: " + err.message);
+      
+      let friendlyError = "An unexpected error occurred.";
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+        friendlyError = "Incorrect email or password.";
+      } else if (err.code === 'auth/email-already-in-use') {
+        friendlyError = "An account with this email already exists.";
+      } else if (err.code === 'auth/weak-password') {
+        friendlyError = "Password should be at least 6 characters long.";
+      } else if (err.code === 'auth/invalid-email') {
+        friendlyError = "Please enter a valid email address.";
+      } else {
+        friendlyError = err.message; // Fallback if it's an unknown error
+      }
+      
+      setError(isRegistering ? "Registration failed: " + friendlyError : "Sign in failed: " + friendlyError);
     }
     setLoading(false);
   };

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebaseConfig';
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, sendEmailVerification } from 'firebase/auth';
 import { ref, set } from 'firebase/database';
 
 const AuthContext = createContext();
@@ -21,11 +21,17 @@ export function AuthProvider({ children }) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
+    // NEW: Send verification email!
+    await sendEmailVerification(user);
+    
     await set(ref(db, 'users/' + user.uid), {
       email: email,
       TotalLifetimeSteps: 0,
       currentDailySteps: 0
     });
+
+    // NEW: Sign them out so they are forced to verify
+    await signOut(auth);
 
     return userCredential;
   }

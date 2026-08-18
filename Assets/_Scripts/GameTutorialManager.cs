@@ -112,6 +112,14 @@ public class GameTutorialManager : MonoBehaviour
     {
         HideAllSteps();
 
+        // 🚨 CRITICAL FIX: Gracefully shut down Mapbox before leaving ANY scene via the tutorial to prevent Android background crashes!
+        var tracker = UnityEngine.Object.FindFirstObjectByType<MapAvatarTracker>();
+        if (tracker != null && tracker.mapManager != null)
+        {
+            tracker.mapManager.gameObject.SetActive(false);
+            Debug.Log("[GameTutorialManager] Mapbox gracefully shutdown before teleporting.");
+        }
+
         if (isLastSceneOfTutorial)
         {
             // The tour is officially over! Wipe the progress flag so it doesn't auto-start next time they enter a scene
@@ -128,14 +136,21 @@ public class GameTutorialManager : MonoBehaviour
 
         if (loadSceneOnComplete && !string.IsNullOrEmpty(nextSceneToLoad))
         {
-            // Teleport to the next scene in the chain!
+            // Teleport to the next scene in the chain safely via the loading screen!
+            if (SceneLoader.Instance == null) 
+            {
+                SceneLoader.Instance = FindFirstObjectByType<SceneLoader>(FindObjectsInactive.Include);
+                if (SceneLoader.Instance != null) SceneLoader.Instance.gameObject.SetActive(true);
+            }
+
             if (SceneLoader.Instance != null)
             {
                 SceneLoader.Instance.LoadScene(nextSceneToLoad);
             }
             else
             {
-                SceneManager.LoadSceneAsync(nextSceneToLoad);
+                Debug.LogWarning("SCENELOADER IS NULL! Bypassing Cutscene...");
+                SceneManager.LoadScene(nextSceneToLoad); // Use synchronous load if loader is totally missing to prevent async OOM crash
             }
         }
         else if (!isLastSceneOfTutorial)
