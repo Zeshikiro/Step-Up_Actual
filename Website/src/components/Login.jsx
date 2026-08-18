@@ -44,7 +44,7 @@ export default function Login() {
       setLoading(true);
       if (isRegistering) {
         await register(email, password);
-        setError("Registration successful! Please check your email to verify your account.");
+        setError("Registration successful! Please verify your email address (check your spam folder) before logging in!");
       } else {
         const userCred = await login(email, password);
         if (!userCred.user.emailVerified) {
