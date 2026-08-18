@@ -8,11 +8,15 @@ import Leaderboard from './components/Leaderboard'
 import Login from './components/Login'
 import Profile from './components/Profile'
 import SocialFeed from './components/SocialFeed'
+import VerifyEmail from './components/VerifyEmail'
 
 function AppContent() {
   const { currentUser } = useAuth();
   const getActiveTabFromUrl = () => {
     const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'verifyEmail') {
+      return 'verify';
+    }
     return params.get('tab') || 'home';
   };
 
@@ -31,8 +35,13 @@ function AppContent() {
     const url = new URL(window.location);
     url.searchParams.set('tab', tab);
     
-    // clear mode since we don't use it anymore
-    url.searchParams.delete('mode');
+    // clear mode since we only use it for initial load of verification
+    if (tab !== 'verify') {
+      url.searchParams.delete('mode');
+      url.searchParams.delete('oobCode');
+      url.searchParams.delete('apiKey');
+      url.searchParams.delete('lang');
+    }
     
     if (tab !== 'health') {
       url.searchParams.delete('tip'); // clear tip if not on health page
@@ -218,6 +227,7 @@ function AppContent() {
   </>
 )}
 
+        {activeTab === 'verify' && <VerifyEmail />}
         {activeTab === 'leaderboard' && <Leaderboard />}
         {activeTab === 'social' && <SocialFeed />}
         {activeTab === 'about' && <AboutUs />}
