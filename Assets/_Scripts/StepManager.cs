@@ -112,14 +112,19 @@ public class StepManager : MonoBehaviour
         if (_instance != this) return; // 🚨 CRITICAL ANTI-CRASH FIX: Prevent dying clones from running logic!
 
 #if UNITY_ANDROID
-        // Request runtime permissions required for Android 13+
+        // Request runtime permissions required for Android 13+ safely using an array!
+        // Firing multiple single requests on the exact same frame crashes many Android phones.
+        System.Collections.Generic.List<string> perms = new System.Collections.Generic.List<string>();
         if (!Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
-        {
-            Permission.RequestUserPermission("android.permission.ACTIVITY_RECOGNITION");
-        }
+            perms.Add("android.permission.ACTIVITY_RECOGNITION");
         if (!Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS"))
+            perms.Add("android.permission.POST_NOTIFICATIONS");
+        if (!Permission.HasUserAuthorizedPermission("android.permission.ACCESS_FINE_LOCATION"))
+            perms.Add("android.permission.ACCESS_FINE_LOCATION");
+
+        if (perms.Count > 0)
         {
-            Permission.RequestUserPermission("android.permission.POST_NOTIFICATIONS");
+            Permission.RequestUserPermissions(perms.ToArray());
         }
         
         AndroidNotificationCenter.CancelAllNotifications();
@@ -464,8 +469,6 @@ public class StepManager : MonoBehaviour
         // ========== HARDWARE STEP COUNTER ONLY ==========
         // We have completely disabled the real-time Accelerometer detection.
         // The Accelerometer cannot distinguish between hand-shaking and walking.
-        // By relying purely on the Android StepCounter, we utilize Android's built-in ML algorithm
-        // which flawlessly filters out shaking! (Note: Updates arrive in batches every 5-10 seconds)
         DetectAccelerometerStep();
 
         // If we lost the location provider (e.g. Map -> Bag scene transition), try to find it again!
