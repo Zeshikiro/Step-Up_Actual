@@ -431,7 +431,9 @@ function App() {
 // A simple wrapper to decide whether to show the Login screen or the Profile Dashboard
 function AuthWrapper() {
   const { currentUser } = useAuth();
-  return currentUser ? <Profile /> : <Login />;
+  // Prevent flashing the Profile page during the brief moment after registration 
+  // before the system forcefully signs the unverified user out.
+  return (currentUser && currentUser.emailVerified) ? <Profile /> : <Login />;
 }
 
 export default App
