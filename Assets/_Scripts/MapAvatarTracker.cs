@@ -48,13 +48,7 @@ public class MapAvatarTracker : MonoBehaviour
             mapManager = FindFirstObjectByType<AbstractMap>();
         }
 
-#if PLATFORM_ANDROID
-        // 1. Request Hardware GPS Access immediately on startup
-        if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
-        {
-            Permission.RequestUserPermission(Permission.FineLocation);
-        }
-#endif
+        // (Location permission request removed. StepManager.cs now handles all permissions in a single safe batch array to prevent OS crashes!)
 
 
         // Setup the cinematic "Strava" zoom-in animation
