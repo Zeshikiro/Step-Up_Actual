@@ -237,17 +237,22 @@ public class StepManager : MonoBehaviour
             }
         });
 
-        PerformDateRolloverCheck();
-        
         // --- BACKGROUND TRACKING FIX ---
-        // Retrieve steps from the Java foreground service (if the app was fully killed)
+        // Retrieve steps from the Java foreground service BEFORE checking for a date rollover!
+        // This ensures that steps taken late at night while the app was closed are properly credited to yesterday!
         int backgroundSteps = AndroidServiceController.GetAndClearBackgroundSteps();
         if (backgroundSteps > 0)
         {
-            currentDailySteps += backgroundSteps;
-            totalLifetimeSteps += backgroundSteps;
+            int savedDaily = PlayerPrefs.GetInt("DailySteps", 0);
+            int savedLifetime = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
+            
+            PlayerPrefs.SetInt("DailySteps", savedDaily + backgroundSteps);
+            PlayerPrefs.SetInt("TotalLifetimeSteps", savedLifetime + backgroundSteps);
+            PlayerPrefs.Save();
             Debug.Log("[StepManager] Recovered " + backgroundSteps + " steps from background service!");
         }
+
+        PerformDateRolloverCheck();
 
         // Render the correct initial value on screen immediately
         UpdateStepUI();
@@ -527,8 +532,9 @@ public class StepManager : MonoBehaviour
         {
             int currentHardwareSteps = StepCounter.current.stepCounter.ReadValue();
             
-            // ANTI-CHEAT: If moving faster than 6 m/s (13 mph) OR actively in the shaking penalty box, ignore steps!
-            if ((_currentSpeedMPS > 6.0f || Time.time < _shakeBlockEndTime) && lastHardwareStepCount != -1)
+            // ANTI-CHEAT: If moving faster than 15 m/s (33 mph) OR actively in the shaking penalty box, ignore steps!
+            // (Threshold raised to 15.0f to prevent indoor GPS drift from breaking the pedometer)
+            if ((_currentSpeedMPS > 15.0f || Time.time < _shakeBlockEndTime) && lastHardwareStepCount != -1)
             {
                 // Constantly update the baseline so we absorb these fake steps without awarding points
                 lastHardwareStepCount = currentHardwareSteps;
@@ -602,9 +608,10 @@ public class StepManager : MonoBehaviour
         // Read the phone's accelerometer (works on ALL Android devices, no permissions needed)
         if (UnityEngine.InputSystem.Accelerometer.current == null) return;
 
-        // ANTI-CHEAT: If GPS says we're moving faster than 6 m/s (~13 mph), we're in a vehicle.
+        // ANTI-CHEAT: If GPS says we're moving faster than 15 m/s (~33 mph), we're in a vehicle.
         // Car vibrations trigger the accelerometer constantly — block ALL accel-based step detection.
-        if (_currentSpeedMPS > 6.0f)
+        // (Threshold raised to 15.0f because indoor GPS drift frequently simulates 5-10 m/s speeds!)
+        if (_currentSpeedMPS > 15.0f)
         {
             // Reset peak state so we don't get a phantom step when the car stops
             _accelPeakDetected = false;
