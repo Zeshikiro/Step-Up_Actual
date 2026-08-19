@@ -112,13 +112,24 @@ public class StepManager : MonoBehaviour
         if (_instance != this) return; // 🚨 CRITICAL ANTI-CRASH FIX: Prevent dying clones from running logic!
 
 #if UNITY_ANDROID
-        // Request runtime permissions required for Android 13+ safely using an array!
-        // Firing multiple single requests on the exact same frame crashes many Android phones.
+        // 🚨 PREVENT FATAL CRASH ON OLDER PHONES: 
+        // Requesting a permission that doesn't exist on that Android version instantly crashes the app!
+        int sdkInt = 0;
+        using (var version = new UnityEngine.AndroidJavaClass("android.os.Build$VERSION")) {
+            sdkInt = version.GetStatic<int>("SDK_INT");
+        }
+
         System.Collections.Generic.List<string> perms = new System.Collections.Generic.List<string>();
-        if (!Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
+        
+        // Activity Recognition only exists on Android 10 (API 29) and above
+        if (sdkInt >= 29 && !Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
             perms.Add("android.permission.ACTIVITY_RECOGNITION");
-        if (!Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS"))
+            
+        // Post Notifications only exists on Android 13 (API 33) and above
+        if (sdkInt >= 33 && !Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS"))
             perms.Add("android.permission.POST_NOTIFICATIONS");
+            
+        // Location is required on all versions for Mapbox
         if (!Permission.HasUserAuthorizedPermission("android.permission.ACCESS_FINE_LOCATION"))
             perms.Add("android.permission.ACCESS_FINE_LOCATION");
 
@@ -274,21 +285,28 @@ public class StepManager : MonoBehaviour
     private System.Collections.IEnumerator StartServiceWhenPermitted()
     {
 #if PLATFORM_ANDROID
+        int sdkInt = 0;
+        using (var version = new UnityEngine.AndroidJavaClass("android.os.Build$VERSION")) {
+            sdkInt = version.GetStatic<int>("SDK_INT");
+        }
+
         // Wait until permissions are granted (or user permanently denied them and dialog is gone)
         // A simple timeout of 30 seconds ensures we don't loop forever if denied.
         float timeout = 30f;
         while (timeout > 0f)
         {
-            bool hasActivity = Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION");
-            bool hasNotif = Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS");
+            bool hasActivity = sdkInt < 29 || Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION");
+            bool hasNotif = sdkInt < 33 || Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS");
             if (hasActivity && hasNotif) break;
             
             timeout -= Time.deltaTime;
             yield return null;
         }
         
-        if (Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION") &&
-            Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS"))
+        bool finalActivity = sdkInt < 29 || Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION");
+        bool finalNotif = sdkInt < 33 || Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS");
+
+        if (finalActivity && finalNotif)
         {
             // Ensure the foreground service is active ONLY if permitted
             AndroidServiceController.StartForegroundService(currentDailySteps);
