@@ -309,24 +309,30 @@ public class InventoryManager : MonoBehaviour
     {
         UnlockItem(outfitName); 
         
-        // Strip out the underscore so "M_Adventurer" becomes "MAdventurer" 
-        // to match the Item Id the user typed in the Inspector!
-        string strippedName = outfitName.Replace("_", "");
+        // Strip out the underscore and gender prefixes to get the raw core name
+        // Example: "M_Adventurer" -> "Adventurer", "F_Punk" -> "Punk", "Suit" -> "Suit"
+        string coreName = outfitName.Replace("_", "");
+        if (coreName.StartsWith("M")) coreName = coreName.Substring(1);
+        else if (coreName.StartsWith("F")) coreName = coreName.Substring(1);
 
-        UnlockItem(strippedName + "_Head");
-        UnlockItem(strippedName + "_Torso");
-        UnlockItem(strippedName + "_Body"); // Unlock both Torso and Body just in case!
-        UnlockItem(strippedName + "_Legs");
-        UnlockItem(strippedName + "_Feet");
-        UnlockItem(strippedName + "_Accessory");
+        // Unlock EVERY POSSIBLE VARIATION to guarantee the Wardrobe finds it!
+        string[] prefixes = new string[] { "M", "F", "M_", "F_", "" };
+        string[] suffixes = new string[] { "", "_Head", "_Torso", "_Body", "_Legs", "_Feet", "_Accessory" };
+
+        foreach (string p in prefixes)
+        {
+            foreach (string s in suffixes)
+            {
+                UnlockItem(p + coreName + s);
+            }
+        }
     }
 
     // Helper to calculate the player's current level using the same logic as ProfileManager
     public int GetCurrentLevel()
     {
-        int totalLifetimeSteps = PlayerPrefs.GetInt("TotalLifetimeSteps", 0);
         int missionXPEarned = PlayerPrefs.GetInt("MissionXPEarned", 0);
-        int totalXP = totalLifetimeSteps + missionXPEarned;
+        int totalXP = missionXPEarned;
         return (totalXP / 5000) + 1; // Level up every 5000 XP
     }
 
@@ -367,10 +373,12 @@ public class InventoryManager : MonoBehaviour
     public void LoadCoins()
     {
         coins = PlayerPrefs.GetInt("PlayerCoins", 0); // Defaults to 0 for new players
+#if UNITY_EDITOR
         if (overrideCoins)
         {
             coins = debugCoinAmount;
         }
+#endif
     }
 
     // 🔄 CALL THIS ONCE WHEN THE STUDENT OPENS THEIR WARDROBE/CUSTOMIZATION PAGE

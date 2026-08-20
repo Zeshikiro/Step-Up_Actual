@@ -60,10 +60,10 @@ public class ProfileManager : MonoBehaviour
         // Live XP Updates while the profile panel is open!
         if (StepManager.Instance != null)
         {
-            int totalLifetimeSteps = StepManager.Instance.totalLifetimeSteps;
             int missionXPEarned = PlayerPrefs.GetInt("MissionXPEarned", 0);
             
-            int totalXP = totalLifetimeSteps + missionXPEarned;
+            // BUGFIX: EXP should ONLY come from claimed missions, NOT from walking steps!
+            int totalXP = missionXPEarned;
             currentLevel = (totalXP / xpPerLevel) + 1; 
             int currentXPInLevel = totalXP % xpPerLevel;
             float progressPercentage = (float)currentXPInLevel / xpPerLevel;
@@ -124,7 +124,8 @@ public class ProfileManager : MonoBehaviour
         }
 
         // 2. XP Calculations 
-        int totalXP = totalLifetimeSteps + missionXPEarned;
+        // BUGFIX: EXP should ONLY come from claimed missions!
+        int totalXP = missionXPEarned;
         currentLevel = (totalXP / xpPerLevel) + 1; 
         int currentXPInLevel = totalXP % xpPerLevel;
         float progressPercentage = (float)currentXPInLevel / xpPerLevel;
