@@ -114,9 +114,12 @@ public class StepManager : MonoBehaviour
 #if UNITY_ANDROID
         // 🚨 PREVENT FATAL CRASH ON OLDER PHONES: 
         // Requesting a permission that doesn't exist on that Android version instantly crashes the app!
-        int sdkInt = 0;
-        using (var version = new UnityEngine.AndroidJavaClass("android.os.Build$VERSION")) {
-            sdkInt = version.GetStatic<int>("SDK_INT");
+        int sdkInt = 33; // Default to safe modern SDK for Editor testing
+        if (UnityEngine.Application.platform == UnityEngine.RuntimePlatform.Android)
+        {
+            using (var version = new UnityEngine.AndroidJavaClass("android.os.Build$VERSION")) {
+                sdkInt = version.GetStatic<int>("SDK_INT");
+            }
         }
 
         System.Collections.Generic.List<string> perms = new System.Collections.Generic.List<string>();
@@ -285,9 +288,12 @@ public class StepManager : MonoBehaviour
     private System.Collections.IEnumerator StartServiceWhenPermitted()
     {
 #if PLATFORM_ANDROID
-        int sdkInt = 0;
-        using (var version = new UnityEngine.AndroidJavaClass("android.os.Build$VERSION")) {
-            sdkInt = version.GetStatic<int>("SDK_INT");
+        int sdkInt = 33;
+        if (UnityEngine.Application.platform == UnityEngine.RuntimePlatform.Android)
+        {
+            using (var version = new UnityEngine.AndroidJavaClass("android.os.Build$VERSION")) {
+                sdkInt = version.GetStatic<int>("SDK_INT");
+            }
         }
 
         // Wait until permissions are granted (or user permanently denied them and dialog is gone)
