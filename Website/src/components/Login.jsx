@@ -22,6 +22,29 @@ export default function Login() {
     return () => window.removeEventListener('popstate', handleUrlChange);
   }, []);
 
+  // NEW: Automatic Verification Poller!
+  useEffect(() => {
+    let interval = null;
+    // If they are signed in but not verified, start checking their status every 3 seconds
+    if (currentUser && !currentUser.emailVerified) {
+      interval = setInterval(async () => {
+        try {
+          await currentUser.reload();
+          if (currentUser.emailVerified) {
+            clearInterval(interval);
+            // They clicked it! Reload the page to instantly drop them into their Dashboard
+            window.location.reload(); 
+          }
+        } catch (err) {
+          console.error("Polling error:", err);
+        }
+      }, 3000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [currentUser]);
+
   const toggleMode = () => {
     const newMode = !isRegistering;
     setIsRegistering(newMode);
@@ -44,7 +67,7 @@ export default function Login() {
       setLoading(true);
       if (isRegistering) {
         await register(email, password);
-        setError("Registration successful! Please verify your email address (check your spam folder) before logging in!");
+        setError("Registration successful! We sent a link to your email (check spam). We are waiting for you to click it... this page will automatically log you in!");
       } else {
         const userCred = await login(email, password);
         if (!userCred.user.emailVerified) {

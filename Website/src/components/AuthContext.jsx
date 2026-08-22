@@ -30,9 +30,9 @@ export function AuthProvider({ children }) {
       currentDailySteps: 0
     });
 
-    // NEW: Sign them out so they are forced to verify
-    await signOut(auth);
-
+    // NEW: We no longer sign them out immediately. 
+    // They stay signed in so the Login page can poll `user.reload()` to auto-detect when they click the email link!
+    
     return userCredential;
   }
 
