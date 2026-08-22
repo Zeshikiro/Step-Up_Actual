@@ -35,6 +35,12 @@ public class GameTutorialManager : MonoBehaviour
             {
                 if (tutorialPromptPanel != null) tutorialPromptPanel.SetActive(true);
             }
+            else
+            {
+                // CRITICAL FIX: If they already finished the tutorial, completely shut off the 
+                // TutorialHolder folder so its invisible background stops blocking the Main Menu buttons!
+                gameObject.SetActive(false);
+            }
         }
         else
         {
@@ -43,6 +49,11 @@ public class GameTutorialManager : MonoBehaviour
             {
                 // Auto-start without asking!
                 StartTutorialSequence();
+            }
+            else
+            {
+                // CRITICAL FIX: Not in a tutorial tour? Shut off the raycast shield!
+                gameObject.SetActive(false);
             }
         }
     }
