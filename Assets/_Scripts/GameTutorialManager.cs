@@ -77,6 +77,9 @@ public class GameTutorialManager : MonoBehaviour
 
         if (tutorialPromptPanel != null) tutorialPromptPanel.SetActive(false);
         HideAllSteps();
+
+        // CRITICAL FIX: Destroy the invisible shield immediately if they click No!
+        gameObject.SetActive(false);
     }
 
     private void StartTutorialSequence()
@@ -117,6 +120,9 @@ public class GameTutorialManager : MonoBehaviour
         PlayerPrefs.SetInt("Tutorial_InProgress", 0);
         PlayerPrefs.Save();
         HideAllSteps();
+
+        // CRITICAL FIX: Destroy the invisible shield immediately if they skip!
+        gameObject.SetActive(false);
     }
 
     public void EndTutorial()
@@ -164,11 +170,17 @@ public class GameTutorialManager : MonoBehaviour
                 SceneManager.LoadScene(nextSceneToLoad); // Use synchronous load if loader is totally missing to prevent async OOM crash
             }
         }
-        else if (!isLastSceneOfTutorial)
+        else 
         {
-            // Just in case it wasn't checked, but we are stopping here
-            PlayerPrefs.SetInt("Tutorial_InProgress", 0);
-            PlayerPrefs.Save();
+            if (!isLastSceneOfTutorial)
+            {
+                // Just in case it wasn't checked, but we are stopping here
+                PlayerPrefs.SetInt("Tutorial_InProgress", 0);
+                PlayerPrefs.Save();
+            }
+
+            // CRITICAL FIX: If we are staying in the exact same scene, destroy the invisible shield!
+            gameObject.SetActive(false);
         }
     }
 
