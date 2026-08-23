@@ -250,38 +250,39 @@ function AppContent() {
   position: 'relative',
   zIndex: 2
 }}>
-  <p style={{
-    margin: 0,
-    textAlign: 'center',
-    color: '#1b2433',
-    fontWeight: '700'
-  }}>
-    A Capstone Thesis Project. Currently available on Android.
-  </p>
-
-  <a
-    href="#"
-    style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '10px',
-      background: 'linear-gradient(135deg, #4ade80, #22c55e)',
-      color: '#000',
-      padding: '14px 26px',
-      borderRadius: '12px',
-      border: '4px solid #171717',
-      textDecoration: 'none',
-      fontWeight: 'bold',
-      fontSize: '1rem',
-      boxShadow: '0 6px 0 #137333',
-      transition: 'transform 0.2s ease'
-    }}
-    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-  >
-    <Download size={20} />
-    Download on Google Play
-  </a>
+    <p style={{
+      margin: 0,
+      textAlign: 'center',
+      color: '#1b2433',
+      fontWeight: '700'
+    }}>
+      An Academic Thesis Project. Available now on Android.
+    </p>
+  
+    <a
+      href="https://www.mediafire.com/file/7khm156ckw08bhh/Step_-_Up.apk/file"
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '10px',
+        background: 'linear-gradient(135deg, #4ade80, #22c55e)',
+        color: '#000',
+        padding: '14px 26px',
+        borderRadius: '12px',
+        border: '4px solid #171717',
+        fontWeight: '900',
+        textDecoration: 'none',
+        boxShadow: '0 6px 0 #14532d',
+        transition: 'transform 0.1s ease-in-out'
+      }}
+      onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+      onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+    >
+      <Download size={20} />
+      Download APK
+    </a>
 </footer>
 
        {/* BOTTOM NAVIGATION BAR */}
