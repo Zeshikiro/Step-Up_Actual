@@ -1,11 +1,11 @@
 import { onValue, ref } from 'firebase/database';
-import { Activity, Award, Footprints, LogOut } from 'lucide-react';
+import { Activity, Award, Footprints, LogOut, Mail, Lock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { db } from '../firebaseConfig';
 import { useAuth } from './AuthContext';
 
 export default function Profile() {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, resetPassword } = useAuth();
   const [userData, setUserData] = useState({ TotalLifetimeSteps: 0, currentDailySteps: 0 });
   const [userRank, setUserRank] = useState("Unranked");
 
