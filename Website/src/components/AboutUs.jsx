@@ -71,6 +71,31 @@ export default function AboutUs() {
 
         </div>
       </div>
+      
+      {/* Privacy Policy Link */}
+      <div className="glass-card" style={{gridColumn: '1 / -1', marginTop: '1rem', textAlign: 'center'}}>
+        <h2 style={{color: '#6be2ff', marginBottom: '1rem'}}>Privacy & Legal</h2>
+        <p style={{color: '#e0e0e0', marginBottom: '1.5rem'}}>
+          Your data privacy is important to us. Step-Up strictly secures your location data and account information.
+        </p>
+        <a 
+          href="?tab=privacy"
+          style={{
+            background: '#3fd66b',
+            color: '#082313',
+            border: '4px solid #171717',
+            borderRadius: '10px',
+            padding: '12px 24px',
+            fontWeight: '900',
+            textDecoration: 'none',
+            display: 'inline-block',
+            boxShadow: '0 5px 0 #137333'
+          }}
+        >
+          Read Privacy Policy
+        </a>
+      </div>
+      
     </div>
   );
 }
