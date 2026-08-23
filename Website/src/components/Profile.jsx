@@ -142,6 +142,59 @@ export default function Profile() {
           />
         </div>
 
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '1rem' }}>
+          <button
+            onClick={() => {
+              window.location.href = '?tab=change-email';
+            }}
+            style={{
+              background: '#2f8ed8',
+              color: '#ffffff',
+              border: '4px solid #171717',
+              borderRadius: '12px',
+              padding: '13px 20px',
+              cursor: 'pointer',
+              fontWeight: '900',
+              fontSize: '1rem',
+              boxShadow: '0 6px 0 #174b75',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <Mail size={18} />
+            Change Email
+          </button>
+          
+          <button
+            onClick={async () => {
+              try {
+                await resetPassword(currentUser.email);
+                alert("Password reset email sent! Please check your inbox.");
+              } catch (err) {
+                alert("Failed to send reset email: " + err.message);
+              }
+            }}
+            style={{
+              background: '#f59b35',
+              color: '#ffffff',
+              border: '4px solid #171717',
+              borderRadius: '12px',
+              padding: '13px 20px',
+              cursor: 'pointer',
+              fontWeight: '900',
+              fontSize: '1rem',
+              boxShadow: '0 6px 0 #9b531e',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <Lock size={18} />
+            Change Password
+          </button>
+        </div>
+
         {/* Sign out button */}
         <button
           onClick={logout}
