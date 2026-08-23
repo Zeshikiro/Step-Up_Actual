@@ -67,7 +67,7 @@ export default function Login() {
       setLoading(true);
       if (isRegistering) {
         await register(email, password);
-        setError("Registration successful! We sent a link to your email (check spam). We are waiting for you to click it... this page will automatically log you in!");
+        setError("Success! Please click the verification link sent to your email to auto-login.");
       } else {
         const userCred = await login(email, password);
         if (!userCred.user.emailVerified) {
