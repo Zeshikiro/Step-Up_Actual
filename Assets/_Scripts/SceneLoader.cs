@@ -132,19 +132,23 @@ public class SceneLoader : MonoBehaviour
                 // 4. Wait for user input (Upgraded to New Input System!)
                 bool hasInput = false;
 
-                if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasReleasedThisFrame)
+                // Add a 0.5s grace period so they actually have time to see it say "Tap to continue" and we don't catch the initial button click!
+                if (timeElapsed > minimumLoadingTime + 0.5f)
                 {
-                    hasInput = true;
-                }
-                
-                if (UnityEngine.InputSystem.Touchscreen.current != null && UnityEngine.InputSystem.Touchscreen.current.touches.Count > 0)
-                {
-                    foreach (var touch in UnityEngine.InputSystem.Touchscreen.current.touches)
+                    if (UnityEngine.InputSystem.Mouse.current != null && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
                     {
-                        if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Ended || touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Canceled)
+                        hasInput = true;
+                    }
+                    
+                    if (UnityEngine.InputSystem.Touchscreen.current != null && UnityEngine.InputSystem.Touchscreen.current.touches.Count > 0)
+                    {
+                        foreach (var touch in UnityEngine.InputSystem.Touchscreen.current.touches)
                         {
-                            hasInput = true;
-                            break;
+                            if (touch.phase.ReadValue() == UnityEngine.InputSystem.TouchPhase.Began)
+                            {
+                                hasInput = true;
+                                break;
+                            }
                         }
                     }
                 }
