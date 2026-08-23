@@ -79,7 +79,7 @@ export default function ChangeEmail() {
             color: '#ffffff'
           }}>
             <Mail size={24} style={{ verticalAlign: 'middle', marginRight: '10px' }} />
-            CHANGE EMAIL
+            UPDATE EMAIL
           </h2>
         </div>
 

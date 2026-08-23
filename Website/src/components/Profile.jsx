@@ -156,6 +156,7 @@ export default function Profile() {
               cursor: 'pointer',
               fontWeight: '900',
               fontSize: '1rem',
+              fontFamily: 'inherit',
               boxShadow: '0 6px 0 #174b75',
               display: 'inline-flex',
               alignItems: 'center',
@@ -163,7 +164,7 @@ export default function Profile() {
             }}
           >
             <Mail size={18} />
-            Change Email
+            Update Email
           </button>
           
           <button
@@ -191,7 +192,7 @@ export default function Profile() {
             }}
           >
             <Lock size={18} />
-            Change Password
+            Update Password
           </button>
         </div>
 
