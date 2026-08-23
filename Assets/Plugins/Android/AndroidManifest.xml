@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application android:allowBackup="false" android:fullBackupContent="false">
@@ -28,6 +29,7 @@
         </activity>
 
         <service android:name="com.stepup.background.StepForegroundService"
-                 android:exported="false" />
+                 android:exported="false"
+                 android:foregroundServiceType="health" />
     </application>
 </manifest>

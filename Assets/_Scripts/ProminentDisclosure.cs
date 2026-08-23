@@ -164,21 +164,21 @@ public class ProminentDisclosure : MonoBehaviour
     private void RequestPermissionsSilently()
     {
 #if UNITY_ANDROID
-        // Request Location
+        System.Collections.Generic.List<string> perms = new System.Collections.Generic.List<string>();
+
         if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
         {
-            Permission.RequestUserPermission(Permission.FineLocation);
+            perms.Add(Permission.FineLocation);
         }
         
-        // Request Background Location (Required for background tracking)
-        // Note: Android 11+ requires Background Location to be requested SEPARATELY after Fine Location is granted.
-        // We will just request it here, Unity handles the sequencing on newer API levels if possible.
-        // For absolute safety, many developers ask for "android.permission.ACCESS_BACKGROUND_LOCATION".
-        
-        // Request Activity Recognition
         if (!Permission.HasUserAuthorizedPermission("android.permission.ACTIVITY_RECOGNITION"))
         {
-            Permission.RequestUserPermission("android.permission.ACTIVITY_RECOGNITION");
+            perms.Add("android.permission.ACTIVITY_RECOGNITION");
+        }
+        
+        if (perms.Count > 0)
+        {
+            Permission.RequestUserPermissions(perms.ToArray());
         }
 #endif
     }
