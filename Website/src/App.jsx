@@ -9,6 +9,7 @@ import Login from './components/Login'
 import Profile from './components/Profile'
 import SocialFeed from './components/SocialFeed'
 import VerifyEmail from './components/VerifyEmail'
+import PrivacyPolicy from './components/PrivacyPolicy'
 
 function AppContent() {
   const { currentUser } = useAuth();
@@ -231,6 +232,7 @@ function AppContent() {
         {activeTab === 'leaderboard' && <Leaderboard />}
         {activeTab === 'social' && <SocialFeed />}
         {activeTab === 'about' && <AboutUs />}
+        {activeTab === 'privacy' && <PrivacyPolicy />}
         {activeTab === 'health' && <HealthTips />}
         {(activeTab === 'login' || activeTab === 'register') && <AuthWrapper />}
         </div>

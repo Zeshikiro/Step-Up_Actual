@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebaseConfig';
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, sendEmailVerification } from 'firebase/auth';
-import { ref, set } from 'firebase/database';
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, sendEmailVerification, updateEmail, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { ref, set, update } from 'firebase/database';
 
 const AuthContext = createContext();
 
@@ -30,10 +30,27 @@ export function AuthProvider({ children }) {
       currentDailySteps: 0
     });
 
-    // NEW: We no longer sign them out immediately. 
-    // They stay signed in so the Login page can poll `user.reload()` to auto-detect when they click the email link!
-    
     return userCredential;
+  }
+  
+  async function changeEmail(currentPassword, newEmail) {
+    if (!currentUser) throw new Error("No user logged in");
+    
+    const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+    
+    // Re-authenticate user before allowing sensitive operation
+    await reauthenticateWithCredential(currentUser, credential);
+    
+    // Update email in Auth
+    await updateEmail(currentUser, newEmail);
+    
+    // Send verification to the new email
+    await sendEmailVerification(currentUser);
+    
+    // Update email in Realtime Database
+    await update(ref(db, 'users/' + currentUser.uid), {
+      email: newEmail
+    });
   }
 
   function logout() {
@@ -58,7 +75,8 @@ export function AuthProvider({ children }) {
     login,
     register,
     logout,
-    resetPassword
+    resetPassword,
+    changeEmail
   };
 
   return (
