@@ -164,14 +164,14 @@ public class SettingsManager : MonoBehaviour
     {
         Debug.Log("Change Email Clicked! Opening support portal...");
         // Fallback in case Inspector string is blank
-        if (string.IsNullOrEmpty(url)) url = "https://step-up-72811.web.app/?tab=change-email";
+        if (string.IsNullOrEmpty(url)) url = "https://step-up-actual.vercel.app/?tab=change-email";
         Application.OpenURL(url);
     }
 
     public void OnPrivacyAndSocialClicked(string url)
     {
         Debug.Log("Privacy and Social Clicked! Opening URL: " + url);
-        if (string.IsNullOrEmpty(url)) url = "https://step-up-72811.web.app/?tab=privacy";
+        if (string.IsNullOrEmpty(url)) url = "https://step-up-actual.vercel.app/?tab=privacy";
         Application.OpenURL(url);
     }
 
