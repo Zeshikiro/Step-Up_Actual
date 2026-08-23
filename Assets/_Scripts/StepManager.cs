@@ -786,7 +786,6 @@ public class StepManager : MonoBehaviour
         if (isPaused)
         {
             _pauseTime = System.DateTime.Now;
-            AndroidServiceController.StartForegroundService(currentDailySteps);
             
             // We no longer call EndAutoSession here! This allows the session to continue while backgrounded!
 #if UNITY_ANDROID
@@ -827,7 +826,6 @@ public class StepManager : MonoBehaviour
     void OnApplicationQuit()
     {
         EndAutoSession();
-        AndroidServiceController.StartForegroundService(currentDailySteps);
         SaveAllProgress();
 #if UNITY_ANDROID
         AndroidNotificationCenter.CancelAllNotifications();

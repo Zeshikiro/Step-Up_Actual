@@ -41,7 +41,17 @@ public class StepForegroundService extends Service implements SensorEventListene
         if (intent != null && intent.hasExtra("currentSteps")) {
             currentSteps = intent.getIntExtra("currentSteps", 0);
         }
-        startForeground(NOTIFICATION_ID, getNotification("Step-Up is tracking!", "You have taken " + currentSteps + " steps today. Keep going!"));
+        
+        Notification notification = getNotification("Step-Up is tracking!", "You have taken " + currentSteps + " steps today. Keep going!");
+        
+        if (Build.VERSION.SDK_INT >= 29) {
+            // Android 14 (API 34) STRICTLY requires the type to be explicitly passed here!
+            // 256 is ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
+            startForeground(NOTIFICATION_ID, notification, 256);
+        } else {
+            startForeground(NOTIFICATION_ID, notification);
+        }
+        
         return START_STICKY;
     }
 
