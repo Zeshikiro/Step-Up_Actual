@@ -1,35 +1,13 @@
 import { onValue, ref } from 'firebase/database';
-import { Activity, Award, Footprints, LogOut, Mail } from 'lucide-react';
+import { Activity, Award, Footprints, LogOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { db } from '../firebaseConfig';
 import { useAuth } from './AuthContext';
 
 export default function Profile() {
-  const { currentUser, logout, changeEmail } = useAuth();
+  const { currentUser, logout } = useAuth();
   const [userData, setUserData] = useState({ TotalLifetimeSteps: 0, currentDailySteps: 0 });
   const [userRank, setUserRank] = useState("Unranked");
-  
-  // Change Email State
-  const [isChangingEmail, setIsChangingEmail] = useState(false);
-  const [newEmail, setNewEmail] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [emailMessage, setEmailMessage] = useState("");
-  const [emailError, setEmailError] = useState("");
-
-  const handleChangeEmailSubmit = async (e) => {
-    e.preventDefault();
-    setEmailMessage("");
-    setEmailError("");
-    try {
-      await changeEmail(currentPassword, newEmail);
-      setEmailMessage("Success! Verification email sent to new address.");
-      setNewEmail("");
-      setCurrentPassword("");
-      setTimeout(() => setIsChangingEmail(false), 3000);
-    } catch (err) {
-      setEmailError(err.message || "Failed to change email.");
-    }
-  };
 
   useEffect(() => {
     if (!currentUser) return;
@@ -164,113 +142,27 @@ export default function Profile() {
           />
         </div>
 
-        {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => setIsChangingEmail(!isChangingEmail)}
-            style={{
-              background: '#2f8ed8',
-              color: '#ffffff',
-              border: '4px solid #171717',
-              borderRadius: '12px',
-              padding: '13px 20px',
-              cursor: 'pointer',
-              fontWeight: '900',
-              fontSize: '1rem',
-              boxShadow: '0 6px 0 #174b75',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <Mail size={18} />
-            Change Email
-          </button>
-          
-          <button
-            onClick={logout}
-            style={{
-              background: '#ef4444',
-              color: '#ffffff',
-              border: '4px solid #171717',
-              borderRadius: '12px',
-              padding: '13px 20px',
-              cursor: 'pointer',
-              fontWeight: '900',
-              fontSize: '1rem',
-              boxShadow: '0 6px 0 #991b1b',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <LogOut size={18} />
-            Sign Out
-          </button>
-        </div>
-
-        {/* Change Email Form */}
-        {isChangingEmail && (
-          <div style={{
-            marginTop: '2rem',
-            background: '#fff9e9',
-            padding: '1.5rem',
-            borderRadius: '14px',
+        {/* Sign out button */}
+        <button
+          onClick={logout}
+          style={{
+            background: '#ef4444',
+            color: '#ffffff',
             border: '4px solid #171717',
-            textAlign: 'left'
-          }}>
-            <h3 style={{ color: '#9b531e', marginTop: 0 }}>Change Email Address</h3>
-            <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
-              For security, please enter your current password and your new email address.
-            </p>
-            {emailError && <div style={{ color: '#ef4444', marginBottom: '1rem', fontWeight: 'bold' }}>{emailError}</div>}
-            {emailMessage && <div style={{ color: '#3fd66b', marginBottom: '1rem', fontWeight: 'bold' }}>{emailMessage}</div>}
-            
-            <form onSubmit={handleChangeEmailSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <input
-                type="email"
-                placeholder="New Email Address"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                required
-                style={{
-                  padding: '10px',
-                  borderRadius: '8px',
-                  border: '3px solid #171717',
-                  fontFamily: 'inherit'
-                }}
-              />
-              <input
-                type="password"
-                placeholder="Current Password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-                style={{
-                  padding: '10px',
-                  borderRadius: '8px',
-                  border: '3px solid #171717',
-                  fontFamily: 'inherit'
-                }}
-              />
-              <button
-                type="submit"
-                style={{
-                  background: '#3fd66b',
-                  color: '#082313',
-                  border: '3px solid #171717',
-                  borderRadius: '8px',
-                  padding: '10px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  marginTop: '0.5rem'
-                }}
-              >
-                Confirm Email Change
-              </button>
-            </form>
-          </div>
-        )}
+            borderRadius: '12px',
+            padding: '13px 20px',
+            cursor: 'pointer',
+            fontWeight: '900',
+            fontSize: '1rem',
+            boxShadow: '0 6px 0 #991b1b',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <LogOut size={18} />
+          Sign Out
+        </button>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import Profile from './components/Profile'
 import SocialFeed from './components/SocialFeed'
 import VerifyEmail from './components/VerifyEmail'
 import PrivacyPolicy from './components/PrivacyPolicy'
+import ChangeEmail from './components/ChangeEmail'
 
 function AppContent() {
   const { currentUser } = useAuth();
@@ -234,6 +235,7 @@ function AppContent() {
         {activeTab === 'about' && <AboutUs />}
         {activeTab === 'privacy' && <PrivacyPolicy />}
         {activeTab === 'health' && <HealthTips />}
+        {activeTab === 'change-email' && (currentUser ? <ChangeEmail /> : <Login />)}
         {(activeTab === 'login' || activeTab === 'register') && <AuthWrapper />}
         </div>
 

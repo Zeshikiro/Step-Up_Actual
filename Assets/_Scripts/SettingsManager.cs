@@ -164,7 +164,7 @@ public class SettingsManager : MonoBehaviour
     {
         Debug.Log("Change Email Clicked! Opening support portal...");
         // Fallback in case Inspector string is blank
-        if (string.IsNullOrEmpty(url)) url = "https://step-up-72811.web.app/?tab=login";
+        if (string.IsNullOrEmpty(url)) url = "https://step-up-72811.web.app/?tab=change-email";
         Application.OpenURL(url);
     }
 
