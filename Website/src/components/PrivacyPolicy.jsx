@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Lock, Eye, CheckCircle } from 'lucide-react';
+import { Shield, Lock, Eye, CheckCircle, ArrowLeft } from 'lucide-react';
 
 export default function PrivacyPolicy() {
   return (
@@ -16,6 +16,27 @@ export default function PrivacyPolicy() {
         textAlign: 'left',
         boxShadow: '8px 8px 0 rgba(0, 0, 0, 0.35)'
       }}>
+
+        <a 
+          href="?tab=about"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            color: '#171717',
+            textDecoration: 'none',
+            fontWeight: '900',
+            marginBottom: '1.5rem',
+            background: '#ffd84d',
+            padding: '8px 16px',
+            borderRadius: '10px',
+            border: '3px solid #171717',
+            boxShadow: '0 4px 0 #171717'
+          }}
+        >
+          <ArrowLeft size={20} />
+          Go Back
+        </a>
 
         <div style={{
           background: '#f59b35',
