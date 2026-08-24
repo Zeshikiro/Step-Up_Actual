@@ -260,7 +260,7 @@ function AppContent() {
     </p>
   
     <a
-      href="https://www.mediafire.com/file/7khm156ckw08bhh/Step_-_Up.apk/file"
+      href="https://www.mediafire.com/file/gw6ww0nv5d3zou6/Step_-_Up.apk/file"
       target="_blank"
       rel="noopener noreferrer"
       style={{
