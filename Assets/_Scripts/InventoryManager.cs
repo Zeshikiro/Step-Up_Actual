@@ -211,11 +211,21 @@ public class InventoryManager : MonoBehaviour
                 {
                     int cloudCoins = 0;
                     int.TryParse(snapshot.Child("coins").Value.ToString(), out cloudCoins);
+                    
+#if UNITY_EDITOR
+                    if (overrideCoins) cloudCoins = debugCoinAmount;
+#endif
+
                     if (cloudCoins > coins)
                     {
                         coins = cloudCoins;
                         SaveCoins();
                     }
+                    
+#if UNITY_EDITOR
+                    // If the cheat is strictly lower than cloud (e.g. testing poverty), force it
+                    if (overrideCoins) coins = debugCoinAmount;
+#endif
                 }
 
                 // RESTORE UNLOCKED ITEMS
@@ -373,15 +383,6 @@ public class InventoryManager : MonoBehaviour
     public void LoadCoins()
     {
         coins = PlayerPrefs.GetInt("PlayerCoins", 0); // Defaults to 0 for new players
-
-        // ECONOMY UPDATE: Give a one-time 1000 starter coins to all accounts
-        if (PlayerPrefs.GetInt("EconomyStarterBonus1000", 0) == 0)
-        {
-            coins += 1000;
-            PlayerPrefs.SetInt("PlayerCoins", coins);
-            PlayerPrefs.SetInt("EconomyStarterBonus1000", 1);
-            PlayerPrefs.Save();
-        }
 
 #if UNITY_EDITOR
         if (overrideCoins)
