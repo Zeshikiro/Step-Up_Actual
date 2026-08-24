@@ -384,6 +384,15 @@ public class InventoryManager : MonoBehaviour
     {
         coins = PlayerPrefs.GetInt("PlayerCoins", 0); // Defaults to 0 for new players
 
+        // ECONOMY UPDATE: Give a one-time 1400 starter coins to all accounts
+        if (PlayerPrefs.GetInt("EconomyStarterBonus1400", 0) == 0)
+        {
+            coins += 1400;
+            PlayerPrefs.SetInt("PlayerCoins", coins);
+            PlayerPrefs.SetInt("EconomyStarterBonus1400", 1);
+            PlayerPrefs.Save();
+        }
+
 #if UNITY_EDITOR
         if (overrideCoins)
         {
