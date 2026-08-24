@@ -177,8 +177,8 @@ public class SettingsManager : MonoBehaviour
 
     public void OnContactsAndSupportClicked()
     {
-        Debug.Log("Contacts and Support Clicked! Opening support portal...");
-        Application.OpenURL("https://stepup.com/support"); // mailto: often silently fails on Windows 10/11!
+        Debug.Log("Contacts and Support Clicked! Opening Email Client...");
+        Application.OpenURL("mailto:stepup.app.project@gmail.com?subject=Step-Up%20App%20Support");
     }
 
     public void OnAboutClicked(string url)
