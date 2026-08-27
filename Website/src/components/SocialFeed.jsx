@@ -36,19 +36,24 @@ export default function SocialFeed() {
     return censored;
   };
 
-  const handlePost = () => {
+  const handlePost = async () => {
     if (!newPost.trim() || !currentUser) return;
 
     const sanitizedText = censorText(newPost);
 
-    const postsRef = ref(db, 'posts');
-    const newPostRef = push(postsRef);
-    set(newPostRef, {
-      author: currentUser.email.split('@')[0],
-      text: sanitizedText,
-      timestamp: Date.now()
-    });
-    setNewPost("");
+    try {
+      const postsRef = ref(db, 'posts');
+      const newPostRef = push(postsRef);
+      await set(newPostRef, {
+        author: currentUser.email.split('@')[0],
+        text: sanitizedText,
+        timestamp: Date.now()
+      });
+      setNewPost("");
+    } catch (err) {
+      alert("Database Error: " + err.message + "\n\nYou probably need to add '/posts' to your Firebase Realtime Database Rules!");
+      console.error(err);
+    }
   };
 
   return (
