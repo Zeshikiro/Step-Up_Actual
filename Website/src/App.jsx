@@ -108,7 +108,7 @@ function AppContent() {
         ) : (
           <>
             <button
-              onClick={() => handleTabChange('login')}
+              onClick={() => handleTabChange('register')}
               style={{
                 background: '#2f8ed8',
                 color: '#ffffff',
@@ -120,11 +120,11 @@ function AppContent() {
                 boxShadow: '0 5px 0 #174b75'
               }}
             >
-              Sign In
+              Join Now
             </button>
 
             <button
-              onClick={() => handleTabChange('register')}
+              onClick={() => handleTabChange('login')}
               style={{
                 background: '#3fd66b',
                 color: '#082313',
@@ -136,7 +136,7 @@ function AppContent() {
                 boxShadow: '0 5px 0 #137333'
               }}
             >
-              Join Now
+              Sign In
             </button>
           </>
         )}
