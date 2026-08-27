@@ -136,7 +136,7 @@ function AppContent() {
                 boxShadow: '0 5px 0 #137333'
               }}
             >
-              Sign In
+              Log In
             </button>
           </>
         )}
