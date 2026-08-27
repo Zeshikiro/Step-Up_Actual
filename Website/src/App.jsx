@@ -293,7 +293,7 @@ function AppContent() {
           </p>
         
           <a
-            href="https://drive.google.com/drive/folders/19ijLdWjagEqMbY4Qkj59rw0M4qyFCb5z?usp=sharing"
+            href="https://drive.google.com/uc?export=download&id=1zrFKgHrgTtZv9VFMKNUkHliReI67aCPX"
             target="_blank"
             rel="noopener noreferrer"
             style={{
