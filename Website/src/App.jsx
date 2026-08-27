@@ -240,50 +240,86 @@ function AppContent() {
         </div>
 
         <footer style={{
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: '12px',
-  marginTop: '1rem',
-  marginBottom: '4rem',
-  padding: '16px',
-  position: 'relative',
-  zIndex: 2
-}}>
-    <p style={{
-      margin: 0,
-      textAlign: 'center',
-      color: '#1b2433',
-      fontWeight: '700'
-    }}>
-      An Academic Thesis Project. Available now on Android.
-    </p>
-  
-    <a
-      href="https://www.mediafire.com/file/clq3o1e4jl7uxt4/Step_-_Up.apk/file"
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '10px',
-        background: 'linear-gradient(135deg, #4ade80, #22c55e)',
-        color: '#000',
-        padding: '14px 26px',
-        borderRadius: '12px',
-        border: '4px solid #171717',
-        fontWeight: '900',
-        textDecoration: 'none',
-        boxShadow: '0 6px 0 #14532d',
-        transition: 'transform 0.1s ease-in-out'
-      }}
-      onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-      onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-    >
-      <Download size={20} />
-      Download APK
-    </a>
-</footer>
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '12px',
+          marginTop: '1rem',
+          marginBottom: '4rem',
+          padding: '16px',
+          position: 'relative',
+          zIndex: 2,
+          width: '100%',
+          boxSizing: 'border-box'
+        }}>
+          {/* Quick Setup Guide Card */}
+          <div style={{
+            background: '#fff9e9',
+            border: '4px solid #171717',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            maxWidth: '600px',
+            width: '100%',
+            boxSizing: 'border-box',
+            boxShadow: '5px 5px 0 rgba(0,0,0,0.25)',
+            textAlign: 'left',
+            color: '#1b2433',
+            marginBottom: '1rem'
+          }}>
+            <h3 style={{ marginTop: 0, marginBottom: '1rem', textAlign: 'center', fontSize: '1.4rem', color: '#174b75' }}>
+              🛠️ Quick Setup Guide
+            </h3>
+            <p style={{ margin: '0 0 15px 0', fontWeight: 'bold', fontSize: '1.05rem', lineHeight: '1.4' }}>
+              Here is the Google Drive link to download STEP-UP, plus a super quick guide on how to set up your account:
+            </p>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem 0', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.95rem', lineHeight: '1.4' }}>
+              <li>📲 <b>1. Download & Install:</b> Click the link below to grab the app! (Quick tip: You might need to allow "Install from Unknown Sources" in your phone settings).</li>
+              <li>🌐 <b>2. Register:</b> Open the app and tap Sign In. It will quickly redirect you to our website to create your account.</li>
+              <li>📧 <b>3. Verify Your Email:</b> Hop over to your Gmail and click the verification link we sent you. (If you don't see it right away, be sure to peek in your Spam folder!)</li>
+              <li>🏃‍♂️ <b>4. Log In & Set Up:</b> Once verified, jump back into the app, log in, and quickly set up your profile!</li>
+            </ul>
+            <div style={{ background: '#e0f2fe', padding: '12px', borderRadius: '8px', border: '2px solid #0284c7', fontSize: '0.9rem', lineHeight: '1.4' }}>
+              💡 <b>P.S.</b> After you log in, you will notice a STEP-UP notification pop up on your phone. Just leave it there! That little widget is what allows the app to keep tracking your steps in the background, even when you aren't actively using the app. Have fun, and just message us here if you encounter any problem or need help!
+            </div>
+          </div>
+
+          <p style={{
+            margin: 0,
+            textAlign: 'center',
+            color: '#1b2433',
+            fontWeight: '700'
+          }}>
+            An Academic Thesis Project. Available now on Android.
+          </p>
+        
+          <a
+            href="https://drive.google.com/drive/folders/19ijLdWjagEqMbY4Qkj59rw0M4qyFCb5z?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              background: 'linear-gradient(135deg, #4ade80, #22c55e)',
+              color: '#000',
+              padding: '14px 26px',
+              borderRadius: '12px',
+              border: '4px solid #171717',
+              fontWeight: '900',
+              textDecoration: 'none',
+              boxShadow: '0 6px 0 #14532d',
+              transition: 'transform 0.1s ease-in-out',
+              textAlign: 'center',
+              maxWidth: '90vw'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <Download size={20} style={{ flexShrink: 0 }} />
+            <span>Download from Google Drive</span>
+          </a>
+        </footer>
 
        {/* BOTTOM NAVIGATION BAR */}
 <nav style={{
