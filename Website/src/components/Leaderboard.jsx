@@ -26,6 +26,7 @@ export default function Leaderboard() {
   const rest = users.slice(3);
 
   const getName = (user) => {
+    if (user?.username) return user.username;
     return user?.email ? user.email.split('@')[0] : 'Anonymous';
   };
 

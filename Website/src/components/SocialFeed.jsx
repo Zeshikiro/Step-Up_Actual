@@ -1,4 +1,4 @@
-import { onValue, push, ref, set } from 'firebase/database';
+import { get, onValue, push, ref, set } from 'firebase/database';
 import { MessageCircle, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { db } from '../firebaseConfig';
@@ -42,10 +42,17 @@ export default function SocialFeed() {
     const sanitizedText = censorText(newPost);
 
     try {
+      const userRef = ref(db, 'users/' + currentUser.uid);
+      const snapshot = await get(userRef);
+      let authorName = currentUser.email.split('@')[0];
+      if (snapshot.exists() && snapshot.val().username) {
+        authorName = snapshot.val().username;
+      }
+
       const postsRef = ref(db, 'posts');
       const newPostRef = push(postsRef);
       await set(newPostRef, {
-        author: currentUser.email.split('@')[0],
+        author: authorName,
         text: sanitizedText,
         timestamp: Date.now()
       });

@@ -98,11 +98,20 @@ export default function Profile() {
           marginTop: '1rem',
           marginBottom: '0.4rem',
           color: '#9b531e',
-          fontSize: '1.35rem',
-          wordBreak: 'break-word'
+          fontSize: '1.65rem',
+          wordBreak: 'break-word',
+          textTransform: 'capitalize'
+        }}>
+          {userData?.username || currentUser.email.split('@')[0]}
+        </h2>
+        <p style={{
+          color: '#1b2433',
+          marginBottom: '0.5rem',
+          fontWeight: '600',
+          fontSize: '1rem'
         }}>
           {currentUser.email}
-        </h2>
+        </p>
 
         <p style={{
           color: '#1b2433',
