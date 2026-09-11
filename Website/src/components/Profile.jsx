@@ -1,5 +1,5 @@
 import { onValue, ref } from 'firebase/database';
-import { Activity, Award, Footprints, LogOut, Mail, Lock } from 'lucide-react';
+import { Activity, Award, Footprints, LogOut, Mail, Lock, Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { db } from '../firebaseConfig';
 import { useAuth } from './AuthContext';
@@ -8,9 +8,20 @@ export default function Profile() {
   const { currentUser, logout, resetPassword } = useAuth();
   const [userData, setUserData] = useState({ TotalLifetimeSteps: 0, currentDailySteps: 0 });
   const [userRank, setUserRank] = useState("Unranked");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
+
+    // Check if user is an admin
+    const adminRef = ref(db, 'admins/' + currentUser.uid);
+    onValue(adminRef, (snapshot) => {
+      if (snapshot.exists() && snapshot.val().role === 'admin') {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    });
 
     const userRef = ref(db, 'users/' + currentUser.uid);
     onValue(userRef, (snapshot) => {
@@ -152,6 +163,36 @@ export default function Profile() {
         </div>
 
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '1rem' }}>
+          
+          {isAdmin && (
+            <button
+              onClick={() => {
+                window.location.href = '?tab=admin';
+              }}
+              style={{
+                background: '#22c55e',
+                color: '#ffffff',
+                border: '4px solid #171717',
+                borderRadius: '12px',
+                padding: '13px 20px',
+                cursor: 'pointer',
+                fontWeight: '900',
+                fontSize: '1rem',
+                fontFamily: 'inherit',
+                boxShadow: '0 6px 0 #14532d',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                width: '100%',
+                justifyContent: 'center',
+                marginBottom: '10px'
+              }}
+            >
+              <Shield size={20} />
+              Open Infirmary Dashboard
+            </button>
+          )}
+
           <button
             onClick={() => {
               window.location.href = '?tab=change-email';
