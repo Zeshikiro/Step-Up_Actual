@@ -11,6 +11,7 @@ import SocialFeed from './components/SocialFeed'
 import VerifyEmail from './components/VerifyEmail'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import ChangeEmail from './components/ChangeEmail'
+import AdminDashboard from './components/AdminDashboard'
 
 function AppContent() {
   const { currentUser } = useAuth();
@@ -236,6 +237,7 @@ function AppContent() {
         {activeTab === 'privacy' && <PrivacyPolicy />}
         {activeTab === 'health' && <HealthTips />}
         {activeTab === 'change-email' && (currentUser ? <ChangeEmail /> : <Login />)}
+        {activeTab === 'admin' && <AdminDashboard />}
         {(activeTab === 'login' || activeTab === 'register') && <AuthWrapper />}
         </div>
 
