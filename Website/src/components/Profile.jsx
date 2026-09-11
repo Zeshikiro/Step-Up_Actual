@@ -189,7 +189,7 @@ export default function Profile() {
               }}
             >
               <Shield size={20} />
-              Open Infirmary Dashboard
+              Open Dashboard
             </button>
           )}
 
