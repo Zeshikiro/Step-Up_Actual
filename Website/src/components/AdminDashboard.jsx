@@ -71,7 +71,7 @@ export default function AdminDashboard() {
   // ============================
   if (!adminCheckDone) {
     return (
-      <div style={{ textAlign: 'center', padding: '3rem', color: '#1b2433' }}>
+      <div style={{ textAlign: 'center', padding: '3rem', color: '#1b2433', fontFamily: '"Segoe UI", "Inter", "Roboto", sans-serif' }}>
         <p style={{ fontSize: '1.2rem', fontWeight: '700' }}>Verifying admin access...</p>
       </div>
     );
@@ -83,7 +83,8 @@ export default function AdminDashboard() {
         textAlign: 'center',
         padding: '3rem 1.5rem',
         maxWidth: '500px',
-        margin: '0 auto'
+        margin: '0 auto',
+        fontFamily: '"Segoe UI", "Inter", "Roboto", sans-serif'
       }}>
         <div style={{
           background: '#fee2e2',
@@ -221,7 +222,8 @@ export default function AdminDashboard() {
       maxWidth: '950px',
       margin: '0 auto',
       padding: '1rem',
-      color: '#1b2433'
+      color: '#1b2433',
+      fontFamily: '"Segoe UI", "Inter", "Roboto", -apple-system, sans-serif'
     }}>
       {/* HEADER */}
       <div style={{
@@ -417,12 +419,39 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {filteredUsers.map((u, i) => {
-                    const today = Math.max(u.DailySteps || 0, u.currentDailySteps || 0);
+                    // currentDailySteps = live step count pushed by the Unity app in real-time
+                    const todayLive = u.currentDailySteps || 0;
+                    const todaySaved = u.DailySteps || 0;
+                    const today = Math.max(todayLive, todaySaved);
                     const lifetime = u.TotalLifetimeSteps || 0;
+                    const weekly = u.WeeklySteps || 0;
+                    const streak = u.CurrentStreak || 0;
+
+                    // Determine real-time activity status based on actual Firebase data
                     let activityStatus = 'Inactive';
                     let statusColor = '#94a3b8';
-                    if (today > 0) { activityStatus = 'Active Today'; statusColor = '#22c55e'; }
-                    else if (lifetime > 0) { activityStatus = 'Has History'; statusColor = '#f59e0b'; }
+
+                    if (todayLive > 0) {
+                      // User's Unity app is actively pushing steps RIGHT NOW
+                      activityStatus = 'Active Now';
+                      statusColor = '#22c55e';
+                    } else if (today > 0) {
+                      // Has steps logged today but app might be closed
+                      activityStatus = 'Active Today';
+                      statusColor = '#16a34a';
+                    } else if (streak > 0 || weekly > 0) {
+                      // Was active recently (has a streak going or walked this week)
+                      activityStatus = 'Recently Active';
+                      statusColor = '#f59e0b';
+                    } else if (lifetime > 0) {
+                      // Walked before but not recently
+                      activityStatus = 'Has History';
+                      statusColor = '#6b7280';
+                    } else if (u.OnboardingComplete === 1) {
+                      // Finished setup but never walked
+                      activityStatus = 'New User';
+                      statusColor = '#3b82f6';
+                    }
 
                     return (
                       <tr key={u.id} style={{ background: i % 2 === 0 ? '#f8fafc' : '#fff' }}>
