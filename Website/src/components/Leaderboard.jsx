@@ -1,3 +1,7 @@
+// Leaderboard.jsx — Global step-count rankings
+// Reads all users from Firebase, sorts by TotalLifetimeSteps descending
+// Top 3 get a podium display, everyone else goes in the list below
+
 import { onValue, ref } from 'firebase/database';
 import { Crown, Medal, Trophy } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -6,6 +10,7 @@ import { db } from '../firebaseConfig';
 export default function Leaderboard() {
   const [users, setUsers] = useState([]);
 
+  // Subscribe to /users node — Firebase pushes updates in real-time via WebSockets
   useEffect(() => {
     const usersRef = ref(db, 'users');
     onValue(usersRef, (snapshot) => {
@@ -15,21 +20,23 @@ export default function Leaderboard() {
           id: key,
           ...data[key]
         })).filter(u => u.TotalLifetimeSteps !== undefined)
-          .sort((a, b) => b.TotalLifetimeSteps - a.TotalLifetimeSteps);
+          .sort((a, b) => b.TotalLifetimeSteps - a.TotalLifetimeSteps); // highest steps first
 
         setUsers(userList);
       }
     });
   }, []);
 
-  const topThree = users.slice(0, 3);
-  const rest = users.slice(3);
+  const topThree = users.slice(0, 3);  // podium display
+  const rest = users.slice(3);          // regular list
 
+  // Show username if available, otherwise fall back to email prefix
   const getName = (user) => {
     if (user?.username) return user.username;
     return user?.email ? user.email.split('@')[0] : 'Anonymous';
   };
 
+  // First letter of name for the avatar circle
   const getInitial = (user) => {
     return getName(user).charAt(0).toUpperCase();
   };

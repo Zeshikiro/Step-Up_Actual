@@ -1,3 +1,7 @@
+// App.jsx — Main application entry point
+// Uses a tab-based routing system via URL query params (?tab=home, ?tab=leaderboard, etc.)
+// All components render inside AppContent, wrapped by AuthProvider for global auth state
+
 import { Download, Heart, Home, Info, MessageCircle, Trophy, User } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import './App.css'
@@ -15,6 +19,9 @@ import AdminDashboard from './components/AdminDashboard'
 
 function AppContent() {
   const { currentUser } = useAuth();
+
+  // Read which tab to show from the URL (e.g. ?tab=leaderboard)
+  // Also handles Firebase email verification links (?mode=verifyEmail)
   const getActiveTabFromUrl = () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('mode') === 'verifyEmail') {

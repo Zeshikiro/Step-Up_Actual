@@ -1,3 +1,8 @@
+// Profile.jsx — Player profile dashboard
+// Shows: username, email, global rank, lifetime steps, today's steps
+// Also checks /admins/{uid} in Firebase — if admin, shows the green "Open Infirmary Dashboard" button
+// Includes buttons for email change, password reset, and sign out
+
 import { onValue, ref } from 'firebase/database';
 import { Activity, Award, Footprints, LogOut, Mail, Lock, Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';

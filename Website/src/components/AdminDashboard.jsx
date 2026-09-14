@@ -1,3 +1,9 @@
+// AdminDashboard.jsx — Infirmary Staff Admin Panel
+// Restricted to users with role:"admin" in the /admins/{uid} Firebase node
+// Shows: user stats overview, activity table with respondent codes (privacy), health/wellness info
+// Security: Firebase Rules block non-admins from reading /admins, and this component
+// double-checks on the client side too before rendering any data
+
 import { useEffect, useState } from 'react';
 import { ref, onValue, get } from 'firebase/database';
 import { db } from '../firebaseConfig';

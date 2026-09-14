@@ -1,3 +1,7 @@
+// AuthContext.jsx — Global authentication state manager
+// Wraps the entire app so any component can access the current user via useAuth()
+// Handles: login, register (with email verification), logout, password reset, email change
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebaseConfig';
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, sendPasswordResetEmail, sendEmailVerification, updateEmail, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
@@ -5,25 +9,29 @@ import { ref, set, update } from 'firebase/database';
 
 const AuthContext = createContext();
 
+// Hook — lets any component grab { currentUser, login, register, logout, ... }
 export function useAuth() {
   return useContext(AuthContext);
 }
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // prevents flash of wrong UI while Firebase checks session
 
+  // Standard email+password login
   function login(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
+  // Register — creates Firebase Auth user + sends verification email + writes initial DB record
   async function register(email, password) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // NEW: Send verification email!
+    // Force email verification before they can use the app
     await sendEmailVerification(user);
     
+    // Create their database entry with zeroed-out stats (Unity app will populate the rest)
     await set(ref(db, 'users/' + user.uid), {
       email: email,
       TotalLifetimeSteps: 0,
@@ -33,21 +41,18 @@ export function AuthProvider({ children }) {
     return userCredential;
   }
   
+  // Email change — requires re-authentication for security (Firebase enforces this)
   async function changeEmail(currentPassword, newEmail) {
     if (!currentUser) throw new Error("No user logged in");
     
+    // Re-auth with current password first (Firebase requirement for sensitive ops)
     const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
-    
-    // Re-authenticate user before allowing sensitive operation
     await reauthenticateWithCredential(currentUser, credential);
     
-    // Update email in Auth
     await updateEmail(currentUser, newEmail);
-    
-    // Send verification to the new email
     await sendEmailVerification(currentUser);
     
-    // Update email in Realtime Database
+    // Sync the new email to the Realtime Database so Unity app sees it too
     await update(ref(db, 'users/' + currentUser.uid), {
       email: newEmail
     });
@@ -57,10 +62,12 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  // Sends a password reset link to their email
   function resetPassword(email) {
     return sendPasswordResetEmail(auth, email);
   }
 
+  // Listen for auth state changes (login, logout, page refresh)
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       setCurrentUser(user);
@@ -70,6 +77,7 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
+  // Expose all auth functions to the rest of the app
   const value = {
     currentUser,
     login,

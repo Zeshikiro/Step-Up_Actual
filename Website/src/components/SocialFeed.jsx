@@ -1,3 +1,7 @@
+// SocialFeed.jsx — Community post feed
+// Users can post fitness milestones, posts are stored at /posts in Firebase
+// Includes a basic profanity filter and fetches in-game usernames before posting
+
 import { get, onValue, push, ref, set } from 'firebase/database';
 import { MessageCircle, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -9,6 +13,7 @@ export default function SocialFeed() {
   const [newPost, setNewPost] = useState("");
   const { currentUser } = useAuth();
 
+  // Live-subscribe to all posts, sorted newest first
   useEffect(() => {
     const postsRef = ref(db, 'posts');
     onValue(postsRef, (snapshot) => {
@@ -24,31 +29,33 @@ export default function SocialFeed() {
     });
   }, []);
 
+  // Simple word filter — replaces bad words with *** using regex word boundaries
   const censorText = (text) => {
-    // List of inappropriate words (you can expand this later)
     const badWords = ['fuck', 'shit', 'bitch', 'asshole', 'dick', 'cunt', 'damn', 'crap', 'piss', 'slut', 'whore', 'bastard'];
     let censored = text;
     badWords.forEach(word => {
-      // Use regex to match whole words case-insensitively
       const regex = new RegExp(`\\b${word}\\b`, 'gi');
       censored = censored.replace(regex, '***');
     });
     return censored;
   };
 
+  // Submit a new post — fetches the user's in-game username from /users/{uid}
   const handlePost = async () => {
     if (!newPost.trim() || !currentUser) return;
 
     const sanitizedText = censorText(newPost);
 
     try {
+      // Grab their username from the database (set by the Unity app during onboarding)
       const userRef = ref(db, 'users/' + currentUser.uid);
       const snapshot = await get(userRef);
-      let authorName = currentUser.email.split('@')[0];
+      let authorName = currentUser.email.split('@')[0]; // fallback to email prefix
       if (snapshot.exists() && snapshot.val().username) {
         authorName = snapshot.val().username;
       }
 
+      // Push new post to /posts with a unique Firebase key
       const postsRef = ref(db, 'posts');
       const newPostRef = push(postsRef);
       await set(newPostRef, {
@@ -58,6 +65,7 @@ export default function SocialFeed() {
       });
       setNewPost("");
     } catch (err) {
+      // Most common cause: Firebase rules don't have /posts read/write enabled
       alert("Database Error: " + err.message + "\n\nYou probably need to add '/posts' to your Firebase Realtime Database Rules!");
       console.error(err);
     }
