@@ -419,28 +419,32 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {filteredUsers.map((u, i) => {
-                    // currentDailySteps = live step count pushed by the Unity app in real-time
                     const todayLive = u.currentDailySteps || 0;
-                    const todaySaved = u.DailySteps || 0;
-                    const today = Math.max(todayLive, todaySaved);
+                    const today = Math.max(todayLive, u.DailySteps || 0);
                     const lifetime = u.TotalLifetimeSteps || 0;
                     const weekly = u.WeeklySteps || 0;
                     const streak = u.CurrentStreak || 0;
 
-                    // Determine real-time activity status based on actual Firebase data
+                    // Compare LastLoginDate (written by Unity app) to today's local date
+                    // This is the most accurate way to determine if they were ACTUALLY active today
+                    // DailySteps alone is unreliable — it doesn't reset until the user opens the app
+                    const todayStr = new Date().toLocaleDateString('en-CA'); // "YYYY-MM-DD" format
+                    const lastLogin = u.LastLoginDate || '';
+                    const openedAppToday = lastLogin === todayStr;
+
                     let activityStatus = 'Inactive';
                     let statusColor = '#94a3b8';
 
-                    if (todayLive > 0) {
-                      // User's Unity app is actively pushing steps RIGHT NOW
+                    if (openedAppToday && todayLive > 0) {
+                      // Opened the app today AND steps are actively being pushed
                       activityStatus = 'Active Now';
                       statusColor = '#22c55e';
-                    } else if (today > 0) {
-                      // Has steps logged today but app might be closed
+                    } else if (openedAppToday) {
+                      // Opened the app today (confirmed by date), may not have walked yet
                       activityStatus = 'Active Today';
                       statusColor = '#16a34a';
                     } else if (streak > 0 || weekly > 0) {
-                      // Was active recently (has a streak going or walked this week)
+                      // Active recently but didn't open today
                       activityStatus = 'Recently Active';
                       statusColor = '#f59e0b';
                     } else if (lifetime > 0) {
@@ -448,7 +452,7 @@ export default function AdminDashboard() {
                       activityStatus = 'Has History';
                       statusColor = '#6b7280';
                     } else if (u.OnboardingComplete === 1) {
-                      // Finished setup but never walked
+                      // Set up the app but never walked
                       activityStatus = 'New User';
                       statusColor = '#3b82f6';
                     }
