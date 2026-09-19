@@ -144,10 +144,29 @@ export default function AdminDashboard() {
   // EXPORT TO CSV
   // ============================
   const handleExport = () => {
-    let csv = 'Respondent,Username,Today Steps,Yesterday Steps,Weekly Steps,Total Lifetime Steps,Step Goal,Streak,Age,Weight(kg),Height(cm),BMI,BMI Status,Onboarding\n';
+    // 1. Gather all unique dates recorded in dailyHistory across all users
+    const allDatesSet = new Set();
+    users.forEach(u => {
+      if (u.dailyHistory) {
+        Object.keys(u.dailyHistory).forEach(dateStr => allDatesSet.add(dateStr));
+      }
+    });
+    // Sort dates chronologically (e.g., 2026-09-18, 2026-09-19)
+    const sortedDates = Array.from(allDatesSet).sort();
+
+    // 2. Build the CSV Header dynamically
+    let header = 'Respondent,Username,Today Steps,Yesterday Steps,Weekly Steps,Total Lifetime Steps,Step Goal,Streak,Age,Weight(kg),Height(cm),BMI,BMI Status,Onboarding';
+    sortedDates.forEach(date => {
+      header += `,${date} Steps,${date} Status`;
+    });
+    header += '\n';
+
+    let csv = header;
+
+    // 3. Build each user's row
     users.forEach(u => {
       const today = Math.max(u.DailySteps || 0, u.currentDailySteps || 0);
-      csv += [
+      const row = [
         u.respondentCode,
         u.username || 'N/A',
         today,
@@ -162,7 +181,20 @@ export default function AdminDashboard() {
         u.bmi ? parseFloat(u.bmi).toFixed(2) : 'N/A',
         u.bmiCategory || 'N/A',
         u.OnboardingComplete === 1 ? 'Yes' : 'No'
-      ].join(',') + '\n';
+      ];
+
+      // 4. Append history columns for this specific user
+      sortedDates.forEach(date => {
+        if (u.dailyHistory && u.dailyHistory[date]) {
+          row.push(u.dailyHistory[date].steps || 0);
+          row.push(u.dailyHistory[date].status || 'Inactive');
+        } else {
+          row.push(0);
+          row.push('No Record'); // If they didn't have the app installed that day
+        }
+      });
+
+      csv += row.join(',') + '\n';
     });
 
     const blob = new Blob([csv], { type: 'text/csv' });
